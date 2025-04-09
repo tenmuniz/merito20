@@ -945,6 +945,7 @@
             const password = document.getElementById('password').value;
             
             try {
+                console.log('Tentando login com:', { username, password });
                 const response = await fetch('/api/auth/login', {
                     method: 'POST',
                     headers: {
@@ -954,10 +955,26 @@
                 });
                 
                 if (!response.ok) {
-                    throw new Error('Credenciais inválidas');
+                    const errorText = await response.text();
+                    let errorMessage = 'Credenciais inválidas';
+                    try {
+                        const errorData = JSON.parse(errorText);
+                        errorMessage = errorData.message || errorMessage;
+                    } catch (e) {
+                        console.error('Erro ao parsear resposta de erro:', e);
+                    }
+                    throw new Error(errorMessage);
                 }
                 
-                const user = await response.json();
+                const responseText = await response.text();
+                let user;
+                try {
+                    user = JSON.parse(responseText);
+                } catch (e) {
+                    console.error('Erro ao parsear resposta de sucesso:', e, responseText);
+                    throw new Error('Formato de resposta inválido');
+                }
+                console.log('Login bem-sucedido:', user);
                 
                 // Mostrar controles de admin se o usuário for administrador
                 if (user.isAdmin) {

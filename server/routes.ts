@@ -95,6 +95,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  app.post("/api/events", async (req, res) => {
+    try {
+      const { teamId, type, description, points, officersInvolved, createdBy } = req.body;
+      
+      // Validações básicas
+      if (!teamId || !type || !description || !points || !officersInvolved) {
+        return res.status(400).json({ message: "Todos os campos são obrigatórios" });
+      }
+      
+      // Verificar se a equipe existe
+      const team = await storage.getTeam(teamId);
+      if (!team) {
+        return res.status(404).json({ message: "Equipe não encontrada" });
+      }
+      
+      // Criar o evento
+      const newEvent = await storage.createEvent({
+        teamId,
+        type,
+        description,
+        points,
+        officersInvolved,
+        createdBy: createdBy || "Admin",
+        createdAt: new Date()
+      });
+      
+      // Atualizar os pontos da equipe
+      await storage.updateTeamPoints(teamId, team.points + points);
+      
+      res.status(201).json(newEvent);
+    } catch (error: any) {
+      console.error("Erro ao criar evento:", error);
+      res.status(500).json({ message: error.message || "Erro ao criar evento" });
+    }
+  });
+
   // Authentication
   app.post("/api/auth/login", async (req, res) => {
     try {
