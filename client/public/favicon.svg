@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="64px" height="64px" viewBox="0 0 64 64" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <g stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+    <circle fill="#1155CC" cx="32" cy="32" r="32"></circle>
+    <path d="M16,18 L48,18 C49.1045695,18 50,18.8954305 50,20 L50,44 C50,45.1045695 49.1045695,46 48,46 L16,46 C14.8954305,46 14,45.1045695 14,44 L14,20 C14,18.8954305 14.8954305,18 16,18 Z M18,22 L18,42 L46,42 L46,22 L18,22 Z" fill="#FFFFFF" fill-rule="nonzero"></path>
+    <path d="M24,32 L40,32 C41.1045695,32 42,32.8954305 42,34 L42,38 C42,39.1045695 41.1045695,40 40,40 L24,40 C22.8954305,40 22,39.1045695 22,38 L22,34 C22,32.8954305 22.8954305,32 24,32 Z" fill="#FFFFFF"></path>
+    <path d="M24,24 L40,24 C41.1045695,24 42,24.8954305 42,26 L42,30 C42,31.1045695 41.1045695,32 40,32 L24,32 C22.8954305,32 22,31.1045695 22,30 L22,26 C22,24.8954305 22.8954305,24 24,24 Z" fill="#FFFFFF"></path>
+    <text font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#1155CC">
+      <tspan x="26" y="30">20ª</tspan>
+    </text>
+    <text font-family="Arial-BoldMT, Arial" font-size="12" font-weight="bold" fill="#1155CC">
+      <tspan x="25" y="38">CIPM</tspan>
+    </text>
+  </g>
+</svg>
