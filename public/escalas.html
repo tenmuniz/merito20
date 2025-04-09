@@ -217,6 +217,31 @@
             transition: transform 0.2s ease, box-shadow 0.2s ease;
         }
         
+        /* Destacar quintas-feiras (dia de troca) */
+        .dia-container.dia-troca {
+            background: linear-gradient(to bottom, #f0f9ff, #e6f7ff);
+            border: 1px solid #93c5fd;
+            box-shadow: 0 3px 10px rgba(59, 130, 246, 0.15);
+            position: relative;
+        }
+        
+        .dia-container.dia-troca::after {
+            content: '↻';
+            position: absolute;
+            top: 5px;
+            right: 5px;
+            font-size: 12px;
+            color: #3b82f6;
+            background-color: #f0f9ff;
+            height: 18px;
+            width: 18px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 50%;
+            border: 1px solid #bfdbfe;
+        }
+        
         .dia-container:hover {
             transform: translateY(-3px);
             box-shadow: 0 5px 10px rgba(0,0,0,0.15);
@@ -608,6 +633,9 @@
             <div class="escala-container">
                 <div class="escala-header">
                     <div class="escala-title">ABRIL 2025</div>
+                    <div style="margin-top: 0.5rem; font-size: 0.85rem; color: #3b82f6; text-align: center;">
+                        Escala de serviço 7x14 - <span style="font-weight: bold;">As trocas de guarnição (↻) acontecem sempre nas quintas-feiras</span>
+                    </div>
                 </div>
                 
                 <div class="escala-grid">
@@ -622,7 +650,7 @@
                         <div class="dia-data">QUA</div>
                         <div class="dia-equipe charlie">CHARLIE</div>
                     </div>
-                    <div class="dia-container">
+                    <div class="dia-container dia-troca">
                         <div class="dia-header">03/04</div>
                         <div class="dia-data">QUI</div>
                         <div class="dia-equipe charlie">CHARLIE</div>
@@ -659,11 +687,11 @@
                         <div class="dia-header">09/04</div>
                         <div class="dia-data">QUA</div>
                         <div class="dia-equipe bravo">BRAVO</div>
-                        <div class="dia-equipe alfa">ALFA</div>
                     </div>
-                    <div class="dia-container">
+                    <div class="dia-container dia-troca">
                         <div class="dia-header">10/04</div>
                         <div class="dia-data">QUI</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
                         <div class="dia-equipe alfa">ALFA</div>
                     </div>
                     <div class="dia-container">
@@ -697,11 +725,11 @@
                         <div class="dia-header">16/04</div>
                         <div class="dia-data">QUA</div>
                         <div class="dia-equipe alfa">ALFA</div>
-                        <div class="dia-equipe charlie">CHARLIE</div>
                     </div>
-                    <div class="dia-container">
+                    <div class="dia-container dia-troca">
                         <div class="dia-header">17/04</div>
                         <div class="dia-data">QUI</div>
+                        <div class="dia-equipe alfa">ALFA</div>
                         <div class="dia-equipe charlie">CHARLIE</div>
                     </div>
                     <div class="dia-container">
@@ -736,7 +764,7 @@
                         <div class="dia-data">QUA</div>
                         <div class="dia-equipe charlie">CHARLIE</div>
                     </div>
-                    <div class="dia-container">
+                    <div class="dia-container dia-troca">
                         <div class="dia-header">24/04</div>
                         <div class="dia-data">QUI</div>
                         <div class="dia-equipe charlie">CHARLIE</div>
@@ -774,9 +802,10 @@
                         <div class="dia-data">QUA</div>
                         <div class="dia-equipe bravo">BRAVO</div>
                     </div>
-                    <div class="dia-container">
+                    <div class="dia-container dia-troca">
                         <div class="dia-header">01/05</div>
                         <div class="dia-data">QUI</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
                         <div class="dia-equipe alfa">ALFA</div>
                     </div>
                     <div class="dia-container">
