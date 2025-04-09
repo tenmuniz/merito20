@@ -57,19 +57,16 @@
         }
         
         .logo {
-            height: 90px;
-            width: 80px;
-            object-fit: cover;
-            object-position: center 30%;
-            border-radius: 8px;
+            height: 120px;
+            width: auto;
+            object-fit: contain;
             filter: drop-shadow(0 4px 8px rgba(0,0,0,0.4));
             transition: transform 0.3s ease;
-            border: 2px solid rgba(255, 255, 255, 0.3);
+            border: none;
         }
         
         .logo:hover {
             transform: scale(1.05);
-            border-color: rgba(255, 255, 255, 0.5);
         }
         
         .title-container {
@@ -83,6 +80,18 @@
             margin-top: 3px;
             letter-spacing: 0.5px;
             font-weight: 300;
+        }
+        
+        .slogan {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 6px;
+            max-width: 300px;
         }
         
         h1 {
@@ -679,12 +688,22 @@
             }
             
             .logo {
-                height: 70px;
-                width: 65px;
+                height: 100px;
+                width: auto;
             }
             
             h1 {
-                font-size: 1.6rem;
+                font-size: 1.4rem;
+                letter-spacing: 0.8px;
+            }
+            
+            .unit-name {
+                font-size: 0.85rem;
+            }
+            
+            .slogan {
+                font-size: 0.8rem;
+                max-width: 100%;
             }
             
             .teams-grid {
@@ -732,10 +751,11 @@
 <body>
     <header>
         <div class="header-title">
-            <img src="/assets/brasao-20cipm.jpg" alt="Brasão 20ª CIPM" class="logo">
+            <img src="/assets/brasao-20cipm-novo.jpg" alt="Brasão 20ª CIPM" class="logo">
             <div class="title-container">
-                <h1>Sistema de Meritocracia</h1>
+                <h1>SISTEMA DE MERITOCRACIA</h1>
                 <div class="unit-name">20ª Companhia Independente de Polícia Militar</div>
+                <div class="slogan">"Guardiões da paz, escudos da justiça"</div>
             </div>
         </div>
         <button id="loginBtn" class="login-button">
