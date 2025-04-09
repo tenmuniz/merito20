@@ -59,6 +59,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         points: event.points,
         officersInvolved: event.officersInvolved,
         createdBy: event.createdBy,
+        eventDate: event.eventDate,
         createdAt: event.createdAt
       }));
       res.json(formattedEvents);
@@ -88,6 +89,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         points: event.points,
         officersInvolved: event.officersInvolved,
         createdBy: event.createdBy,
+        eventDate: event.eventDate,
         createdAt: event.createdAt
       });
     } catch (error: any) {
