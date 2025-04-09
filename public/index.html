@@ -962,7 +962,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO ALFA</div>
-                        <div class="ranking">1º Lugar</div>
+                        <div class="ranking"><span>1º</span> Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -974,7 +974,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO BRAVO</div>
-                        <div class="ranking">2º Lugar</div>
+                        <div class="ranking"><span>2º</span> Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -986,7 +986,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO CHARLIE</div>
-                        <div class="ranking">3º Lugar</div>
+                        <div class="ranking"><span>3º</span> Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -1314,14 +1314,17 @@
                 // Primeiro lugar
                 document.querySelector('.first-place .podium-team').textContent = sortedTeams[0].name.toUpperCase();
                 document.querySelector('.first-place .podium-points').textContent = sortedTeams[0].points;
+                document.querySelector('.first-place .podium-number').textContent = "1";
                 
                 // Segundo lugar
                 document.querySelector('.second-place .podium-team').textContent = sortedTeams[1].name.toUpperCase();
                 document.querySelector('.second-place .podium-points').textContent = sortedTeams[1].points;
+                document.querySelector('.second-place .podium-number').textContent = "2";
                 
                 // Terceiro lugar
                 document.querySelector('.third-place .podium-team').textContent = sortedTeams[2].name.toUpperCase();
                 document.querySelector('.third-place .podium-points').textContent = sortedTeams[2].points;
+                document.querySelector('.third-place .podium-number').textContent = "3";
             }
             
             // Atualizar as posições nos cards
@@ -1330,7 +1333,8 @@
                 const rankingText = `${i + 1}º Lugar`;
                 const rankingElement = document.querySelector(`.card:nth-child(${getTeamIndex(teamId)}) .ranking`);
                 if (rankingElement) {
-                    rankingElement.textContent = rankingText;
+                    // Todos os cards agora têm a mesma estrutura com span
+                    rankingElement.querySelector('span').textContent = `${i + 1}º`;
                 }
             }
         }
