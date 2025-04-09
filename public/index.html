@@ -278,6 +278,14 @@
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
+            background-color: #f97316;
+            color: white;
+            white-space: nowrap;
+        }
+        
+        .ranking span {
+            display: inline;
+            margin-right: 3px;
         }
         
         .card:nth-child(1) .ranking {
@@ -962,7 +970,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO ALFA</div>
-                        <div class="ranking"><span>1º</span> Lugar</div>
+                        <div class="ranking"><span>1º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -974,7 +982,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO BRAVO</div>
-                        <div class="ranking"><span>2º</span> Lugar</div>
+                        <div class="ranking"><span>2º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -986,7 +994,7 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO CHARLIE</div>
-                        <div class="ranking"><span>3º</span> Lugar</div>
+                        <div class="ranking"><span>1º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
@@ -1330,10 +1338,8 @@
             // Atualizar as posições nos cards
             for (let i = 0; i < sortedTeams.length; i++) {
                 const teamId = sortedTeams[i].name.toLowerCase();
-                const rankingText = `${i + 1}º Lugar`;
                 const rankingElement = document.querySelector(`.card:nth-child(${getTeamIndex(teamId)}) .ranking`);
                 if (rankingElement) {
-                    // Todos os cards agora têm a mesma estrutura com span
                     rankingElement.querySelector('span').textContent = `${i + 1}º`;
                 }
             }
