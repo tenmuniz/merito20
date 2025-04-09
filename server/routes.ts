@@ -2,6 +2,9 @@ import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { type InsertEvent } from "@shared/schema";
+import { db } from './db';
+import { teams, events } from '@shared/schema';
+import { eq } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
@@ -175,6 +178,27 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Erro ao atualizar evento:", error);
       res.status(500).json({ message: error.message || "Erro ao atualizar evento" });
+    }
+  });
+
+  // Reset API - para zerar todos os eventos e pontos
+  app.post("/api/reset", async (req, res) => {
+    try {
+      // Primeiro, exclua todos os eventos
+      await db.delete(events);
+      
+      // Em seguida, zere os pontos de todas as equipes
+      const allTeams = await storage.getTeams();
+      for (const team of allTeams) {
+        await db.update(teams)
+          .set({ points: 0 })
+          .where(eq(teams.id, team.id));
+      }
+      
+      res.json({ success: true, message: "Todos os eventos foram excluídos e os pontos zerados." });
+    } catch (error: any) {
+      console.error("Erro ao resetar dados:", error);
+      res.status(500).json({ message: error.message || "Erro ao resetar dados" });
     }
   });
 

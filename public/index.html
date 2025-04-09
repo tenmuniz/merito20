@@ -94,6 +94,24 @@
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
         
+        /* Botões específicos */
+        #addEventBtn {
+            background: linear-gradient(to right, #22c55e, #16a34a);
+            margin-right: 10px;
+        }
+        
+        #addEventBtn:hover {
+            background: linear-gradient(to right, #16a34a, #15803d);
+        }
+        
+        #resetBtn {
+            background: linear-gradient(to right, #ef4444, #dc2626);
+        }
+        
+        #resetBtn:hover {
+            background: linear-gradient(to right, #dc2626, #b91c1c);
+        }
+        
         /* Estilos dos cards das equipes */
         .teams-grid {
             display: grid;
@@ -630,6 +648,7 @@
             <div class="section-header">
                 <h2>Desempenho das Equipes</h2>
                 <button id="addEventBtn" style="display: none;">Adicionar Evento</button>
+                <button id="resetBtn" style="display: none;">Zerar Todos os Pontos</button>
             </div>
             
             <div class="teams-grid">
@@ -912,29 +931,16 @@
             // Ordenar as equipes por pontos (maior para menor)
             const sortedTeams = [...teams].sort((a, b) => b.points - a.points);
             
-            // Atualizar os pontos e barras de progresso
+            // Atualizar os pontos das equipes
             for (const team of teams) {
                 const teamId = team.name.toLowerCase();
                 const pointsElement = document.getElementById(`${teamId}-points`);
-                const barElement = document.getElementById(`${teamId}-bar`);
                 
                 if (pointsElement) {
                     pointsElement.textContent = team.points;
                 }
                 
-                if (barElement) {
-                    // Calcular porcentagem para as barras baseada no total de pontos
-                    const totalPoints = teams.reduce((sum, t) => sum + t.points, 0);
-                    let percentage = 0;
-                    if (totalPoints > 0) {
-                        percentage = Math.round((team.points / totalPoints) * 100);
-                    } else {
-                        // Se não houver pontos, distribuir igualmente
-                        percentage = Math.round(100 / teams.length);
-                    }
-                    barElement.style.width = `${percentage}%`;
-                    barElement.textContent = `${percentage}%`;
-                }
+                // Removemos a atualização das barras de progresso conforme solicitado
             }
             
             // Atualizar o pódio
@@ -1238,8 +1244,10 @@
                 // Mostrar controles de admin se o usuário for administrador
                 if (user.isAdmin) {
                     document.getElementById('addEventBtn').style.display = 'block';
+                    document.getElementById('resetBtn').style.display = 'block';
                 } else {
                     document.getElementById('addEventBtn').style.display = 'none';
+                    document.getElementById('resetBtn').style.display = 'none';
                 }
                 
                 document.getElementById('loginModal').style.display = 'none';
@@ -1342,6 +1350,35 @@
             }
         });
         
+        // Função para resetar todos os pontos e eventos
+        async function resetAllData() {
+            if (!confirm('ATENÇÃO: Esta ação irá remover TODOS os eventos e zerar as pontuações das equipes. Esta ação não pode ser desfeita. Deseja continuar?')) {
+                return;
+            }
+            
+            try {
+                const response = await fetch('/api/reset', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Falha ao resetar dados');
+                }
+                
+                // Recarregar dados
+                fetchTeams();
+                fetchEvents();
+                
+                alert('Todos os eventos foram removidos e as pontuações zeradas com sucesso!');
+            } catch (error) {
+                console.error('Erro ao resetar dados:', error);
+                alert('Erro ao resetar dados: ' + error.message);
+            }
+        }
+        
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             fetchTeams();
@@ -1350,9 +1387,13 @@
             
             // Por padrão, esconder o botão de adicionar evento até login
             document.getElementById('addEventBtn').style.display = 'none';
+            document.getElementById('resetBtn').style.display = 'none';
             
             // Configurar o botão de editar no modal de detalhes
             document.getElementById('editEventBtn').addEventListener('click', openEditModal);
+            
+            // Configurar o botão de reset
+            document.getElementById('resetBtn').addEventListener('click', resetAllData);
             
             // Configurar o evento para atualizar pontos automaticamente no modal de edição
             const editTypeSelect = document.getElementById('editEventType');
