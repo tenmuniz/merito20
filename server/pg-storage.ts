@@ -83,6 +83,50 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
 
+  async updateEvent(id: number, eventData: Partial<InsertEvent>): Promise<Event | undefined> {
+    const event = await this.getEvent(id);
+    if (!event) return undefined;
+    
+    // Se houver mudança de pontos ou equipe, ajustar os pontos das equipes
+    let pointsChanged = false;
+    let teamChanged = false;
+    let oldTeamId = event.teamId;
+    let pointsDiff = 0;
+    
+    if (eventData.points !== undefined && eventData.points !== event.points) {
+      pointsChanged = true;
+      pointsDiff = eventData.points - event.points;
+    }
+    
+    if (eventData.teamId !== undefined && eventData.teamId !== event.teamId) {
+      teamChanged = true;
+    }
+    
+    // Se a equipe mudou, remover pontos da equipe antiga
+    if (teamChanged) {
+      await this.updateTeamPoints(oldTeamId, -event.points);
+    } 
+    // Se apenas os pontos mudaram, ajustar a diferença
+    else if (pointsChanged) {
+      await this.updateTeamPoints(event.teamId, pointsDiff);
+    }
+    
+    // Se a equipe mudou, adicionar pontos à nova equipe
+    if (teamChanged && eventData.teamId !== undefined) {
+      const pointsToAdd = eventData.points !== undefined ? eventData.points : event.points;
+      await this.updateTeamPoints(eventData.teamId, pointsToAdd);
+    }
+    
+    // Atualizar o evento no banco de dados, preservando createdAt
+    const result = await db
+      .update(events)
+      .set(eventData)
+      .where(eq(events.id, id))
+      .returning();
+    
+    return result[0];
+  }
+  
   async deleteEvent(id: number): Promise<boolean> {
     const event = await this.getEvent(id);
     if (!event) return false;

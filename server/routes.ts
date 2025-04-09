@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { type InsertEvent } from "@shared/schema";
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
@@ -129,6 +130,49 @@ export async function registerRoutes(app: Express): Promise<Server> {
     } catch (error: any) {
       console.error("Erro ao criar evento:", error);
       res.status(500).json({ message: error.message || "Erro ao criar evento" });
+    }
+  });
+  
+  app.put("/api/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+      
+      // Verificar se o evento existe
+      const event = await storage.getEvent(id);
+      if (!event) {
+        return res.status(404).json({ message: "Evento não encontrado" });
+      }
+      
+      const { teamId, type, description, points, officersInvolved, eventDate } = req.body;
+      
+      // Validações básicas
+      if (teamId) {
+        // Verificar se a equipe existe
+        const team = await storage.getTeam(teamId);
+        if (!team) {
+          return res.status(404).json({ message: "Equipe não encontrada" });
+        }
+      }
+      
+      // Dados para atualização
+      const updateData: Partial<InsertEvent> = {};
+      if (teamId !== undefined) updateData.teamId = teamId;
+      if (type !== undefined) updateData.type = type;
+      if (description !== undefined) updateData.description = description;
+      if (points !== undefined) updateData.points = points;
+      if (officersInvolved !== undefined) updateData.officersInvolved = officersInvolved;
+      if (eventDate !== undefined) updateData.eventDate = new Date(eventDate);
+      
+      // Atualizar o evento
+      const updatedEvent = await storage.updateEvent(id, updateData);
+      
+      res.json(updatedEvent);
+    } catch (error: any) {
+      console.error("Erro ao atualizar evento:", error);
+      res.status(500).json({ message: error.message || "Erro ao atualizar evento" });
     }
   });
 

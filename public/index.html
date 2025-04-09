@@ -709,7 +709,63 @@
                     <div>Registrado por: <span id="detailCreatedBy">Admin</span></div>
                     <div>Pontos: <span id="detailPoints" class="detail-points">10</span></div>
                 </div>
+                <div class="detail-actions" id="detailActions" style="display: none; margin-top: 20px; text-align: right;">
+                    <button id="editEventBtn" class="edit-btn">Editar</button>
+                </div>
             </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Editar Evento -->
+    <div id="editModal" class="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Evento</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="editForm">
+                <input type="hidden" id="editEventId">
+                <div class="form-group">
+                    <label for="editEventDate">Data do Evento:</label>
+                    <input type="date" id="editEventDate" required>
+                </div>
+                <div class="form-group">
+                    <label for="editEventTeam">Equipe:</label>
+                    <select id="editEventTeam" required>
+                        <option value="">Selecione uma equipe</option>
+                        <option value="1">Alfa</option>
+                        <option value="2">Bravo</option>
+                        <option value="3">Charlie</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editEventType">Tipo de Evento:</label>
+                    <select id="editEventType" required>
+                        <option value="">Selecione um tipo</option>
+                        <option value="Prisão em Flagrante" data-points="25">Prisão em Flagrante (25 pts)</option>
+                        <option value="Apreensão de Arma" data-points="30">Apreensão de Arma (30 pts)</option>
+                        <option value="Apreensão de Drogas" data-points="20">Apreensão de Drogas (20 pts)</option>
+                        <option value="Recuperação de Veículo" data-points="15">Recuperação de Veículo (15 pts)</option>
+                        <option value="Operação" data-points="10">Operação (10 pts)</option>
+                        <option value="Patrulhamento" data-points="5">Patrulhamento (5 pts)</option>
+                        <option value="Outros" data-points="10">Outros (10 pts)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="editEventDescription">Descrição:</label>
+                    <textarea id="editEventDescription" rows="3" required></textarea>
+                </div>
+                <div class="form-group">
+                    <label for="editEventPoints">Pontos:</label>
+                    <input type="number" id="editEventPoints" min="1" max="100" readonly required>
+                    <small>(Atribuído automaticamente conforme o tipo de evento)</small>
+                </div>
+                <div class="form-group">
+                    <label for="editEventOfficers">Policiais Envolvidos:</label>
+                    <input type="text" id="editEventOfficers" required>
+                </div>
+                <button type="submit" class="submit-btn">Atualizar Evento</button>
+            </form>
         </div>
     </div>
     
@@ -899,8 +955,14 @@
             }
         }
         
+        // Variável global para armazenar o evento atual em visualização/edição
+        let currentEvent = null;
+        
         // Função para mostrar o modal de detalhes do evento
         function showEventDetails(event) {
+            // Armazenar o evento atual
+            currentEvent = event;
+            
             const detailTeam = document.getElementById('detailTeam');
             const detailType = document.getElementById('detailType');
             const detailDescription = document.getElementById('detailDescription');
@@ -908,6 +970,7 @@
             const detailCreatedBy = document.getElementById('detailCreatedBy');
             const detailPoints = document.getElementById('detailPoints');
             const detailEventDate = document.getElementById('detailEventDate');
+            const detailActions = document.getElementById('detailActions');
             
             detailTeam.textContent = `Equipe ${getTeamNameById(event.teamId)}`;
             detailTeam.className = `detail-team ${getTeamColorClass(event.teamId)}`;
@@ -925,7 +988,59 @@
                 detailEventDate.textContent = 'Data não disponível';
             }
             
+            // Mostrar ações de edição apenas para administradores
+            // (Verificar se o botão de adicionar evento está visível, o que indica que o usuário é admin)
+            if (document.getElementById('addEventBtn').style.display === 'block') {
+                detailActions.style.display = 'block';
+            } else {
+                detailActions.style.display = 'none';
+            }
+            
             document.getElementById('detailModal').style.display = 'flex';
+        }
+        
+        // Função para abrir o modal de edição com os dados do evento atual
+        function openEditModal() {
+            if (!currentEvent) return;
+            
+            // Preencher o formulário com os dados do evento
+            document.getElementById('editEventId').value = currentEvent.id;
+            
+            // Data do evento (convertendo para o formato YYYY-MM-DD)
+            if (currentEvent.eventDate) {
+                const eventDate = new Date(currentEvent.eventDate);
+                const year = eventDate.getFullYear();
+                const month = String(eventDate.getMonth() + 1).padStart(2, '0');
+                const day = String(eventDate.getDate()).padStart(2, '0');
+                document.getElementById('editEventDate').value = `${year}-${month}-${day}`;
+            } else {
+                document.getElementById('editEventDate').valueAsDate = new Date();
+            }
+            
+            // Selecionar a equipe
+            document.getElementById('editEventTeam').value = currentEvent.teamId;
+            
+            // Tipo de evento
+            const editTypeSelect = document.getElementById('editEventType');
+            editTypeSelect.value = currentEvent.type;
+            
+            // Descrição
+            document.getElementById('editEventDescription').value = currentEvent.description;
+            
+            // Pontos (automático com base no tipo)
+            const selectedOption = editTypeSelect.options[editTypeSelect.selectedIndex];
+            if (selectedOption && selectedOption.dataset.points) {
+                document.getElementById('editEventPoints').value = selectedOption.dataset.points;
+            } else {
+                document.getElementById('editEventPoints').value = currentEvent.points;
+            }
+            
+            // Policiais envolvidos
+            document.getElementById('editEventOfficers').value = currentEvent.officersInvolved;
+            
+            // Fechar o modal de detalhes e abrir o de edição
+            document.getElementById('detailModal').style.display = 'none';
+            document.getElementById('editModal').style.display = 'flex';
         }
         
         // Funções para manipulação de modais
@@ -1083,6 +1198,52 @@
             }
         });
         
+        // Submissão do formulário de edição
+        document.getElementById('editForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            const eventId = document.getElementById('editEventId').value;
+            const eventDate = document.getElementById('editEventDate').value;
+            const teamId = parseInt(document.getElementById('editEventTeam').value);
+            const type = document.getElementById('editEventType').value;
+            const description = document.getElementById('editEventDescription').value;
+            const points = parseInt(document.getElementById('editEventPoints').value);
+            const officersInvolved = document.getElementById('editEventOfficers').value;
+            
+            try {
+                const response = await fetch(`/api/events/${eventId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        teamId,
+                        type,
+                        description,
+                        points,
+                        officersInvolved,
+                        eventDate
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error('Falha ao atualizar evento');
+                }
+                
+                document.getElementById('editModal').style.display = 'none';
+                
+                // Recarregar dados
+                fetchTeams();
+                fetchEvents();
+                
+                alert('Evento atualizado com sucesso!');
+                
+            } catch (error) {
+                console.error('Erro ao atualizar evento:', error);
+                alert('Erro ao atualizar evento: ' + error.message);
+            }
+        });
+        
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             fetchTeams();
@@ -1091,6 +1252,18 @@
             
             // Por padrão, esconder o botão de adicionar evento até login
             document.getElementById('addEventBtn').style.display = 'none';
+            
+            // Configurar o botão de editar no modal de detalhes
+            document.getElementById('editEventBtn').addEventListener('click', openEditModal);
+            
+            // Configurar o evento para atualizar pontos automaticamente no modal de edição
+            const editTypeSelect = document.getElementById('editEventType');
+            editTypeSelect.addEventListener('change', () => {
+                const selectedOption = editTypeSelect.options[editTypeSelect.selectedIndex];
+                if (selectedOption && selectedOption.dataset.points) {
+                    document.getElementById('editEventPoints').value = selectedOption.dataset.points;
+                }
+            });
         });
     </script>
 </body>
