@@ -15,30 +15,82 @@
         }
         
         header {
-            background: linear-gradient(to right, #1a237e, #283593);
+            background: linear-gradient(135deg, #1a237e, #283593, #3949ab);
             color: white;
             padding: 1.2rem;
             display: flex;
             justify-content: space-between;
             align-items: center;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 4px solid #ff0000;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(225deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(315deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            opacity: 0.7;
+            z-index: 1;
+        }
+        
+        header * {
+            position: relative;
+            z-index: 2;
         }
         
         .header-title {
             display: flex;
             align-items: center;
-            gap: 15px;
+            gap: 20px;
         }
         
         .logo {
-            height: 45px;
-            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.2));
+            height: 80px;
+            border-radius: 10px;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.3));
+            transition: transform 0.3s ease;
+        }
+        
+        .logo:hover {
+            transform: scale(1.05);
+        }
+        
+        .title-container {
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .unit-name {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
         }
         
         h1 {
             margin: 0;
-            font-size: 1.6rem;
-            text-shadow: 1px 1px 2px rgba(0,0,0,0.2);
+            font-size: 1.8rem;
+            font-weight: 700;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+            background: linear-gradient(90deg, #ffffff, #f0f4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 0.5px;
+            position: relative;
         }
         
         h2 {
@@ -92,6 +144,29 @@
             background: linear-gradient(to right, #3949ab, #5c6bc0);
             transform: translateY(-2px);
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
+        }
+        
+        .login-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+        }
+        
+        .login-button:hover {
+            background: linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0.3));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        }
+        
+        .login-icon {
+            font-size: 1.2rem;
         }
         
         /* Botões específicos */
@@ -637,10 +712,16 @@
 <body>
     <header>
         <div class="header-title">
-            <img src="https://www.pm.ba.gov.br/images/logo-pmba.png" alt="Logo PMBA" class="logo">
-            <h1>Sistema de Meritocracia - 20ª CIPM</h1>
+            <img src="/assets/brasao-20cipm.jpg" alt="Brasão 20ª CIPM" class="logo">
+            <div class="title-container">
+                <h1>Sistema de Meritocracia</h1>
+                <div class="unit-name">20ª Companhia Independente de Polícia Militar</div>
+            </div>
         </div>
-        <button id="loginBtn">Área Administrativa</button>
+        <button id="loginBtn" class="login-button">
+            <span class="login-icon">🔐</span>
+            <span>Área Administrativa</span>
+        </button>
     </header>
     
     <div class="main-content">
