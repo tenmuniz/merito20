@@ -430,7 +430,6 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: space-between;
             position: relative;
             box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             transform-style: preserve-3d;
@@ -459,7 +458,7 @@
         
         .first-place {
             background: linear-gradient(to bottom, #ffeb3b, #ffd700);
-            height: 100%;
+            height: 260px;
             border: 2px solid #ffd700;
             z-index: 3;
             transform: translateZ(10px);
@@ -481,14 +480,14 @@
         
         .second-place {
             background: linear-gradient(to bottom, #e0e0e0, #bdbdbd);
-            height: 75%;
+            height: 220px;
             border: 2px solid #bdbdbd;
             z-index: 2;
         }
         
         .third-place {
             background: linear-gradient(to bottom, #d7a06c, #cd7f32);
-            height: 55%;
+            height: 180px;
             border: 2px solid #cd7f32;
             z-index: 1;
         }
@@ -515,10 +514,14 @@
             background-color: rgba(255, 255, 255, 0.3);
             border-radius: 25px;
             padding: 0.4rem 0.8rem;
-            margin: 0.5rem auto 0.8rem auto;
-            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            margin: auto;
+            position: absolute;
+            bottom: 15px;
+            left: 0;
+            right: 0;
             width: 70%;
-            max-width: 100px;
+            max-width: 90px;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
         }
         
         .podium-points {
