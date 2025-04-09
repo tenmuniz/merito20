@@ -603,7 +603,8 @@
                         <th>Tipo</th>
                         <th>Descrição</th>
                         <th>Pontos</th>
-                        <th>Data</th>
+                        <th>Data do Evento</th>
+                        <th>Registro</th>
                     </tr>
                 </thead>
                 <tbody id="eventsTableBody">
@@ -659,13 +660,13 @@
                     <label for="eventType">Tipo de Evento:</label>
                     <select id="eventType" required>
                         <option value="">Selecione um tipo</option>
-                        <option value="Prisão em Flagrante">Prisão em Flagrante</option>
-                        <option value="Apreensão de Arma">Apreensão de Arma</option>
-                        <option value="Apreensão de Drogas">Apreensão de Drogas</option>
-                        <option value="Recuperação de Veículo">Recuperação de Veículo</option>
-                        <option value="Operação">Operação</option>
-                        <option value="Patrulhamento">Patrulhamento</option>
-                        <option value="Outros">Outros</option>
+                        <option value="Prisão em Flagrante" data-points="25">Prisão em Flagrante (25 pts)</option>
+                        <option value="Apreensão de Arma" data-points="30">Apreensão de Arma (30 pts)</option>
+                        <option value="Apreensão de Drogas" data-points="20">Apreensão de Drogas (20 pts)</option>
+                        <option value="Recuperação de Veículo" data-points="15">Recuperação de Veículo (15 pts)</option>
+                        <option value="Operação" data-points="10">Operação (10 pts)</option>
+                        <option value="Patrulhamento" data-points="5">Patrulhamento (5 pts)</option>
+                        <option value="Outros" data-points="10">Outros (10 pts)</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -674,7 +675,8 @@
                 </div>
                 <div class="form-group">
                     <label for="eventPoints">Pontos:</label>
-                    <input type="number" id="eventPoints" min="1" max="100" required>
+                    <input type="number" id="eventPoints" min="1" max="100" readonly required>
+                    <small>(Atribuído automaticamente conforme o tipo de evento)</small>
                 </div>
                 <div class="form-group">
                     <label for="eventOfficers">Policiais Envolvidos:</label>
@@ -823,14 +825,17 @@
             
             if (!events || events.length === 0) {
                 const row = document.createElement('tr');
-                row.innerHTML = '<td colspan="5" style="text-align: center;">Nenhum evento registrado</td>';
+                row.innerHTML = '<td colspan="6" style="text-align: center;">Nenhum evento registrado</td>';
                 tableBody.appendChild(row);
                 return;
             }
             
-            // Ordenar eventos por data (mais recentes primeiro)
+            // Ordenar eventos por data do evento (mais recentes primeiro)
             const sortedEvents = [...events].sort((a, b) => {
-                return new Date(b.createdAt) - new Date(a.createdAt);
+                // Usar a data do evento se disponível, senão usar data de criação
+                const dateA = a.eventDate ? new Date(a.eventDate) : new Date(a.createdAt);
+                const dateB = b.eventDate ? new Date(b.eventDate) : new Date(b.createdAt);
+                return dateB - dateA; // Ordenação decrescente (mais recentes primeiro)
             });
             
             for (const event of sortedEvents) {
@@ -841,16 +846,24 @@
                                    event.teamId === 2 ? 'bravo-row' : 'charlie-row';
                 row.className = teamClass;
                 
-                // Formatar a data
-                const date = new Date(event.createdAt);
-                const formattedDate = `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`;
+                // Formatar a data do evento
+                let eventDateFormatted = 'Data não disponível';
+                if (event.eventDate) {
+                    const eventDate = new Date(event.eventDate);
+                    eventDateFormatted = eventDate.toLocaleDateString('pt-BR');
+                }
+                
+                // Formatar a data de registro
+                const registryDate = new Date(event.createdAt);
+                const registryDateFormatted = `${registryDate.toLocaleDateString('pt-BR')}`;
                 
                 row.innerHTML = `
                     <td>${getTeamNameById(event.teamId)}</td>
                     <td>${event.type}</td>
                     <td>${truncateText(event.description, 50)}</td>
                     <td class="points">${event.points}</td>
-                    <td>${formattedDate}</td>
+                    <td>${eventDateFormatted}</td>
+                    <td>${registryDateFormatted}</td>
                 `;
                 
                 // Adicionar evento de clique para mostrar detalhes
@@ -928,9 +941,27 @@
             // Add Event Modal
             const addEventBtn = document.getElementById('addEventBtn');
             const eventModal = document.getElementById('eventModal');
+            const eventTypeSelect = document.getElementById('eventType');
+            const eventPointsInput = document.getElementById('eventPoints');
+            
+            // Evento para atualizar pontos automaticamente com base no tipo selecionado
+            eventTypeSelect.addEventListener('change', () => {
+                const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+                if (selectedOption && selectedOption.dataset.points) {
+                    eventPointsInput.value = selectedOption.dataset.points;
+                }
+            });
             
             addEventBtn.addEventListener('click', () => {
                 eventModal.style.display = 'flex';
+                // Definir a data do evento como hoje por padrão
+                document.getElementById('eventDate').valueAsDate = new Date();
+                
+                // Definir pontos baseado no evento selecionado (se houver)
+                const selectedOption = eventTypeSelect.options[eventTypeSelect.selectedIndex];
+                if (selectedOption && selectedOption.dataset.points) {
+                    eventPointsInput.value = selectedOption.dataset.points;
+                }
             });
             
             // Close buttons
