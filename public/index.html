@@ -761,6 +761,87 @@
             }
         }
         
+        /* Banner de aniversariantes */
+        .aniversario-banner {
+            background: linear-gradient(135deg, #8b5cf6, #6366f1);
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 8px;
+            margin: 2rem auto 0;
+            max-width: 800px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            animation: pulse-banner 2s infinite;
+            position: relative;
+            overflow: hidden;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+        
+        .aniversario-banner:hover {
+            transform: translateY(-5px);
+        }
+        
+        .aniversario-banner::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                radial-gradient(circle at 20% 30%, rgba(255, 255, 255, 0.2) 0%, transparent 20%),
+                radial-gradient(circle at 80% 70%, rgba(255, 255, 255, 0.15) 0%, transparent 20%);
+            z-index: 1;
+        }
+        
+        .aniversario-banner-content {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .aniversario-icone {
+            font-size: 2rem;
+        }
+        
+        .aniversario-texto {
+            font-weight: 600;
+            text-shadow: 0 1px 3px rgba(0,0,0,0.2);
+        }
+        
+        .aniversario-nomes {
+            font-weight: 300;
+            font-size: 0.9rem;
+            opacity: 0.9;
+            margin-top: 3px;
+        }
+        
+        .aniversario-link {
+            background-color: rgba(255, 255, 255, 0.2);
+            padding: 0.5rem 1rem;
+            border-radius: 25px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            transition: background-color 0.3s ease;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .aniversario-link:hover {
+            background-color: rgba(255, 255, 255, 0.3);
+        }
+        
+        @keyframes pulse-banner {
+            0% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+            50% { box-shadow: 0 4px 25px rgba(139, 92, 246, 0.6); }
+            100% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
+        }
+        
         footer {
             background: linear-gradient(to right, #1a237e, #283593);
             color: white;
@@ -1023,6 +1104,18 @@
                 <button type="submit" class="submit-btn">Atualizar Evento</button>
             </form>
         </div>
+    </div>
+    
+    <!-- Banner de aniversariantes -->
+    <div class="aniversario-banner" id="aniversarioBanner">
+        <div class="aniversario-banner-content">
+            <div class="aniversario-icone">🎂</div>
+            <div>
+                <div class="aniversario-texto">Aniversariantes do mês de Abril</div>
+                <div class="aniversario-nomes">2º Ten Vanilson e SD Da Silva</div>
+            </div>
+        </div>
+        <div class="aniversario-link">Ver mais detalhes</div>
     </div>
     
     <footer>
@@ -1550,6 +1643,11 @@
                 if (selectedOption && selectedOption.dataset.points) {
                     document.getElementById('editEventPoints').value = selectedOption.dataset.points;
                 }
+            });
+            
+            // Configurar evento do banner de aniversariantes
+            document.getElementById('aniversarioBanner').addEventListener('click', () => {
+                window.location.href = '/escalas.html';
             });
         });
     </script>
