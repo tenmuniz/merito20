@@ -944,6 +944,10 @@
         <div class="section">
             <div class="section-header">
                 <h2>Histórico de Ocorrências</h2>
+                <button id="pontosBtn" class="pontuacoes-btn" onclick="abrirModalPontuacoes()">
+                    <span>📋</span>
+                    <span>Ver Tabela de Pontuação</span>
+                </button>
             </div>
             
             <table id="eventsTable">
@@ -1010,13 +1014,38 @@
                     <label for="eventType">Tipo de Evento:</label>
                     <select id="eventType" required>
                         <option value="">Selecione um tipo</option>
-                        <option value="Prisão em Flagrante" data-points="25">Prisão em Flagrante (25 pts)</option>
-                        <option value="Apreensão de Arma" data-points="30">Apreensão de Arma (30 pts)</option>
-                        <option value="Apreensão de Drogas" data-points="20">Apreensão de Drogas (20 pts)</option>
-                        <option value="Recuperação de Veículo" data-points="15">Recuperação de Veículo (15 pts)</option>
-                        <option value="Operação" data-points="10">Operação (10 pts)</option>
-                        <option value="Patrulhamento" data-points="5">Patrulhamento (5 pts)</option>
-                        <option value="Outros" data-points="10">Outros (10 pts)</option>
+                        <optgroup label="Armas">
+                            <option value="Apreensão de arma de fogo" data-points="100">Apreensão de arma de fogo (100 pts)</option>
+                            <option value="Apreensão de arma branca" data-points="25">Apreensão de arma branca (25 pts)</option>
+                            <option value="Apreensão de simulacro" data-points="40">Apreensão de simulacro (40 pts)</option>
+                            <option value="Apreensão de munições" data-points="15">Apreensão de munições (15 pts)</option>
+                        </optgroup>
+                        <optgroup label="Entorpecentes">
+                            <option value="Entorpecentes até 20g" data-points="20">Entorpecentes até 20g (20 pts)</option>
+                            <option value="Entorpecentes 21g-50g" data-points="35">Entorpecentes 21g-50g (35 pts)</option>
+                            <option value="Entorpecentes 51g-100g" data-points="50">Entorpecentes 51g-100g (50 pts)</option>
+                            <option value="Entorpecentes 101g-200g" data-points="70">Entorpecentes 101g-200g (70 pts)</option>
+                            <option value="Entorpecentes 201g-499g" data-points="90">Entorpecentes 201g-499g (90 pts)</option>
+                            <option value="Entorpecentes 500g-999g" data-points="120">Entorpecentes 500g-999g (120 pts)</option>
+                            <option value="Entorpecentes 1kg-1,9kg" data-points="160">Entorpecentes 1kg-1,9kg (160 pts)</option>
+                            <option value="Entorpecentes 2kg+" data-points="200">Entorpecentes 2kg+ (200 pts)</option>
+                        </optgroup>
+                        <optgroup label="Crimes">
+                            <option value="Maria da Penha" data-points="60">Maria da Penha (60 pts)</option>
+                            <option value="Furto simples" data-points="40">Furto simples (40 pts)</option>
+                            <option value="Furto qualificado" data-points="60">Furto qualificado (60 pts)</option>
+                            <option value="Roubo" data-points="80">Roubo (80 pts)</option>
+                            <option value="Homicídio" data-points="120">Homicídio (120 pts)</option>
+                            <option value="Estupro" data-points="150">Estupro (150 pts)</option>
+                            <option value="Ato infracional" data-points="50">Ato infracional (50 pts)</option>
+                        </optgroup>
+                        <optgroup label="Veículos e Foragidos">
+                            <option value="Recuperação de veículo" data-points="100">Recuperação de veículo (100 pts)</option>
+                            <option value="Veículo com adulteração" data-points="60">Veículo com adulteração (60 pts)</option>
+                            <option value="Veículo com restrição" data-points="30">Veículo com restrição (30 pts)</option>
+                            <option value="Recaptura de foragido" data-points="90">Recaptura de foragido (90 pts)</option>
+                            <option value="Descumprimento de medida" data-points="70">Descumprimento de medida (70 pts)</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1086,13 +1115,38 @@
                     <label for="editEventType">Tipo de Evento:</label>
                     <select id="editEventType" required>
                         <option value="">Selecione um tipo</option>
-                        <option value="Prisão em Flagrante" data-points="25">Prisão em Flagrante (25 pts)</option>
-                        <option value="Apreensão de Arma" data-points="30">Apreensão de Arma (30 pts)</option>
-                        <option value="Apreensão de Drogas" data-points="20">Apreensão de Drogas (20 pts)</option>
-                        <option value="Recuperação de Veículo" data-points="15">Recuperação de Veículo (15 pts)</option>
-                        <option value="Operação" data-points="10">Operação (10 pts)</option>
-                        <option value="Patrulhamento" data-points="5">Patrulhamento (5 pts)</option>
-                        <option value="Outros" data-points="10">Outros (10 pts)</option>
+                        <optgroup label="Armas">
+                            <option value="Apreensão de arma de fogo" data-points="100">Apreensão de arma de fogo (100 pts)</option>
+                            <option value="Apreensão de arma branca" data-points="25">Apreensão de arma branca (25 pts)</option>
+                            <option value="Apreensão de simulacro" data-points="40">Apreensão de simulacro (40 pts)</option>
+                            <option value="Apreensão de munições" data-points="15">Apreensão de munições (15 pts)</option>
+                        </optgroup>
+                        <optgroup label="Entorpecentes">
+                            <option value="Entorpecentes até 20g" data-points="20">Entorpecentes até 20g (20 pts)</option>
+                            <option value="Entorpecentes 21g-50g" data-points="35">Entorpecentes 21g-50g (35 pts)</option>
+                            <option value="Entorpecentes 51g-100g" data-points="50">Entorpecentes 51g-100g (50 pts)</option>
+                            <option value="Entorpecentes 101g-200g" data-points="70">Entorpecentes 101g-200g (70 pts)</option>
+                            <option value="Entorpecentes 201g-499g" data-points="90">Entorpecentes 201g-499g (90 pts)</option>
+                            <option value="Entorpecentes 500g-999g" data-points="120">Entorpecentes 500g-999g (120 pts)</option>
+                            <option value="Entorpecentes 1kg-1,9kg" data-points="160">Entorpecentes 1kg-1,9kg (160 pts)</option>
+                            <option value="Entorpecentes 2kg+" data-points="200">Entorpecentes 2kg+ (200 pts)</option>
+                        </optgroup>
+                        <optgroup label="Crimes">
+                            <option value="Maria da Penha" data-points="60">Maria da Penha (60 pts)</option>
+                            <option value="Furto simples" data-points="40">Furto simples (40 pts)</option>
+                            <option value="Furto qualificado" data-points="60">Furto qualificado (60 pts)</option>
+                            <option value="Roubo" data-points="80">Roubo (80 pts)</option>
+                            <option value="Homicídio" data-points="120">Homicídio (120 pts)</option>
+                            <option value="Estupro" data-points="150">Estupro (150 pts)</option>
+                            <option value="Ato infracional" data-points="50">Ato infracional (50 pts)</option>
+                        </optgroup>
+                        <optgroup label="Veículos e Foragidos">
+                            <option value="Recuperação de veículo" data-points="100">Recuperação de veículo (100 pts)</option>
+                            <option value="Veículo com adulteração" data-points="60">Veículo com adulteração (60 pts)</option>
+                            <option value="Veículo com restrição" data-points="30">Veículo com restrição (30 pts)</option>
+                            <option value="Recaptura de foragido" data-points="90">Recaptura de foragido (90 pts)</option>
+                            <option value="Descumprimento de medida" data-points="70">Descumprimento de medida (70 pts)</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group">
@@ -1654,5 +1708,6 @@
             });
         });
     </script>
+    <script src="/pontuacoes.js"></script>
 </body>
 </html>

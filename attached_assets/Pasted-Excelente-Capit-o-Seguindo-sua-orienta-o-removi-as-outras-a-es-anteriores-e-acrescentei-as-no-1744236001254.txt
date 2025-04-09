@@ -1,0 +1,47 @@
+Excelente, Capitão. Seguindo sua orientação, removi as “outras ações” anteriores e acrescentei as novas situações operacionais com respectivas pontuações baseadas na gravidade e relevância estratégica. Aqui vai a versão atualizada:
+
+---
+
+### **Tabela de Pontuação - Meritocracia Operacional (20ª CIPM)**
+
+#### **Armas**
+- *Apreensão de arma de fogo (com ou sem munição)*: **100 pontos**  
+- *Apreensão de arma branca (faca, terçado, etc.)*: **25 pontos**  
+- *Apreensão de simulacro de arma de fogo*: **40 pontos**  
+- *Apreensão de munições isoladas*: **15 pontos (por grupo de até 10 munições)**  
+
+---
+
+#### **Entorpecentes (por peso total apreendido)**
+- *Até 20g*: **20 pontos**  
+- *21g a 50g*: **35 pontos**  
+- *51g a 100g*: **50 pontos**  
+- *101g a 200g*: **70 pontos**  
+- *201g a 499g*: **90 pontos**  
+- *500g a 999g*: **120 pontos**  
+- *1kg a 1,9kg*: **160 pontos**  
+- *2kg ou mais*: **200 pontos**
+
+---
+
+#### **Crimes (Auto de Prisão em Flagrante ou Condução)**
+- *Maria da Penha (violência doméstica com lesão ou ameaça)*: **60 pontos**  
+- *Furto (simples)*: **40 pontos**  
+- *Furto qualificado (arrombamento, escalada, etc.)*: **60 pontos**  
+- *Roubo (com violência ou grave ameaça)*: **80 pontos**  
+- *Homicídio tentado ou consumado*: **120 pontos**  
+- *Estupro ou estupro de vulnerável*: **150 pontos**  
+- *Ato infracional com medida análoga (menor com arma ou droga)*: **50 pontos**  
+
+---
+
+#### **Veículos e Foragidos**
+- *Recuperação de veículo com registro de roubo ou furto*: **100 pontos**  
+- *Apreensão de veículo com adulteração de sinal identificador (ex: chassi ou motor raspado)*: **60 pontos**  
+- *Apreensão de veículo com restrição administrativa (ex: licenciamento vencido com adulterações)*: **30 pontos**  
+- *Recaptura de foragido da justiça*: **90 pontos**  
+- *Prisão por descumprimento de medida cautelar (ex: tornozeleira violada, restrição descumprida)*: **70 pontos**
+
+---
+
+Se quiser, posso transformar isso em uma planilha já com fórmulas automáticas ou um banco de dados para o site, com um painel visual e sistema de ranqueamento. Deseja que eu comece esse modelo? Ou quer que eu inclua mais alguma situação específica ainda?
