@@ -3,8 +3,7 @@ const TABELA_PONTUACOES = {
     armas: [
         { descricao: "Apreensão de arma de fogo (com ou sem munição)", pontos: 100 },
         { descricao: "Apreensão de arma branca (faca, terçado, etc.)", pontos: 25 },
-        { descricao: "Apreensão de simulacro de arma de fogo", pontos: 40 },
-        { descricao: "Apreensão de munições isoladas (por grupo de até 10 munições)", pontos: 15 }
+        { descricao: "Apreensão de simulacro de arma de fogo", pontos: 40 }
     ],
     entorpecentes: [
         { descricao: "Até 20g", pontos: 20 },
@@ -17,19 +16,15 @@ const TABELA_PONTUACOES = {
         { descricao: "2kg ou mais", pontos: 200 }
     ],
     crimes: [
-        { descricao: "Maria da Penha (violência doméstica com lesão ou ameaça)", pontos: 60 },
-        { descricao: "Furto (simples)", pontos: 40 },
-        { descricao: "Furto qualificado (arrombamento, escalada, etc.)", pontos: 60 },
-        { descricao: "Roubo (com violência ou grave ameaça)", pontos: 80 },
-        { descricao: "Homicídio tentado ou consumado", pontos: 120 },
-        { descricao: "Estupro ou estupro de vulnerável", pontos: 150 },
-        { descricao: "Ato infracional com medida análoga (menor com arma ou droga)", pontos: 50 }
+        { descricao: "Furto", pontos: 60 },
+        { descricao: "Homicídio", pontos: 150 },
+        { descricao: "Maria da Penha", pontos: 60 },
+        { descricao: "Ato infracional", pontos: 50 }
     ],
     veiculosForagidos: [
         { descricao: "Recuperação de veículo com registro de roubo ou furto", pontos: 100 },
         { descricao: "Apreensão de veículo com adulteração de sinal identificador", pontos: 60 },
-        { descricao: "Apreensão de veículo com restrição administrativa", pontos: 30 },
-        { descricao: "Recaptura de foragido da justiça", pontos: 90 },
+        { descricao: "Mandado de prisão", pontos: 100 },
         { descricao: "Prisão por descumprimento de medida cautelar", pontos: 70 }
     ]
 };

@@ -440,14 +440,31 @@
             font-size: 1.2rem;
             margin: 0.5rem 0;
             text-shadow: 0 1px 2px rgba(0,0,0,0.2);
+            letter-spacing: 0.5px;
         }
         
-        .podium-points {
+        .podium-points-container {
+            display: flex;
+            align-items: baseline;
+            justify-content: center;
             background-color: rgba(255, 255, 255, 0.25);
             border-radius: 20px;
             padding: 0.4rem 0.8rem;
             margin: 0.5rem 0;
+        }
+        
+        .podium-points {
             font-weight: bold;
+            font-size: 1.6rem;
+            color: #1e3a8a;
+            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+        }
+        
+        .podium-points-label {
+            font-size: 0.9rem;
+            color: #475569;
+            margin-left: 5px;
+            font-weight: normal;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
@@ -879,7 +896,7 @@
     <div class="main-content">
         <div class="section">
             <div class="section-header">
-                <h2>Desempenho das Equipes</h2>
+                <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
                 <button id="addEventBtn" style="display: none;">Adicionar Evento</button>
                 <button id="resetBtn" style="display: none;">Zerar Todos os Pontos</button>
             </div>
@@ -887,7 +904,7 @@
             <div class="teams-grid">
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Guarnição Alfa</div>
+                        <div class="team-name">GUARNIÇÃO ALFA</div>
                         <div class="ranking">1º Lugar</div>
                     </div>
                     <div class="points-container">
@@ -899,7 +916,7 @@
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Guarnição Bravo</div>
+                        <div class="team-name">GUARNIÇÃO BRAVO</div>
                         <div class="ranking">2º Lugar</div>
                     </div>
                     <div class="points-container">
@@ -911,7 +928,7 @@
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Guarnição Charlie</div>
+                        <div class="team-name">GUARNIÇÃO CHARLIE</div>
                         <div class="ranking">3º Lugar</div>
                     </div>
                     <div class="points-container">
@@ -925,18 +942,27 @@
             <div class="podium-container">
                 <div class="podium-position second-place">
                     <div class="podium-number">2</div>
-                    <div class="podium-team">Bravo</div>
-                    <div class="podium-points">0</div>
+                    <div class="podium-team">BRAVO</div>
+                    <div class="podium-points-container">
+                        <span class="podium-points">0</span>
+                        <span class="podium-points-label">pts</span>
+                    </div>
                 </div>
                 <div class="podium-position first-place">
                     <div class="podium-number">1</div>
-                    <div class="podium-team">Alfa</div>
-                    <div class="podium-points">0</div>
+                    <div class="podium-team">ALFA</div>
+                    <div class="podium-points-container">
+                        <span class="podium-points">0</span>
+                        <span class="podium-points-label">pts</span>
+                    </div>
                 </div>
                 <div class="podium-position third-place">
                     <div class="podium-number">3</div>
-                    <div class="podium-team">Charlie</div>
-                    <div class="podium-points">0</div>
+                    <div class="podium-team">CHARLIE</div>
+                    <div class="podium-points-container">
+                        <span class="podium-points">0</span>
+                        <span class="podium-points-label">pts</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -1018,7 +1044,6 @@
                             <option value="Apreensão de arma de fogo" data-points="100">Apreensão de arma de fogo (100 pts)</option>
                             <option value="Apreensão de arma branca" data-points="25">Apreensão de arma branca (25 pts)</option>
                             <option value="Apreensão de simulacro" data-points="40">Apreensão de simulacro (40 pts)</option>
-                            <option value="Apreensão de munições" data-points="15">Apreensão de munições (15 pts)</option>
                         </optgroup>
                         <optgroup label="Entorpecentes">
                             <option value="Entorpecentes até 20g" data-points="20">Entorpecentes até 20g (20 pts)</option>
@@ -1031,19 +1056,15 @@
                             <option value="Entorpecentes 2kg+" data-points="200">Entorpecentes 2kg+ (200 pts)</option>
                         </optgroup>
                         <optgroup label="Crimes">
+                            <option value="Furto" data-points="60">Furto (60 pts)</option>
+                            <option value="Homicídio" data-points="150">Homicídio (150 pts)</option>
                             <option value="Maria da Penha" data-points="60">Maria da Penha (60 pts)</option>
-                            <option value="Furto simples" data-points="40">Furto simples (40 pts)</option>
-                            <option value="Furto qualificado" data-points="60">Furto qualificado (60 pts)</option>
-                            <option value="Roubo" data-points="80">Roubo (80 pts)</option>
-                            <option value="Homicídio" data-points="120">Homicídio (120 pts)</option>
-                            <option value="Estupro" data-points="150">Estupro (150 pts)</option>
                             <option value="Ato infracional" data-points="50">Ato infracional (50 pts)</option>
                         </optgroup>
                         <optgroup label="Veículos e Foragidos">
                             <option value="Recuperação de veículo" data-points="100">Recuperação de veículo (100 pts)</option>
                             <option value="Veículo com adulteração" data-points="60">Veículo com adulteração (60 pts)</option>
-                            <option value="Veículo com restrição" data-points="30">Veículo com restrição (30 pts)</option>
-                            <option value="Recaptura de foragido" data-points="90">Recaptura de foragido (90 pts)</option>
+                            <option value="Mandado de prisão" data-points="100">Mandado de prisão (100 pts)</option>
                             <option value="Descumprimento de medida" data-points="70">Descumprimento de medida (70 pts)</option>
                         </optgroup>
                     </select>
@@ -1119,7 +1140,6 @@
                             <option value="Apreensão de arma de fogo" data-points="100">Apreensão de arma de fogo (100 pts)</option>
                             <option value="Apreensão de arma branca" data-points="25">Apreensão de arma branca (25 pts)</option>
                             <option value="Apreensão de simulacro" data-points="40">Apreensão de simulacro (40 pts)</option>
-                            <option value="Apreensão de munições" data-points="15">Apreensão de munições (15 pts)</option>
                         </optgroup>
                         <optgroup label="Entorpecentes">
                             <option value="Entorpecentes até 20g" data-points="20">Entorpecentes até 20g (20 pts)</option>
@@ -1132,19 +1152,15 @@
                             <option value="Entorpecentes 2kg+" data-points="200">Entorpecentes 2kg+ (200 pts)</option>
                         </optgroup>
                         <optgroup label="Crimes">
+                            <option value="Furto" data-points="60">Furto (60 pts)</option>
+                            <option value="Homicídio" data-points="150">Homicídio (150 pts)</option>
                             <option value="Maria da Penha" data-points="60">Maria da Penha (60 pts)</option>
-                            <option value="Furto simples" data-points="40">Furto simples (40 pts)</option>
-                            <option value="Furto qualificado" data-points="60">Furto qualificado (60 pts)</option>
-                            <option value="Roubo" data-points="80">Roubo (80 pts)</option>
-                            <option value="Homicídio" data-points="120">Homicídio (120 pts)</option>
-                            <option value="Estupro" data-points="150">Estupro (150 pts)</option>
                             <option value="Ato infracional" data-points="50">Ato infracional (50 pts)</option>
                         </optgroup>
                         <optgroup label="Veículos e Foragidos">
                             <option value="Recuperação de veículo" data-points="100">Recuperação de veículo (100 pts)</option>
                             <option value="Veículo com adulteração" data-points="60">Veículo com adulteração (60 pts)</option>
-                            <option value="Veículo com restrição" data-points="30">Veículo com restrição (30 pts)</option>
-                            <option value="Recaptura de foragido" data-points="90">Recaptura de foragido (90 pts)</option>
+                            <option value="Mandado de prisão" data-points="100">Mandado de prisão (100 pts)</option>
                             <option value="Descumprimento de medida" data-points="70">Descumprimento de medida (70 pts)</option>
                         </optgroup>
                     </select>
@@ -1235,15 +1251,15 @@
             // Atualizar o pódio
             if (sortedTeams.length >= 3) {
                 // Primeiro lugar
-                document.querySelector('.first-place .podium-team').textContent = sortedTeams[0].name;
+                document.querySelector('.first-place .podium-team').textContent = sortedTeams[0].name.toUpperCase();
                 document.querySelector('.first-place .podium-points').textContent = sortedTeams[0].points;
                 
                 // Segundo lugar
-                document.querySelector('.second-place .podium-team').textContent = sortedTeams[1].name;
+                document.querySelector('.second-place .podium-team').textContent = sortedTeams[1].name.toUpperCase();
                 document.querySelector('.second-place .podium-points').textContent = sortedTeams[1].points;
                 
                 // Terceiro lugar
-                document.querySelector('.third-place .podium-team').textContent = sortedTeams[2].name;
+                document.querySelector('.third-place .podium-team').textContent = sortedTeams[2].name.toUpperCase();
                 document.querySelector('.third-place .podium-points').textContent = sortedTeams[2].points;
             }
             
