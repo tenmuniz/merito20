@@ -117,6 +117,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       }
       
       // Criar o evento com a data do evento
+      console.log('Data recebida do cliente:', eventDate);
+      const eventDateObj = eventDate ? new Date(eventDate) : new Date();
+      console.log('Data convertida para objeto:', eventDateObj);
+      
       const newEvent = await storage.createEvent({
         teamId,
         type,
@@ -124,7 +128,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         points,
         officersInvolved,
         createdBy: createdBy || "Admin",
-        eventDate: eventDate ? new Date(eventDate) : new Date()
+        eventDate: eventDateObj
       });
       
       // Removido: não atualizar os pontos da equipe aqui
@@ -169,7 +173,11 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (description !== undefined) updateData.description = description;
       if (points !== undefined) updateData.points = points;
       if (officersInvolved !== undefined) updateData.officersInvolved = officersInvolved;
-      if (eventDate !== undefined) updateData.eventDate = new Date(eventDate);
+      if (eventDate !== undefined) {
+        console.log('Data de edição recebida do cliente:', eventDate);
+        updateData.eventDate = new Date(eventDate);
+        console.log('Data de edição convertida para objeto:', updateData.eventDate);
+      }
       
       // Atualizar o evento
       const updatedEvent = await storage.updateEvent(id, updateData);

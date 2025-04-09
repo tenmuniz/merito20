@@ -1263,12 +1263,14 @@
         document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const eventDate = document.getElementById('eventDate').value;
+            const eventDateValue = document.getElementById('eventDate').value;
             const teamId = parseInt(document.getElementById('eventTeam').value);
             const type = document.getElementById('eventType').value;
             const description = document.getElementById('eventDescription').value;
             const points = parseInt(document.getElementById('eventPoints').value);
             const officersInvolved = document.getElementById('eventOfficers').value;
+            
+            console.log('Data do evento selecionada:', eventDateValue);
             
             try {
                 const response = await fetch('/api/events', {
@@ -1282,7 +1284,7 @@
                         description,
                         points,
                         officersInvolved,
-                        eventDate,
+                        eventDate: eventDateValue, // Usar a data exata selecionada pelo usuário
                         createdBy: 'Admin' // Temporário, deve ser o usuário logado
                     })
                 });
@@ -1309,12 +1311,14 @@
             e.preventDefault();
             
             const eventId = document.getElementById('editEventId').value;
-            const eventDate = document.getElementById('editEventDate').value;
+            const eventDateValue = document.getElementById('editEventDate').value;
             const teamId = parseInt(document.getElementById('editEventTeam').value);
             const type = document.getElementById('editEventType').value;
             const description = document.getElementById('editEventDescription').value;
             const points = parseInt(document.getElementById('editEventPoints').value);
             const officersInvolved = document.getElementById('editEventOfficers').value;
+            
+            console.log('Data do evento editado:', eventDateValue);
             
             try {
                 const response = await fetch(`/api/events/${eventId}`, {
@@ -1328,7 +1332,7 @@
                         description,
                         points,
                         officersInvolved,
-                        eventDate
+                        eventDate: eventDateValue
                     })
                 });
                 
