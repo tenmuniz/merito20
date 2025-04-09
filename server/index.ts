@@ -45,6 +45,10 @@ app.use((req, res, next) => {
   // Inicializar o banco de dados com dados padrão
   await initializeDatabase();
   
+  // Atualizar o banco de dados (alterar a coluna created_by na tabela events)
+  const { updateDatabase } = await import("./db-update");
+  await updateDatabase();
+  
   const server = await registerRoutes(app);
 
   app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

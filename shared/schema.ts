@@ -40,7 +40,7 @@ export const events = pgTable("events", {
   description: text("description").notNull(),
   points: integer("points").notNull(),
   officersInvolved: text("officers_involved").notNull(),
-  createdBy: integer("created_by").notNull(),
+  createdBy: text("created_by").notNull(),
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -51,6 +51,7 @@ export const insertEventSchema = createInsertSchema(events).pick({
   points: true,
   officersInvolved: true,
   createdBy: true,
+  // createdAt é gerenciado automaticamente pelo banco de dados
 });
 
 // Types

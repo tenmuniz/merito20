@@ -110,15 +110,14 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Equipe não encontrada" });
       }
       
-      // Criar o evento
+      // Criar o evento (o createdAt será gerado automaticamente pelo banco)
       const newEvent = await storage.createEvent({
         teamId,
         type,
         description,
         points,
         officersInvolved,
-        createdBy: createdBy || "Admin",
-        createdAt: new Date()
+        createdBy: createdBy || "Admin"
       });
       
       // Atualizar os pontos da equipe
