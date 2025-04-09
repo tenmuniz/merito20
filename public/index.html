@@ -1012,8 +1012,14 @@
                 // Formatar a data do evento
                 let eventDateFormatted = 'Data não disponível';
                 if (event.eventDate) {
-                    const eventDate = new Date(event.eventDate);
+                    console.log('Data original do evento:', event.eventDate, typeof event.eventDate);
+                    // Ajustar para fuso horário local ao criar o objeto Date
+                    const eventDateStr = event.eventDate.split('T')[0]; // Extrair apenas a parte da data YYYY-MM-DD
+                    console.log('Data do evento extraída:', eventDateStr);
+                    const eventDate = new Date(eventDateStr + 'T00:00:00');
+                    console.log('Objeto Date criado:', eventDate);
                     eventDateFormatted = eventDate.toLocaleDateString('pt-BR');
+                    console.log('Data formatada final:', eventDateFormatted);
                 }
                 
                 // Formatar a data de registro
@@ -1086,7 +1092,9 @@
             
             // Formatação da data do evento
             if (event.eventDate) {
-                const eventDate = new Date(event.eventDate);
+                console.log('Data no modal de detalhes:', event.eventDate);
+                const eventDateStr = event.eventDate.split('T')[0]; // Extrair apenas a parte da data YYYY-MM-DD
+                const eventDate = new Date(eventDateStr + 'T00:00:00');
                 detailEventDate.textContent = eventDate.toLocaleDateString('pt-BR');
             } else {
                 detailEventDate.textContent = 'Data não disponível';
@@ -1112,11 +1120,11 @@
             
             // Data do evento (convertendo para o formato YYYY-MM-DD)
             if (currentEvent.eventDate) {
-                const eventDate = new Date(currentEvent.eventDate);
-                const year = eventDate.getFullYear();
-                const month = String(eventDate.getMonth() + 1).padStart(2, '0');
-                const day = String(eventDate.getDate()).padStart(2, '0');
-                document.getElementById('editEventDate').value = `${year}-${month}-${day}`;
+                console.log('Data na edição:', currentEvent.eventDate);
+                // Extrair a parte da data (YYYY-MM-DD) e usar diretamente
+                const eventDateStr = currentEvent.eventDate.split('T')[0];
+                console.log('Data extraída para edição:', eventDateStr);
+                document.getElementById('editEventDate').value = eventDateStr;
             } else {
                 document.getElementById('editEventDate').valueAsDate = new Date();
             }
