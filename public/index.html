@@ -363,14 +363,52 @@
             color: white;
         }
         
-        /* Estilos do pódio - Versão melhorada */
+        /* Estilos do pódio - Versão melhorada 3D */
+        .podium-section {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            position: relative;
+            margin: 2rem 0 3rem;
+            padding-bottom: 2rem;
+        }
+        
+        .podium-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 1.5rem;
+            padding: 0.5rem 1.5rem;
+            background-color: rgba(30, 58, 138, 0.1);
+            border-radius: 50px;
+            text-align: center;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            text-shadow: 1px 1px 1px rgba(255, 255, 255, 0.5);
+            letter-spacing: 1px;
+            border: 1px solid rgba(30, 58, 138, 0.2);
+        }
+        
         .podium-container {
             display: flex;
             justify-content: center;
             align-items: flex-end;
             height: 280px;
-            margin: 3rem 0;
-            perspective: 800px;
+            margin: 1rem 0;
+            perspective: 1000px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .podium-base {
+            position: absolute;
+            bottom: 0;
+            width: 95%;
+            height: 20px;
+            background: linear-gradient(to right, #334155, #475569, #334155);
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+            z-index: 1;
+            transform: translateZ(-10px) translateY(10px);
         }
         
         .podium-position {
@@ -384,13 +422,28 @@
             flex-direction: column;
             align-items: center;
             position: relative;
-            box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.3);
             transform-style: preserve-3d;
-            transition: transform 0.5s ease;
+            transition: all 0.5s ease;
+            backdrop-filter: blur(5px);
+        }
+        
+        .podium-position::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: linear-gradient(135deg, rgba(255,255,255,0.3) 0%, rgba(255,255,255,0) 50%);
+            border-top-left-radius: 12px;
+            border-top-right-radius: 12px;
+            pointer-events: none;
         }
         
         .podium-position:hover {
-            transform: translateY(-10px) rotateY(5deg);
+            transform: translateY(-15px) rotateY(5deg);
+            box-shadow: 0 20px 30px rgba(0,0,0,0.4);
         }
         
         .first-place {
@@ -398,6 +451,7 @@
             height: 100%;
             border: 2px solid #ffd700;
             z-index: 3;
+            transform: translateZ(10px);
         }
         
         .first-place::before {
@@ -447,25 +501,28 @@
             display: flex;
             align-items: baseline;
             justify-content: center;
-            background-color: rgba(255, 255, 255, 0.25);
-            border-radius: 20px;
-            padding: 0.4rem 0.8rem;
-            margin: 0.5rem 0;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 25px;
+            padding: 0.5rem 1rem;
+            margin: 0.7rem 0 1.2rem 0;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+            min-width: 90px;
         }
         
         .podium-points {
             font-weight: bold;
-            font-size: 1.6rem;
+            font-size: 1.8rem;
             color: #1e3a8a;
-            text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.1);
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.8);
+            min-width: 1.5em;
+            text-align: center;
         }
         
         .podium-points-label {
             font-size: 0.9rem;
             color: #475569;
-            margin-left: 5px;
+            margin-left: 6px;
             font-weight: normal;
-            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
         }
         
         /* Estilos da tabela de eventos */
@@ -939,31 +996,35 @@
                 </div>
             </div>
             
-            <div class="podium-container">
-                <div class="podium-position second-place">
-                    <div class="podium-number">2</div>
-                    <div class="podium-team">BRAVO</div>
-                    <div class="podium-points-container">
-                        <span class="podium-points">0</span>
-                        <span class="podium-points-label">pts</span>
+            <div class="podium-section">
+                <div class="podium-title">RANKING DE ABRIL 2025</div>
+                <div class="podium-container">
+                    <div class="podium-position second-place">
+                        <div class="podium-number">2</div>
+                        <div class="podium-team">BRAVO</div>
+                        <div class="podium-points-container">
+                            <span class="podium-points">0</span>
+                            <span class="podium-points-label">pts</span>
+                        </div>
+                    </div>
+                    <div class="podium-position first-place">
+                        <div class="podium-number">1</div>
+                        <div class="podium-team">ALFA</div>
+                        <div class="podium-points-container">
+                            <span class="podium-points">0</span>
+                            <span class="podium-points-label">pts</span>
+                        </div>
+                    </div>
+                    <div class="podium-position third-place">
+                        <div class="podium-number">3</div>
+                        <div class="podium-team">CHARLIE</div>
+                        <div class="podium-points-container">
+                            <span class="podium-points">0</span>
+                            <span class="podium-points-label">pts</span>
+                        </div>
                     </div>
                 </div>
-                <div class="podium-position first-place">
-                    <div class="podium-number">1</div>
-                    <div class="podium-team">ALFA</div>
-                    <div class="podium-points-container">
-                        <span class="podium-points">0</span>
-                        <span class="podium-points-label">pts</span>
-                    </div>
-                </div>
-                <div class="podium-position third-place">
-                    <div class="podium-number">3</div>
-                    <div class="podium-team">CHARLIE</div>
-                    <div class="podium-points-container">
-                        <span class="podium-points">0</span>
-                        <span class="podium-points-label">pts</span>
-                    </div>
-                </div>
+                <div class="podium-base"></div>
             </div>
         </div>
         
