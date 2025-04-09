@@ -23,11 +23,13 @@ export const teams = pgTable("teams", {
   id: serial("id").primaryKey(),
   name: text("name").notNull().unique(),
   colorCode: text("color_code").notNull(),
+  points: integer("points").default(0).notNull(),
 });
 
 export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,
   colorCode: true,
+  points: true,
 });
 
 // Event model

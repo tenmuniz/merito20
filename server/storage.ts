@@ -76,7 +76,11 @@ export class MemStorage implements IStorage {
 
   async createUser(insertUser: InsertUser): Promise<User> {
     const id = this.currentUserId++;
-    const user: User = { ...insertUser, id };
+    const user: User = { 
+      ...insertUser, 
+      id,
+      isAdmin: insertUser.isAdmin ?? false
+    };
     this.users.set(id, user);
     return user;
   }
@@ -98,7 +102,7 @@ export class MemStorage implements IStorage {
   
   async createTeam(insertTeam: InsertTeam): Promise<Team> {
     const id = this.currentTeamId++;
-    const team: Team = { ...insertTeam, id };
+    const team: Team = { ...insertTeam, id, points: 0 };
     this.teamsMap.set(id, team);
     return team;
   }
@@ -107,9 +111,9 @@ export class MemStorage implements IStorage {
     const team = await this.getTeam(id);
     if (!team) return undefined;
     
-    // In a real database, we'd update the team's points
-    // For this in-memory implementation, we'd need to track points separately
-    // as our Team schema doesn't have a points field
+    // Atualizar os pontos da equipe
+    team.points += points;
+    this.teamsMap.set(id, team);
     
     return team;
   }
@@ -137,12 +141,28 @@ export class MemStorage implements IStorage {
       createdAt: new Date() 
     };
     this.eventsMap.set(id, event);
+    
+    // Atualizar os pontos da equipe
+    await this.updateTeamPoints(event.teamId, event.points);
+    
     return event;
   }
   
   async deleteEvent(id: number): Promise<boolean> {
+    const event = await this.getEvent(id);
+    if (!event) return false;
+    
+    // Remover os pontos da equipe
+    await this.updateTeamPoints(event.teamId, -event.points);
+    
+    // Excluir o evento
     return this.eventsMap.delete(id);
   }
 }
 
-export const storage = new MemStorage();
+import { PostgresStorage } from './pg-storage';
+
+// Escolha entre a implementação em memória ou PostgreSQL
+const usePostgres = true; // Altere para false para usar o armazenamento em memória
+
+export const storage = usePostgres ? new PostgresStorage() : new MemStorage();
