@@ -635,44 +635,38 @@
             <div class="teams-grid">
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Equipe Alfa</div>
+                        <div class="team-name">Guarnição Alfa</div>
                         <div class="ranking">1º Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
                         <div id="alfa-points" class="points-value">0</div>
                     </div>
-                    <div class="progress-bar">
-                        <div id="alfa-bar" class="progress-fill alfa-color" style="width: 33%;">33%</div>
-                    </div>
+
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Equipe Bravo</div>
+                        <div class="team-name">Guarnição Bravo</div>
                         <div class="ranking">2º Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
                         <div id="bravo-points" class="points-value">0</div>
                     </div>
-                    <div class="progress-bar">
-                        <div id="bravo-bar" class="progress-fill bravo-color" style="width: 33%;">33%</div>
-                    </div>
+
                 </div>
                 
                 <div class="card">
                     <div class="card-header">
-                        <div class="team-name">Equipe Charlie</div>
+                        <div class="team-name">Guarnição Charlie</div>
                         <div class="ranking">3º Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
                         <div id="charlie-points" class="points-value">0</div>
                     </div>
-                    <div class="progress-bar">
-                        <div id="charlie-bar" class="progress-fill charlie-color" style="width: 33%;">33%</div>
-                    </div>
+
                 </div>
             </div>
             
@@ -697,13 +691,13 @@
         
         <div class="section">
             <div class="section-header">
-                <h2>Histórico de Eventos</h2>
+                <h2>Histórico de Ocorrências</h2>
             </div>
             
             <table id="eventsTable">
                 <thead>
                     <tr>
-                        <th>Equipe</th>
+                        <th>Guarnição</th>
                         <th>Tipo</th>
                         <th>Descrição</th>
                         <th>Pontos</th>
@@ -752,7 +746,7 @@
                     <input type="date" id="eventDate" required>
                 </div>
                 <div class="form-group">
-                    <label for="eventTeam">Equipe:</label>
+                    <label for="eventTeam">Guarnição:</label>
                     <select id="eventTeam" required>
                         <option value="">Selecione uma equipe</option>
                         <option value="1">Alfa</option>
@@ -799,7 +793,7 @@
                 <button class="close-btn">&times;</button>
             </div>
             <div class="detail-content">
-                <div id="detailTeam" class="detail-team alfa-color">Equipe Alfa</div>
+                <div id="detailTeam" class="detail-team alfa-color">Guarnição Alfa</div>
                 <div id="detailType" class="detail-type">Prisão em Flagrante</div>
                 <div class="detail-label">Descrição:</div>
                 <div id="detailDescription" class="detail-description">
@@ -834,7 +828,7 @@
                     <input type="date" id="editEventDate" required>
                 </div>
                 <div class="form-group">
-                    <label for="editEventTeam">Equipe:</label>
+                    <label for="editEventTeam">Guarnição:</label>
                     <select id="editEventTeam" required>
                         <option value="">Selecione uma equipe</option>
                         <option value="1">Alfa</option>
@@ -1076,7 +1070,7 @@
             const detailEventDate = document.getElementById('detailEventDate');
             const detailActions = document.getElementById('detailActions');
             
-            detailTeam.textContent = `Equipe ${getTeamNameById(event.teamId)}`;
+            detailTeam.textContent = `Guarnição ${getTeamNameById(event.teamId)}`;
             detailTeam.className = `detail-team ${getTeamColorClass(event.teamId)}`;
             detailType.textContent = event.type;
             detailDescription.textContent = event.description;
