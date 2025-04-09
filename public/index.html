@@ -161,6 +161,11 @@
             box-shadow: 0 5px 10px rgba(0,0,0,0.2);
         }
         
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+
         .login-button {
             display: flex;
             align-items: center;
@@ -178,6 +183,15 @@
             background: linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0.3));
             transform: translateY(-2px);
             box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        }
+        
+        .scale-button {
+            background: linear-gradient(to right, rgba(255, 217, 102, 0.2), rgba(255, 217, 102, 0.3));
+            border: 1px solid rgba(255, 217, 102, 0.5);
+        }
+        
+        .scale-button:hover {
+            background: linear-gradient(to right, rgba(255, 217, 102, 0.3), rgba(255, 217, 102, 0.4));
         }
         
         .login-icon {
@@ -766,10 +780,16 @@
                 <div class="slogan">"Guardiões da paz, escudos da justiça"</div>
             </div>
         </div>
-        <button id="loginBtn" class="login-button">
-            <span class="login-icon">🔐</span>
-            <span>Área Administrativa</span>
-        </button>
+        <div class="header-buttons">
+            <button id="scaleBtn" class="login-button scale-button">
+                <span class="login-icon">📅</span>
+                <span>Escala Mensal</span>
+            </button>
+            <button id="loginBtn" class="login-button">
+                <span class="login-icon">🔐</span>
+                <span>Área Administrativa</span>
+            </button>
+        </div>
     </header>
     
     <div class="main-content">
@@ -1277,6 +1297,12 @@
             
             loginBtn.addEventListener('click', () => {
                 loginModal.style.display = 'flex';
+            });
+            
+            // Escala Button
+            const scaleBtn = document.getElementById('scaleBtn');
+            scaleBtn.addEventListener('click', () => {
+                window.location.href = '/escalas.html';
             });
             
             // Add Event Modal

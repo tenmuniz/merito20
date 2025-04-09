@@ -1,0 +1,865 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quadro de Distribuição de Guarnições - 20ª CIPM</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a237e, #283593, #3949ab, #303f9f);
+            color: white;
+            padding: 1.8rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            position: relative;
+            overflow: hidden;
+            border-bottom: 3px solid #ff0000;
+        }
+        
+        header::before {
+            content: "";
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-image: 
+                linear-gradient(135deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(225deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(45deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%), 
+                linear-gradient(315deg, rgba(255, 255, 255, 0.05) 25%, transparent 25%);
+            background-position: 10px 0, 10px 0, 0 0, 0 0;
+            background-size: 20px 20px;
+            opacity: 0.7;
+            z-index: 1;
+        }
+        
+        header * {
+            position: relative;
+            z-index: 2;
+        }
+        
+        .header-title {
+            display: flex;
+            align-items: flex-start;
+        }
+        
+        .title-container {
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            padding-left: 15px;
+        }
+        
+        .title-container::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 5px;
+            bottom: 5px;
+            width: 4px;
+            background: linear-gradient(to bottom, #ffcc00, #ff9900);
+            border-radius: 2px;
+        }
+        
+        .unit-name {
+            font-size: 0.95rem;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 3px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+        }
+        
+        .slogan {
+            font-size: 0.9rem;
+            font-style: italic;
+            color: rgba(255, 255, 255, 0.9);
+            margin-top: 8px;
+            letter-spacing: 0.5px;
+            font-weight: 300;
+            border-top: 1px solid rgba(255, 255, 255, 0.2);
+            padding-top: 6px;
+            max-width: 300px;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 2rem;
+            font-weight: 800;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+            background: linear-gradient(90deg, #ffffff, #f0f4ff);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            letter-spacing: 1px;
+            position: relative;
+            font-family: 'Arial', sans-serif;
+            padding-bottom: 2px;
+        }
+        
+        .header-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: linear-gradient(to right, rgba(255,255,255,0.1), rgba(255,255,255,0.2));
+            border: 1px solid rgba(255,255,255,0.3);
+            padding: 0.7rem 1.3rem;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+            backdrop-filter: blur(4px);
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+        }
+        
+        .btn:hover {
+            background: linear-gradient(to right, rgba(255,255,255,0.2), rgba(255,255,255,0.3));
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.25);
+        }
+        
+        .main-content {
+            max-width: 1200px;
+            margin: 1.5rem auto;
+            padding: 1rem;
+        }
+        
+        .section {
+            background-color: white;
+            border-radius: 12px;
+            padding: 1.8rem;
+            margin-bottom: 2.5rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.08);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+        
+        .section:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+        }
+        
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            flex-wrap: wrap;
+        }
+        
+        .section-title {
+            color: #1e3a8a;
+            margin-top: 0;
+            font-size: 1.5rem;
+            border-left: 4px solid #3b82f6;
+            padding-left: 10px;
+        }
+        
+        .section-subtitle {
+            color: #4b5563;
+            margin-top: 0.5rem;
+            font-size: 1.1rem;
+            font-weight: normal;
+        }
+        
+        /* Estilos da Escala e Quadro */
+        .escala-container {
+            background-color: #f8fafc;
+            border-radius: 8px;
+            padding: 1.5rem;
+            margin-top: 1.5rem;
+            box-shadow: inset 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .escala-header {
+            text-align: center;
+            margin-bottom: 1.5rem;
+        }
+        
+        .escala-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+        }
+        
+        .escala-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(80px, 1fr));
+            gap: 8px;
+            margin-bottom: 2rem;
+        }
+        
+        .dia-container {
+            border-radius: 8px;
+            overflow: hidden;
+            text-align: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .dia-container:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0,0,0,0.15);
+        }
+        
+        .dia-header {
+            background-color: #1e3a8a;
+            color: white;
+            padding: 5px 0;
+            font-size: 0.8rem;
+            font-weight: bold;
+        }
+        
+        .dia-data {
+            background-color: #f1f5f9;
+            padding: 4px 0;
+            font-size: 0.75rem;
+            color: #64748b;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .dia-equipe {
+            padding: 8px 0;
+            font-weight: bold;
+            font-size: 0.9rem;
+            color: white;
+        }
+        
+        .alfa {
+            background: linear-gradient(45deg, #ffcc00, #ffd700);
+            color: #333;
+        }
+        
+        .bravo {
+            background: linear-gradient(45deg, #00897b, #4db6ac);
+        }
+        
+        .charlie {
+            background: linear-gradient(45deg, #e53935, #ef5350);
+        }
+        
+        /* Estilos para as equipes */
+        .equipes-container {
+            margin-top: 2rem;
+        }
+        
+        .equipe-box {
+            margin-bottom: 1.5rem;
+            padding: 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .equipe-box::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 5px;
+        }
+        
+        .equipe-alfa {
+            background-color: #fffceb;
+            border: 1px solid #ffecb3;
+        }
+        
+        .equipe-alfa::before {
+            background: linear-gradient(to right, #ffd700, #ffcc00);
+        }
+        
+        .equipe-bravo {
+            background-color: #e6f7f5;
+            border: 1px solid #b2dfdb;
+        }
+        
+        .equipe-bravo::before {
+            background: linear-gradient(to right, #00897b, #4db6ac);
+        }
+        
+        .equipe-charlie {
+            background-color: #feeeee;
+            border: 1px solid #ffcdd2;
+        }
+        
+        .equipe-charlie::before {
+            background: linear-gradient(to right, #e53935, #ef5350);
+        }
+        
+        .equipe-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1e293b;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .equipe-title-badge {
+            padding: 4px 12px;
+            border-radius: 25px;
+            font-size: 0.8rem;
+            color: white;
+        }
+        
+        .badge-alfa {
+            background: linear-gradient(45deg, #ffcc00, #ffd700);
+            color: #333;
+        }
+        
+        .badge-bravo {
+            background: linear-gradient(45deg, #00897b, #4db6ac);
+        }
+        
+        .badge-charlie {
+            background: linear-gradient(45deg, #e53935, #ef5350);
+        }
+        
+        .equipe-membros {
+            list-style-type: none;
+            padding: 0;
+            columns: 2;
+        }
+        
+        .equipe-membro {
+            padding: 6px 10px;
+            margin-bottom: 8px;
+            background-color: rgba(255, 255, 255, 0.7);
+            border-radius: 6px;
+            font-size: 0.95rem;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.05);
+            display: inline-block;
+            width: 95%;
+        }
+        
+        .equipe-membro strong {
+            color: #1e3a8a;
+        }
+        
+        /* Seção de férias, licenças e expediente */
+        .info-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 1.5rem;
+            margin-top: 2rem;
+        }
+        
+        .info-box {
+            padding: 1.2rem;
+            border-radius: 8px;
+            box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+            background-color: #f8fafc;
+            border-left: 4px solid #6366f1;
+        }
+        
+        .info-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1e293b;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .info-list {
+            list-style-type: none;
+            padding-left: 0;
+        }
+        
+        .info-item {
+            padding: 8px 0;
+            font-size: 0.95rem;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .info-item:last-child {
+            border-bottom: none;
+        }
+        
+        .info-destaque {
+            font-weight: bold;
+            color: #0f766e;
+            background-color: rgba(15, 118, 110, 0.1);
+            padding: 2px 6px;
+            border-radius: 4px;
+        }
+        
+        .box-ferias {
+            border-left-color: #f59e0b;
+        }
+        
+        .box-licencas {
+            border-left-color: #ef4444;
+        }
+        
+        .box-expediente {
+            border-left-color: #10b981;
+        }
+        
+        footer {
+            background: linear-gradient(to right, #1a237e, #283593);
+            color: white;
+            text-align: center;
+            padding: 1.5rem;
+            margin-top: 3rem;
+            box-shadow: 0 -4px 12px rgba(0,0,0,0.15);
+        }
+        
+        /* Responsividade */
+        @media (max-width: 768px) {
+            header {
+                flex-direction: column;
+                gap: 15px;
+                padding: 1.5rem 1.2rem;
+            }
+            
+            h1 {
+                font-size: 1.5rem;
+                letter-spacing: 1px;
+                text-align: center;
+            }
+            
+            .title-container {
+                padding-left: 0;
+                align-items: center;
+                text-align: center;
+            }
+            
+            .title-container::before {
+                display: none;
+            }
+            
+            .unit-name {
+                font-size: 0.85rem;
+                text-align: center;
+            }
+            
+            .slogan {
+                font-size: 0.8rem;
+                max-width: 100%;
+                text-align: center;
+            }
+            
+            .section-header {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: 10px;
+            }
+            
+            .escala-grid {
+                grid-template-columns: repeat(auto-fill, minmax(70px, 1fr));
+            }
+            
+            .equipe-membros {
+                columns: 1;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="header-title">
+            <div class="title-container">
+                <h1>QUADRO DE DISTRIBUIÇÃO</h1>
+                <div class="unit-name">20ª Companhia Independente de Polícia Militar</div>
+                <div class="slogan">"Guardiões da paz, escudos da justiça"</div>
+            </div>
+        </div>
+        <div class="header-buttons">
+            <a href="/" class="btn">
+                <span>🏆</span>
+                <span>Sistema de Meritocracia</span>
+            </a>
+        </div>
+    </header>
+    
+    <div class="main-content">
+        <div class="section">
+            <div class="section-header">
+                <h2 class="section-title">Quadro de Distribuição de Guarnições</h2>
+                <div class="section-subtitle">Abril 2025 - Sede</div>
+            </div>
+            
+            <div class="escala-container">
+                <div class="escala-header">
+                    <div class="escala-title">ABRIL 2025</div>
+                </div>
+                
+                <div class="escala-grid">
+                    <!-- Primeira semana -->
+                    <div class="dia-container">
+                        <div class="dia-header">01/04</div>
+                        <div class="dia-data">TER</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">02/04</div>
+                        <div class="dia-data">QUA</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">03/04</div>
+                        <div class="dia-data">QUI</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">04/04</div>
+                        <div class="dia-data">SEX</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">05/04</div>
+                        <div class="dia-data">SÁB</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">06/04</div>
+                        <div class="dia-data">DOM</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">07/04</div>
+                        <div class="dia-data">SEG</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    
+                    <!-- Segunda semana -->
+                    <div class="dia-container">
+                        <div class="dia-header">08/04</div>
+                        <div class="dia-data">TER</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">09/04</div>
+                        <div class="dia-data">QUA</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">10/04</div>
+                        <div class="dia-data">QUI</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">11/04</div>
+                        <div class="dia-data">SEX</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">12/04</div>
+                        <div class="dia-data">SÁB</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">13/04</div>
+                        <div class="dia-data">DOM</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">14/04</div>
+                        <div class="dia-data">SEG</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    
+                    <!-- Terceira semana -->
+                    <div class="dia-container">
+                        <div class="dia-header">15/04</div>
+                        <div class="dia-data">TER</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">16/04</div>
+                        <div class="dia-data">QUA</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">17/04</div>
+                        <div class="dia-data">QUI</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">18/04</div>
+                        <div class="dia-data">SEX</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">19/04</div>
+                        <div class="dia-data">SÁB</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">20/04</div>
+                        <div class="dia-data">DOM</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">21/04</div>
+                        <div class="dia-data">SEG</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    
+                    <!-- Quarta semana -->
+                    <div class="dia-container">
+                        <div class="dia-header">22/04</div>
+                        <div class="dia-data">TER</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">23/04</div>
+                        <div class="dia-data">QUA</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">24/04</div>
+                        <div class="dia-data">QUI</div>
+                        <div class="dia-equipe charlie">CHARLIE</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">25/04</div>
+                        <div class="dia-data">SEX</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">26/04</div>
+                        <div class="dia-data">SÁB</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">27/04</div>
+                        <div class="dia-data">DOM</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">28/04</div>
+                        <div class="dia-data">SEG</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    
+                    <!-- Quinta semana -->
+                    <div class="dia-container">
+                        <div class="dia-header">29/04</div>
+                        <div class="dia-data">TER</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">30/04</div>
+                        <div class="dia-data">QUA</div>
+                        <div class="dia-equipe bravo">BRAVO</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">01/05</div>
+                        <div class="dia-data">QUI</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">02/05</div>
+                        <div class="dia-data">SEX</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">03/05</div>
+                        <div class="dia-data">SÁB</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                    <div class="dia-container">
+                        <div class="dia-header">04/05</div>
+                        <div class="dia-data">DOM</div>
+                        <div class="dia-equipe alfa">ALFA</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="equipes-container">
+                <div class="equipe-box equipe-alfa">
+                    <div class="equipe-title">
+                        <span class="equipe-title-badge badge-alfa">ALFA</span>
+                        Equipe Alfa (11 Policiais)
+                    </div>
+                    <ul class="equipe-membros">
+                        <li class="equipe-membro"><strong>2º SGT PM PEIXOTO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM RODRIGO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM LEDO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM NUNES</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM AMARAL</strong></li>
+                        <li class="equipe-membro"><strong>CB PM CARLA</strong></li>
+                        <li class="equipe-membro"><strong>CB PM FELIPE</strong></li>
+                        <li class="equipe-membro"><strong>CB PM BARROS</strong></li>
+                        <li class="equipe-membro"><strong>CB PM A. SILVA</strong></li>
+                        <li class="equipe-membro"><strong>SD PM LUAN</strong></li>
+                        <li class="equipe-membro"><strong>SD PM NAVARRO</strong></li>
+                    </ul>
+                </div>
+                
+                <div class="equipe-box equipe-bravo">
+                    <div class="equipe-title">
+                        <span class="equipe-title-badge badge-bravo">BRAVO</span>
+                        Equipe Bravo (9 Policiais)
+                    </div>
+                    <ul class="equipe-membros">
+                        <li class="equipe-membro"><strong>1º SGT PM OLIMAR</strong></li>
+                        <li class="equipe-membro"><strong>2º SGT PM FÁBIO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM ANA CLEIDE</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM GLEIDSON</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM CARLOS EDUARDO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM NEGRÃO</strong></li>
+                        <li class="equipe-membro"><strong>CB PM BRASIL</strong></li>
+                        <li class="equipe-membro"><strong>SD PM MARVÃO</strong></li>
+                        <li class="equipe-membro"><strong>SD PM IDELVAN</strong></li>
+                    </ul>
+                </div>
+                
+                <div class="equipe-box equipe-charlie">
+                    <div class="equipe-title">
+                        <span class="equipe-title-badge badge-charlie">CHARLIE</span>
+                        Equipe Charlie (10 Policiais)
+                    </div>
+                    <ul class="equipe-membros">
+                        <li class="equipe-membro"><strong>2º SGT PM PINHEIRO</strong></li>
+                        <li class="equipe-membro"><strong>3º SGT PM RAFAEL</strong></li>
+                        <li class="equipe-membro"><strong>CB PM MIQUEIAS</strong></li>
+                        <li class="equipe-membro"><strong>CB PM M. PAIXÃO</strong></li>
+                        <li class="equipe-membro"><strong>SD PM CHAGAS</strong></li>
+                        <li class="equipe-membro"><strong>SD PM CARVALHO</strong></li>
+                        <li class="equipe-membro"><strong>SD PM GOVEIA</strong></li>
+                        <li class="equipe-membro"><strong>SD PM ALMEIDA</strong></li>
+                        <li class="equipe-membro"><strong>SD PM PATRIK</strong></li>
+                        <li class="equipe-membro"><strong>SD PM GUIMARÃES</strong></li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="info-container">
+                <div class="info-box box-ferias">
+                    <div class="info-title">1 - FÉRIAS</div>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <span class="info-destaque">CB PM ALAX</span> (BRAVO)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">CB PM VELOSO</span> (BRAVO)
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="info-box box-licencas">
+                    <div class="info-title">2 - LICENÇA ESPECIAL</div>
+                    <ul class="info-list">
+                        <li class="info-item">
+                            <span class="info-destaque">2º SGT PM A. TAVARES</span> (EXPEDIENTE)
+                        </li>
+                    </ul>
+                </div>
+                
+                <div class="info-box box-expediente">
+                    <div class="info-title">3 - EXPEDIENTE</div>
+                    <ul class="info-list">
+                        <li class="info-item">CAP QOPM MUNIZ</li>
+                        <li class="info-item">
+                            <span class="info-destaque">1º TEN QOPM MONTEIRO</span> (CHEFE DO P1 E P3)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">TEN VANILSON</span> (CHEFE DO P2 E P4)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">SUB TEN ANDRÉ</span> (AUXL. DO P2)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">3º SGT PM CUNHA</span> (AUXL. DO P)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">3º SGT PM CARAVELAS</span> (AUXL. DO P4)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">CB PM TONI</span> (AUXL. DO P4)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">SD PM S. CORREA</span> (ESTAFETA)
+                        </li>
+                        <li class="info-item">
+                            <span class="info-destaque">SD PM RODRIGUES</span> (AUXL. DO P4)
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div style="text-align: center; margin-top: 2rem; color: #64748b; font-size: 0.9rem;">
+                <strong>TOTAL:</strong> 30 PPMM
+            </div>
+        </div>
+    </div>
+    
+    <footer>
+        &copy; 2025 - 20ª CIPM - Quadro de Distribuição de Guarnições
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Verificar se o mês atual é abril de 2025
+            const today = new Date();
+            const currentMonth = today.getMonth(); // 0-11, onde 3 é abril
+            const currentYear = today.getFullYear();
+            
+            if (currentMonth !== 3 || currentYear !== 2025) {
+                const alertBox = document.createElement('div');
+                alertBox.style.backgroundColor = '#fef2f2';
+                alertBox.style.color = '#b91c1c';
+                alertBox.style.padding = '1rem';
+                alertBox.style.borderRadius = '8px';
+                alertBox.style.margin = '1rem auto';
+                alertBox.style.maxWidth = '800px';
+                alertBox.style.textAlign = 'center';
+                alertBox.style.fontWeight = 'bold';
+                alertBox.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+                alertBox.innerHTML = 'Atenção: Esta é a escala de abril de 2025. A escala atual pode ser diferente.';
+                
+                const mainContent = document.querySelector('.main-content');
+                mainContent.insertBefore(alertBox, mainContent.firstChild);
+            }
+            
+            // Destacar o dia atual no calendário
+            const diaCells = document.querySelectorAll('.dia-container');
+            const todayDay = today.getDate();
+            const todayMonth = today.getMonth() + 1; // 1-12
+            
+            diaCells.forEach(cell => {
+                const dataHeader = cell.querySelector('.dia-header').textContent;
+                const [day, month] = dataHeader.split('/');
+                
+                if (parseInt(day) === todayDay && parseInt(month) === todayMonth) {
+                    cell.style.transform = 'scale(1.05)';
+                    cell.style.boxShadow = '0 0 15px rgba(59, 130, 246, 0.5)';
+                    cell.style.border = '2px solid #3b82f6';
+                    cell.style.position = 'relative';
+                    cell.style.zIndex = '5';
+                }
+            });
+        });
+    </script>
+</body>
+</html>
