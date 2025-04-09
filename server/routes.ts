@@ -103,10 +103,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events", async (req, res) => {
     try {
-      const { teamId, type, description, points, officersInvolved, createdBy, eventDate } = req.body;
+      const { teamId, type, description, points, createdBy, eventDate } = req.body;
       
       // Validações básicas
-      if (!teamId || !type || !description || !points || !officersInvolved) {
+      if (!teamId || !type || !description || !points) {
         return res.status(400).json({ message: "Todos os campos são obrigatórios" });
       }
       
@@ -126,7 +126,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         type,
         description,
         points,
-        officersInvolved,
+        officersInvolved: "Guarnição", // Valor padrão para manter compatibilidade com o banco de dados
         createdBy: createdBy || "Admin",
         eventDate: eventDateObj
       });
@@ -155,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Evento não encontrado" });
       }
       
-      const { teamId, type, description, points, officersInvolved, eventDate } = req.body;
+      const { teamId, type, description, points, eventDate } = req.body;
       
       // Validações básicas
       if (teamId) {
@@ -172,7 +172,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       if (type !== undefined) updateData.type = type;
       if (description !== undefined) updateData.description = description;
       if (points !== undefined) updateData.points = points;
-      if (officersInvolved !== undefined) updateData.officersInvolved = officersInvolved;
+      updateData.officersInvolved = "Guarnição"; // Valor padrão para manter compatibilidade
       if (eventDate !== undefined) {
         console.log('Data de edição recebida do cliente:', eventDate);
         updateData.eventDate = new Date(eventDate);
