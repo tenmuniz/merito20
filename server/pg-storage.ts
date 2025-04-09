@@ -138,4 +138,22 @@ export class PostgresStorage implements IStorage {
     const result = await db.delete(events).where(eq(events.id, id)).returning();
     return result.length > 0;
   }
+
+  async resetAllData(): Promise<void> {
+    try {
+      // Primeiro, excluir todos os eventos
+      await db.delete(events);
+      
+      // Em seguida, zerar os pontos de todas as equipes
+      const allTeams = await this.getTeams();
+      for (const team of allTeams) {
+        await db.update(teams)
+          .set({ points: 0 })
+          .where(eq(teams.id, team.id));
+      }
+    } catch (error) {
+      console.error("Error resetting data:", error);
+      throw error;
+    }
+  }
 }

@@ -23,6 +23,9 @@ export interface IStorage {
   createEvent(event: InsertEvent): Promise<Event>;
   updateEvent(id: number, eventData: Partial<InsertEvent>): Promise<Event | undefined>;
   deleteEvent(id: number): Promise<boolean>;
+  
+  // System operations
+  resetAllData(): Promise<void>;
 }
 
 export class MemStorage implements IStorage {
@@ -205,6 +208,18 @@ export class MemStorage implements IStorage {
     
     // Excluir o evento
     return this.eventsMap.delete(id);
+  }
+  
+  async resetAllData(): Promise<void> {
+    // Limpar todos os eventos
+    this.eventsMap.clear();
+    
+    // Zerar os pontos de todas as equipes
+    const allTeams = await this.getTeams();
+    for (const team of allTeams) {
+      team.points = 0;
+      this.teamsMap.set(team.id, team);
+    }
   }
 }
 

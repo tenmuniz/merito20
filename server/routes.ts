@@ -184,16 +184,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Reset API - para zerar todos os eventos e pontos
   app.post("/api/reset", async (req, res) => {
     try {
-      // Primeiro, exclua todos os eventos
-      await db.delete(events);
-      
-      // Em seguida, zere os pontos de todas as equipes
-      const allTeams = await storage.getTeams();
-      for (const team of allTeams) {
-        await db.update(teams)
-          .set({ points: 0 })
-          .where(eq(teams.id, team.id));
-      }
+      // Usar o método da interface de storage para resetar os dados
+      await storage.resetAllData();
       
       res.json({ success: true, message: "Todos os eventos foram excluídos e os pontos zerados." });
     } catch (error: any) {
