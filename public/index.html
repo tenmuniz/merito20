@@ -643,6 +643,10 @@
             </div>
             <form id="eventForm">
                 <div class="form-group">
+                    <label for="eventDate">Data do Evento:</label>
+                    <input type="date" id="eventDate" required>
+                </div>
+                <div class="form-group">
                     <label for="eventTeam">Equipe:</label>
                     <select id="eventTeam" required>
                         <option value="">Selecione uma equipe</option>
@@ -697,6 +701,8 @@
                 </div>
                 <div class="detail-label">Policiais Envolvidos:</div>
                 <div id="detailOfficers" class="detail-value">Nomes dos policiais aqui</div>
+                <div class="detail-label">Data do Evento:</div>
+                <div id="detailEventDate" class="detail-value">01/01/2025</div>
                 <div class="detail-footer">
                     <div>Registrado por: <span id="detailCreatedBy">Admin</span></div>
                     <div>Pontos: <span id="detailPoints" class="detail-points">10</span></div>
@@ -888,6 +894,7 @@
             const detailOfficers = document.getElementById('detailOfficers');
             const detailCreatedBy = document.getElementById('detailCreatedBy');
             const detailPoints = document.getElementById('detailPoints');
+            const detailEventDate = document.getElementById('detailEventDate');
             
             detailTeam.textContent = `Equipe ${getTeamNameById(event.teamId)}`;
             detailTeam.className = `detail-team ${getTeamColorClass(event.teamId)}`;
@@ -896,6 +903,14 @@
             detailOfficers.textContent = event.officersInvolved;
             detailCreatedBy.textContent = event.createdBy;
             detailPoints.textContent = event.points;
+            
+            // Formatação da data do evento
+            if (event.eventDate) {
+                const eventDate = new Date(event.eventDate);
+                detailEventDate.textContent = eventDate.toLocaleDateString('pt-BR');
+            } else {
+                detailEventDate.textContent = 'Data não disponível';
+            }
             
             document.getElementById('detailModal').style.display = 'flex';
         }
@@ -996,6 +1011,7 @@
         document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
+            const eventDate = document.getElementById('eventDate').value;
             const teamId = parseInt(document.getElementById('eventTeam').value);
             const type = document.getElementById('eventType').value;
             const description = document.getElementById('eventDescription').value;
@@ -1014,6 +1030,7 @@
                         description,
                         points,
                         officersInvolved,
+                        eventDate,
                         createdBy: 'Admin' // Temporário, deve ser o usuário logado
                     })
                 });

@@ -97,7 +97,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events", async (req, res) => {
     try {
-      const { teamId, type, description, points, officersInvolved, createdBy } = req.body;
+      const { teamId, type, description, points, officersInvolved, createdBy, eventDate } = req.body;
       
       // Validações básicas
       if (!teamId || !type || !description || !points || !officersInvolved) {
@@ -110,18 +110,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
         return res.status(404).json({ message: "Equipe não encontrada" });
       }
       
-      // Criar o evento (o createdAt será gerado automaticamente pelo banco)
+      // Criar o evento com a data do evento
       const newEvent = await storage.createEvent({
         teamId,
         type,
         description,
         points,
         officersInvolved,
-        createdBy: createdBy || "Admin"
+        createdBy: createdBy || "Admin",
+        eventDate: eventDate ? new Date(eventDate) : new Date()
       });
       
-      // Atualizar os pontos da equipe
-      await storage.updateTeamPoints(teamId, team.points + points);
+      // Removido: não atualizar os pontos da equipe aqui
+      // Os pontos já são atualizados dentro do método createEvent
+      // Isso estava causando dupla contagem dos pontos
       
       res.status(201).json(newEvent);
     } catch (error: any) {
