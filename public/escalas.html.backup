@@ -1747,7 +1747,7 @@
                 equipeModal.classList.add('active');
             }
             
-            function fecharEquipeModal() {
+            function closeEquipeModal() {
                 equipeModal.classList.remove('active');
                 hideMembroForm();
                 currentEquipe = null;
@@ -1902,7 +1902,11 @@
             if (editEquipeCharlieBtn) {
                 editEquipeCharlieBtn.addEventListener('click', () => openEquipeModal('charlie'));
             }
-            closeEquipeModal.addEventListener('click', fecharEquipeModal);
+            closeEquipeModal.addEventListener('click', () => {
+                equipeModal.classList.remove('active');
+                hideMembroForm();
+                currentEquipe = null;
+            });
             addMembroBtn.addEventListener('click', addMembro);
             cancelMembroForm.addEventListener('click', hideMembroForm);
             saveMembroForm.addEventListener('click', saveMembro);

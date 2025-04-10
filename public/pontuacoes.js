@@ -542,14 +542,21 @@ function initEditButtons() {
     
     const closeEquipeModalBtn = document.getElementById('closeEquipeModal');
     if (closeEquipeModalBtn) {
+        console.log("Configurando botão de fechar modal de equipe");
         closeEquipeModalBtn.onclick = function() {
-            const modal = document.getElementById('equipeModal');
-            if (modal) modal.classList.remove('active');
-            const form = document.getElementById('membroForm');
-            if (form) form.style.display = 'none';
-            const addBtn = document.getElementById('addMembroBtn');
-            if (addBtn) addBtn.style.display = 'block';
-            window.currentEquipe = null;
+            console.log("Clicou em fechar modal de equipe");
+            if (typeof fecharEquipeModal === 'function') {
+                fecharEquipeModal();
+            } else {
+                console.log("Função fecharEquipeModal não encontrada, usando implementação alternativa");
+                const modal = document.getElementById('equipeModal');
+                if (modal) modal.classList.remove('active');
+                const form = document.getElementById('membroForm');
+                if (form) form.style.display = 'none';
+                const addBtn = document.getElementById('addMembroBtn');
+                if (addBtn) addBtn.style.display = 'block';
+                window.currentEquipe = null;
+            }
         };
     }
     
