@@ -1033,7 +1033,7 @@
             <div class="section-header">
                 <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
                 <div class="admin-buttons">
-                    <button id="addEventBtn" class="admin-btn admin-only" style="display: none;">
+                    <button id="addEventBtn" class="admin-btn" style="display: none;">
                         <span>➕</span>
                         <span>Adicionar Evento</span>
                     </button>
@@ -1155,7 +1155,7 @@
             <div id="loginError" style="display: none; color: #e53935; text-align: center; margin-bottom: 15px; padding: 8px; background-color: #ffebee; border-radius: 4px;">
                 Usuário ou senha incorretos.
             </div>
-            <form id="loginForm">
+            <form id="loginForm" onsubmit="return false;">
                 <div class="form-group">
                     <label for="username">Usuário:</label>
                     <input type="text" id="username" value="admin" required placeholder="Digite seu usuário">
@@ -1164,8 +1164,42 @@
                     <label for="password">Senha:</label>
                     <input type="password" id="password" value="admin123" required placeholder="Digite sua senha">
                 </div>
-                <button type="button" id="loginSubmitBtn" class="submit-btn">Entrar</button>
+                <button type="button" id="loginSubmitBtn" class="submit-btn" onclick="realizarLogin()">Entrar</button>
             </form>
+            
+            <script>
+                function realizarLogin() {
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (username === 'admin' && password === 'admin123') {
+                        // Login bem-sucedido
+                        const userData = {
+                            id: 1,
+                            username: 'admin',
+                            fullName: 'Administrador',
+                            isAdmin: true
+                        };
+                        
+                        localStorage.setItem('escalasUserData', JSON.stringify(userData));
+                        
+                        // Fechar o modal
+                        document.getElementById('loginModal').style.display = 'none';
+                        
+                        // Mostrar mensagem de sucesso
+                        alert('Login realizado com sucesso!');
+                        
+                        // Recarregar a página para aplicar as alterações
+                        window.location.reload();
+                    } else {
+                        // Login falhou
+                        document.getElementById('loginError').style.display = 'block';
+                        setTimeout(() => {
+                            document.getElementById('loginError').style.display = 'none';
+                        }, 3000);
+                    }
+                }
+            </script>
         </div>
     </div>
     
@@ -2102,6 +2136,34 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Sistema de meritocracia 20ª CIPM carregado");
             
+            // Verificar autenticação ao carregar a página
+            const userData = localStorage.getItem('escalasUserData');
+            if (userData) {
+                try {
+                    const usuario = JSON.parse(userData);
+                    if (usuario && usuario.isAdmin) {
+                        // Usuário autenticado, mostrar botão de adicionar eventos
+                        const addEventBtn = document.getElementById('addEventBtn');
+                        if (addEventBtn) {
+                            addEventBtn.style.display = 'inline-flex';
+                        }
+                        
+                        // Atualizar botão de login para "Sair"
+                        const loginBtn = document.getElementById('loginBtn');
+                        if (loginBtn) {
+                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
+                            loginBtn.onclick = function() {
+                                localStorage.removeItem('escalasUserData');
+                                alert('Logout realizado com sucesso!');
+                                window.location.reload();
+                            };
+                        }
+                    }
+                } catch (e) {
+                    console.error('Erro ao verificar autenticação:', e);
+                }
+            }
+            
             // Configurar o formulário de login
             const loginSubmitBtn = document.getElementById('loginSubmitBtn');
             const loginModal = document.getElementById('loginModal');
@@ -2213,6 +2275,27 @@
                 closeLoginBtn.addEventListener('click', function() {
                     loginModal.style.display = 'none';
                 });
+            }
+            
+            // Configurar botão de adicionar evento
+            const eventModal = document.getElementById('eventModal');
+            if (addEventBtn && eventModal) {
+                addEventBtn.addEventListener('click', function() {
+                    eventModal.style.display = 'flex';
+                    // Definir a data do evento como hoje por padrão
+                    const eventDateInput = document.getElementById('eventDate');
+                    if (eventDateInput) {
+                        eventDateInput.valueAsDate = new Date();
+                    }
+                });
+                
+                // Fechar modal de evento
+                const closeEventBtn = document.querySelector('#eventModal .close-btn');
+                if (closeEventBtn) {
+                    closeEventBtn.addEventListener('click', function() {
+                        eventModal.style.display = 'none';
+                    });
+                }
             }
             
             // Inicializar verificação de autenticação
