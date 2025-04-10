@@ -12,14 +12,23 @@ function checkGlobalAuth() {
                 const adminElements = document.querySelectorAll('.admin-only');
                 adminElements.forEach(el => {
                     // Preservar os event listeners originais ao mostrar os elementos
-                    const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'flex' : 'block';
+                    const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
                     el.style.display = originalDisplay;
+                    
+                    // Garantir que o elemento é clicável
+                    el.style.pointerEvents = 'auto';
+                    el.style.cursor = 'pointer';
+                    el.style.position = 'relative';
+                    el.style.zIndex = '100';
                 });
+                
+                // Inicializar listeners para botões de edição
+                initEditButtons();
                 
                 // Atualizar botão de login para "Sair"
                 const loginBtn = document.getElementById('loginBtn');
                 if (loginBtn) {
-                    loginBtn.textContent = 'Sair';
+                    loginBtn.innerHTML = '<span>🔓</span><span>Sair</span>';
                     
                     // Remover todos os event listeners existentes
                     const newLoginBtn = loginBtn.cloneNode(true);
@@ -41,6 +50,49 @@ function checkGlobalAuth() {
         console.log("Usuário não autenticado");
     }
     return false;
+}
+
+// Função para inicializar os botões de edição
+function initEditButtons() {
+    // Inicializar botões de edição de equipes
+    const editEquipeAlfaBtn = document.getElementById('editEquipeAlfaBtn');
+    const editEquipeBravoBtn = document.getElementById('editEquipeBravoBtn');
+    const editEquipeCharlieBtn = document.getElementById('editEquipeCharlieBtn');
+    
+    if (editEquipeAlfaBtn) {
+        editEquipeAlfaBtn.onclick = () => openEquipeModal('alfa');
+    }
+    
+    if (editEquipeBravoBtn) {
+        editEquipeBravoBtn.onclick = () => openEquipeModal('bravo');
+    }
+    
+    if (editEquipeCharlieBtn) {
+        editEquipeCharlieBtn.onclick = () => openEquipeModal('charlie');
+    }
+    
+    // Inicializar botões de edição de aniversariantes
+    const editAniversariantesBtn = document.getElementById('editAniversariantesBtn');
+    if (editAniversariantesBtn) {
+        editAniversariantesBtn.onclick = () => openAniversariantesModal();
+    }
+    
+    // Inicializar botões de edição de informações
+    const editFeriasBtn = document.getElementById('editFeriasBtn');
+    const editLicencasBtn = document.getElementById('editLicencasBtn');
+    const editExpedienteBtn = document.getElementById('editExpedienteBtn');
+    
+    if (editFeriasBtn) {
+        editFeriasBtn.onclick = () => openInfoModal('ferias');
+    }
+    
+    if (editLicencasBtn) {
+        editLicencasBtn.onclick = () => openInfoModal('licencas');
+    }
+    
+    if (editExpedienteBtn) {
+        editExpedienteBtn.onclick = () => openInfoModal('expediente');
+    }
 }
 
 function logout() {
