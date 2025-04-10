@@ -1,24 +1,32 @@
 // Sistema de autenticação global
 function checkGlobalAuth() {
+    console.log("Verificando autenticação global...");
     const userData = localStorage.getItem('escalasUserData');
     if (userData) {
         try {
             const user = JSON.parse(userData);
             if (user && user.isAdmin) {
-                // Aplicar UI de admin em todas as páginas
+                console.log("Usuário autenticado como admin:", user);
+                
+                // Tornar visíveis todos os elementos administrativos
                 const adminElements = document.querySelectorAll('.admin-only');
                 adminElements.forEach(el => {
                     el.style.display = el.tagName.toLowerCase() === 'button' ? 'flex' : 'block';
                 });
                 
-                // Atualizar botão de login se existir
+                // Atualizar botão de login para "Sair"
                 const loginBtn = document.getElementById('loginBtn');
                 if (loginBtn) {
                     loginBtn.textContent = 'Sair';
-                    loginBtn.onclick = function() {
+                    
+                    // Remover todos os event listeners existentes
+                    const newLoginBtn = loginBtn.cloneNode(true);
+                    loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
+                    
+                    // Adicionar novo event listener para logout
+                    newLoginBtn.addEventListener('click', function() {
                         logout();
-                        return false;
-                    };
+                    });
                 }
                 
                 return true;
@@ -27,19 +35,101 @@ function checkGlobalAuth() {
             console.error('Erro ao processar dados de autenticação:', e);
             localStorage.removeItem('escalasUserData');
         }
+    } else {
+        console.log("Usuário não autenticado");
     }
     return false;
 }
 
 function logout() {
+    console.log("Realizando logout...");
     localStorage.removeItem('escalasUserData');
     alert('Você saiu da área administrativa.');
     window.location.reload();
 }
 
+// Autenticar com um clique no botão login
+function setupLoginButton() {
+    const loginBtn = document.getElementById('loginBtn');
+    if (loginBtn && !localStorage.getItem('escalasUserData')) {
+        // Remover todos os event listeners existentes
+        const newLoginBtn = loginBtn.cloneNode(true);
+        loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
+        
+        // Adicionar evento para abrir modal de login
+        newLoginBtn.addEventListener('click', function() {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.classList.add('active');
+                const usernameInput = document.getElementById('username');
+                if (usernameInput) usernameInput.focus();
+            }
+        });
+    }
+}
+
+// Função para validar login
+function validarLogin(username, password) {
+    if (username === 'admin' && password === 'admin123') {
+        const userData = {
+            id: 1,
+            username: 'admin',
+            fullName: 'Administrador',
+            isAdmin: true
+        };
+        
+        localStorage.setItem('escalasUserData', JSON.stringify(userData));
+        return true;
+    }
+    return false;
+}
+
 // Executar verificação de autenticação em todas as páginas
 document.addEventListener('DOMContentLoaded', function() {
+    console.log("DOM carregado, configurando autenticação global");
     checkGlobalAuth();
+    setupLoginButton();
+    
+    // Configurar botão de login no modal se existir
+    const submitLoginBtn = document.getElementById('submitLogin');
+    if (submitLoginBtn) {
+        submitLoginBtn.addEventListener('click', function(e) {
+            e.preventDefault();
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+            
+            if (validarLogin(username, password)) {
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) loginModal.classList.remove('active');
+                
+                window.location.reload(); // Recarregar para aplicar permissões
+            } else {
+                const loginAlert = document.getElementById('loginAlert');
+                if (loginAlert) {
+                    loginAlert.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+                    loginAlert.style.display = 'block';
+                }
+            }
+        });
+    }
+    
+    // Fechar modal se existir
+    const closeLoginModal = document.getElementById('closeLoginModal');
+    const cancelLogin = document.getElementById('cancelLogin');
+    
+    if (closeLoginModal) {
+        closeLoginModal.addEventListener('click', function() {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.remove('active');
+        });
+    }
+    
+    if (cancelLogin) {
+        cancelLogin.addEventListener('click', function() {
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) loginModal.classList.remove('active');
+        });
+    }
 });
 
 // Tabela de pontuações para o sistema de meritocracia

@@ -1400,6 +1400,12 @@
 
     <script src="/pontuacoes.js"></script>
     <script>
+        // Verificar autenticação global ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            checkGlobalAuth();
+        });
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar se o mês atual é abril de 2025
             const today = new Date();
@@ -1441,8 +1447,81 @@
                 }
             });
             
-            // Variáveis para os elementos da UI
-            const adminButtons = document.querySelectorAll('.admin-only');
+            function showAdminUI() {
+                adminButtons.forEach(btn => {
+                    btn.style.display = 'flex';
+                });
+                const loginButton = document.getElementById('loginBtn');
+                loginButton.textContent = 'Sair';
+                loginButton.removeEventListener('click', openLoginModal);
+                loginButton.addEventListener('click', logout);
+            }
+            
+            function hideAdminUI() {
+                adminButtons.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                const loginButton = document.getElementById('loginBtn');
+                loginButton.innerHTML = '<span>🔐</span><span>Área Administrativa</span>';
+                loginButton.removeEventListener('click', logout);
+                loginButton.addEventListener('click', openLoginModal);
+            }
+            
+            function logout() {
+                isAdmin = false;
+                localStorage.removeItem('escalasUserData');
+                hideAdminUI();
+                alert('Você saiu da área administrativa.');
+            }
+            
+            // Gerenciamento de login
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            const cancelLogin = document.getElementById('cancelLogin');
+            const submitLogin = document.getElementById('submitLogin');
+            const loginForm = document.getElementById('loginForm');
+            const loginAlert = document.getElementById('loginAlert');
+            
+            function openLoginModal() {
+                loginModal.classList.add('active');
+                document.getElementById('username').focus();
+            }
+            
+            function closeLoginModalHandler() {
+                loginModal.classList.remove('active');
+                loginForm.reset();
+                loginAlert.style.display = 'none';
+            }
+            
+            function handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                console.log('Tentando login com:', { username, password });
+                
+                // Validação simples - Somente para demonstração
+                if (username === 'admin' && password === 'admin123') {
+                    const userData = {
+                        id: 1,
+                        username: 'admin',
+                        fullName: 'Administrador',
+                        isAdmin: true
+                    };
+                    
+                    localStorage.setItem('escalasUserData', JSON.stringify(userData));
+                    isAdmin = true;
+                    console.log('Login bem-sucedido:', userData);
+                    
+                    closeLoginModalHandler();
+                    showAdminUI();
+                } else {
+                    loginAlert.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+                    loginAlert.style.display = 'block';
+                    console.error('Erro no login:', {});
+                }
+            }
             
             // Inicialização dos dados
             function initializeLocalStorage() {
@@ -1540,8 +1619,11 @@
                 }
             }
             
-            // Inicialização da autenticação global
-            checkGlobalAuth();
+            // Event Listeners
+            loginBtn.addEventListener('click', openLoginModal);
+            closeLoginModal.addEventListener('click', closeLoginModalHandler);
+            cancelLogin.addEventListener('click', closeLoginModalHandler);
+            submitLogin.addEventListener('click', handleLogin);
             
             // Inicialização
             initializeLocalStorage();
