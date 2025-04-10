@@ -11,7 +11,9 @@ function checkGlobalAuth() {
                 // Tornar visíveis todos os elementos administrativos
                 const adminElements = document.querySelectorAll('.admin-only');
                 adminElements.forEach(el => {
-                    el.style.display = el.tagName.toLowerCase() === 'button' ? 'flex' : 'block';
+                    // Preservar os event listeners originais ao mostrar os elementos
+                    const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'flex' : 'block';
+                    el.style.display = originalDisplay;
                 });
                 
                 // Atualizar botão de login para "Sair"

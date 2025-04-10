@@ -1708,6 +1708,8 @@
             function updateAniversariantesUI() {
                 const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
                 const container = document.querySelector('.aniversariantes-lista');
+                
+                // Limpar a lista de aniversariantes
                 container.innerHTML = '';
                 
                 aniversariantes.forEach(aniv => {
@@ -1879,16 +1881,27 @@
                         container.appendChild(li);
                     });
                     
-                    // Atualizar o contador de policiais no título
+                    // Atualizar o contador de policiais no título de forma segura
+                    // para preservar os event listeners dos botões
                     const title = document.querySelector(`.equipe-${equipe} .equipe-title`);
                     const badge = title.querySelector(`.equipe-title-badge.badge-${equipe}`);
-                    const editBtn = title.querySelector(`#editEquipe${equipe.charAt(0).toUpperCase() + equipe.slice(1)}Btn`);
+                    const editBtn = document.getElementById(`editEquipe${equipe.charAt(0).toUpperCase() + equipe.slice(1)}Btn`);
                     
-                    title.innerHTML = '';
-                    title.appendChild(badge);
-                    title.appendChild(document.createTextNode(` Equipe ${equipe.charAt(0).toUpperCase() + equipe.slice(1)} (${membros.length} Policiais)`));
-                    if (editBtn) {
-                        title.appendChild(editBtn);
+                    // Selecionar o nó de texto do título e atualizá-lo
+                    // em vez de limpar todo o conteúdo HTML
+                    for (let i = 0; i < title.childNodes.length; i++) {
+                        if (title.childNodes[i].nodeType === Node.TEXT_NODE) {
+                            title.removeChild(title.childNodes[i]);
+                            break;
+                        }
+                    }
+                    
+                    // Inserir o novo texto após o badge, antes do botão
+                    const newText = document.createTextNode(` Equipe ${equipe.charAt(0).toUpperCase() + equipe.slice(1)} (${membros.length} Policiais)`);
+                    if (editBtn && editBtn.parentElement === title) {
+                        title.insertBefore(newText, editBtn);
+                    } else {
+                        title.appendChild(newText);
                     }
                 });
             }
@@ -2048,6 +2061,8 @@
                 infoTypes.forEach(type => {
                     const infos = JSON.parse(localStorage.getItem(`info_${type}`) || '[]');
                     const container = document.querySelector(`.box-${type} .info-list`);
+                    
+                    // Limpar a lista preservando o botão de edição que está após a lista
                     container.innerHTML = '';
                     
                     infos.forEach(info => {
@@ -2067,6 +2082,16 @@
                         
                         container.appendChild(li);
                     });
+                    
+                    // Atualizar o contador no título se houver
+                    const title = document.querySelector(`.box-${type} .box-title`);
+                    if (title) {
+                        // Encontrar o elemento span com a contagem se existir
+                        const countSpan = title.querySelector('.count-badge');
+                        if (countSpan) {
+                            countSpan.textContent = infos.length.toString();
+                        }
+                    }
                 });
             }
             
