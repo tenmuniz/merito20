@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editar Equipes</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        h1 {
+            color: #1e3a8a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .equipes {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .equipe {
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .equipe-title {
+            font-weight: bold;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .equipe-alfa .equipe-title {
+            color: #ef4444;
+        }
+        
+        .equipe-bravo .equipe-title {
+            color: #10b981;
+        }
+        
+        .equipe-charlie .equipe-title {
+            color: #3b82f6;
+        }
+        
+        .equipe-membros {
+            list-style-type: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .equipe-membro {
+            padding: 5px 0;
+            border-bottom: 1px dashed #e2e8f0;
+        }
+        
+        .equipe-membro:last-child {
+            border-bottom: none;
+        }
+        
+        button {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        button:hover {
+            background-color: #1e40af;
+        }
+        
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            justify-content: center;
+            align-items: center;
+        }
+        
+        .modal.active {
+            display: flex;
+        }
+        
+        .modal-content {
+            background-color: white;
+            padding: a0px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 500px;
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 10px;
+        }
+        
+        .modal-title {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        
+        .close-button {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: #64748b;
+            cursor: pointer;
+        }
+        
+        .item-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 8px 0;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 5px;
+        }
+        
+        .item-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-size: 1.2rem;
+        }
+        
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e2e8f0;
+            border-radius: 4px;
+        }
+        
+        .form-buttons {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 20px;
+        }
+        
+        .nav-buttons {
+            margin-top: 20px;
+            display: flex;
+            justify-content: space-between;
+        }
+    </style>
+</head>
+<body>
+    <h1>Editar Equipes</h1>
+    
+    <div class="equipes">
+        <div class="equipe equipe-alfa">
+            <div class="equipe-title">
+                <span>Equipe Alfa</span>
+                <button id="editAlfaBtn">Editar</button>
+            </div>
+            <ul id="alfaList" class="equipe-membros"></ul>
+        </div>
+        
+        <div class="equipe equipe-bravo">
+            <div class="equipe-title">
+                <span>Equipe Bravo</span>
+                <button id="editBravoBtn">Editar</button>
+            </div>
+            <ul id="bravoList" class="equipe-membros"></ul>
+        </div>
+        
+        <div class="equipe equipe-charlie">
+            <div class="equipe-title">
+                <span>Equipe Charlie</span>
+                <button id="editCharlieBtn">Editar</button>
+            </div>
+            <ul id="charlieList" class="equipe-membros"></ul>
+        </div>
+    </div>
+    
+    <div id="equipeModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 id="modalTitle" class="modal-title">Editar Equipe</h2>
+                <button id="closeModal" class="close-button">&times;</button>
+            </div>
+            
+            <div id="membrosList"></div>
+            
+            <button id="addMembroBtn" style="margin-top: 15px;">Adicionar Policial</button>
+            
+            <div id="membroForm" style="display: none; margin-top: 15px;">
+                <div class="form-group">
+                    <label for="membroNome">Nome do Policial:</label>
+                    <input type="text" id="membroNome" placeholder="Ex: SGT Peixoto">
+                </div>
+                
+                <div class="form-buttons">
+                    <button id="cancelBtn" type="button">Cancelar</button>
+                    <button id="saveBtn" type="button">Salvar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <div class="nav-buttons">
+        <a href="index.html"><button>Voltar para Home</button></a>
+        <a href="escalas.html"><button>Ir para Escala de Serviço</button></a>
+    </div>
+    
+    <script>
+        // Estado da aplicação
+        let currentEquipe = null;
+        let editingIndex = null;
+        
+        // Inicialização de dados padrão
+        function initializeData() {
+            if (!localStorage.getItem('equipe_alfa')) {
+                const defaultData = {
+                    alfa: [
+                        '2º SGT PM PEIXOTO',
+                        '3º SGT PM RODRIGO',
+                        '3º SGT PM LEDO',
+                        '3º SGT PM NUNES',
+                        '3º SGT PM AMARAL',
+                        'CB PM CARLA',
+                        'CB PM FELIPE',
+                        'CB PM BARROS',
+                        'CB PM A. SILVA',
+                        'SD PM LUAN',
+                        'SD PM NAVARRO'
+                    ],
+                    bravo: [
+                        '1º SGT PM OLIMAR',
+                        '2º SGT PM FÁBIO',
+                        '3º SGT PM ANA CLEIDE',
+                        '3º SGT PM GLEIDSON',
+                        '3º SGT PM CARLOS EDUARDO',
+                        '3º SGT PM NEGRÃO',
+                        'CB PM BRASIL',
+                        'SD PM MARVÃO',
+                        'SD PM IDELVAN'
+                    ],
+                    charlie: [
+                        '2º SGT PM PINHEIRO',
+                        '3º SGT PM RAFAEL',
+                        'CB PM MIQUEIAS',
+                        'CB PM M. PAIXÃO',
+                        'SD PM CHAGAS',
+                        'SD PM CARVALHO',
+                        'SD PM GOVEIA',
+                        'SD PM ALMEIDA',
+                        'SD PM PATRIK',
+                        'SD PM GUIMARÃES'
+                    ]
+                };
+                
+                localStorage.setItem('equipe_alfa', JSON.stringify(defaultData.alfa));
+                localStorage.setItem('equipe_bravo', JSON.stringify(defaultData.bravo));
+                localStorage.setItem('equipe_charlie', JSON.stringify(defaultData.charlie));
+            }
+        }
+        
+        // Renderizar as listas de equipes
+        function renderEquipes() {
+            const equipes = ['alfa', 'bravo', 'charlie'];
+            
+            equipes.forEach(equipe => {
+                const membros = JSON.parse(localStorage.getItem(`equipe_${equipe}`) || '[]');
+                const list = document.getElementById(`${equipe}List`);
+                list.innerHTML = '';
+                
+                membros.forEach(membro => {
+                    const li = document.createElement('li');
+                    li.className = 'equipe-membro';
+                    li.innerHTML = `<strong>${membro}</strong>`;
+                    list.appendChild(li);
+                });
+            });
+        }
+        
+        // Renderizar a lista de membros no modal
+        function renderModalList() {
+            const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+            const list = document.getElementById('membrosList');
+            list.innerHTML = '';
+            
+            membros.forEach((membro, index) => {
+                const row = document.createElement('div');
+                row.className = 'item-row';
+                row.innerHTML = `
+                    <div class="item-text">${membro}</div>
+                    <div class="item-actions">
+                        <button class="item-btn edit" data-index="${index}">✏️</button>
+                        <button class="item-btn delete" data-index="${index}">🗑️</button>
+                    </div>
+                `;
+                list.appendChild(row);
+            });
+            
+            // Adicionar event listeners para os botões de editar e excluir
+            document.querySelectorAll('.item-btn.edit').forEach(btn => {
+                btn.onclick = function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    editMembro(index);
+                };
+            });
+            
+            document.querySelectorAll('.item-btn.delete').forEach(btn => {
+                btn.onclick = function() {
+                    const index = parseInt(this.getAttribute('data-index'));
+                    deleteMembro(index);
+                };
+            });
+        }
+        
+        // Função para abrir o modal de edição de equipe
+        function openModal(equipe) {
+            currentEquipe = equipe;
+            document.getElementById('modalTitle').textContent = `Editar Equipe ${equipe.toUpperCase()}`;
+            document.getElementById('equipeModal').classList.add('active');
+            document.getElementById('membroForm').style.display = 'none';
+            document.getElementById('addMembroBtn').style.display = 'block';
+            renderModalList();
+        }
+        
+        // Função para fechar o modal
+        function closeModal() {
+            document.getElementById('equipeModal').classList.remove('active');
+            document.getElementById('membroForm').style.display = 'none';
+            document.getElementById('addMembroBtn').style.display = 'block';
+            currentEquipe = null;
+            editingIndex = null;
+        }
+        
+        // Função para mostrar o formulário de adição/edição de membro
+        function showForm() {
+            document.getElementById('membroForm').style.display = 'block';
+            document.getElementById('addMembroBtn').style.display = 'none';
+            document.getElementById('membroNome').focus();
+        }
+        
+        // Função para editar um membro existente
+        function editMembro(index) {
+            const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+            document.getElementById('membroNome').value = membros[index];
+            editingIndex = index;
+            showForm();
+        }
+        
+        // Função para deletar um membro
+        function deleteMembro(index) {
+            if (confirm('Tem certeza que deseja remover este policial da equipe?')) {
+                const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+                membros.splice(index, 1);
+                localStorage.setItem(`equipe_${currentEquipe}`, JSON.stringify(membros));
+                renderModalList();
+                renderEquipes();
+            }
+        }
+        
+        // Função para salvar um membro (novo ou editado)
+        function saveMembro() {
+            const nome = document.getElementById('membroNome').value.trim();
+            
+            if (!nome) {
+                alert('Por favor, insira o nome do policial.');
+                return;
+            }
+            
+            const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+            
+            if (editingIndex !== null) {
+                // Editar membro existente
+                membros[editingIndex] = nome;
+            } else {
+                // Adicionar novo membro
+                membros.push(nome);
+            }
+            
+            localStorage.setItem(`equipe_${currentEquipe}`, JSON.stringify(membros));
+            document.getElementById('membroNome').value = '';
+            document.getElementById('membroForm').style.display = 'none';
+            document.getElementById('addMembroBtn').style.display = 'block';
+            editingIndex = null;
+            
+            renderModalList();
+            renderEquipes();
+        }
+        
+        // Inicializar a aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar dados
+            initializeData();
+            
+            // Renderizar as equipes
+            renderEquipes();
+            
+            // Event listeners para botões de editar equipes
+            document.getElementById('editAlfaBtn').onclick = function() { openModal('alfa'); };
+            document.getElementById('editBravoBtn').onclick = function() { openModal('bravo'); };
+            document.getElementById('editCharlieBtn').onclick = function() { openModal('charlie'); };
+            
+            // Event listeners para botões do modal
+            document.getElementById('closeModal').onclick = closeModal;
+            document.getElementById('addMembroBtn').onclick = function() { 
+                editingIndex = null;
+                document.getElementById('membroNome').value = '';
+                showForm(); 
+            };
+            document.getElementById('cancelBtn').onclick = function() {
+                document.getElementById('membroForm').style.display = 'none';
+                document.getElementById('addMembroBtn').style.display = 'block';
+            };
+            document.getElementById('saveBtn').onclick = saveMembro;
+        });
+    </script>
+</body>
+</html>
