@@ -8,6 +8,38 @@
     <link rel="icon" href="/favicon.svg" type="image/svg+xml">
     <link rel="apple-touch-icon" href="/favicon.svg">
     <style>
+        /* Estilos para a tabela de pontuação */
+        .pontuacoes-content {
+            padding: 20px;
+            max-height: 70vh;
+            overflow-y: auto;
+        }
+        
+        .pontuacoes-content h3 {
+            color: #3b82f6;
+            margin-top: 20px;
+            margin-bottom: 10px;
+            border-bottom: 1px solid #e2e8f0;
+            padding-bottom: 5px;
+        }
+        
+        .pontuacoes-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        
+        .pontuacoes-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .pontuacoes-table td.points {
+            font-weight: bold;
+            color: #10b981;
+            text-align: right;
+        }
+        
         /* Estilos gerais */
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -1117,7 +1149,7 @@
         <div class="section">
             <div class="section-header">
                 <h2>Histórico de Ocorrências</h2>
-                <button id="pontosBtn" class="pontuacoes-btn" onclick="abrirModalPontuacoes()">
+                <button id="pontosBtn" class="pontuacoes-btn">
                     <span>📋</span>
                     <span>Ver Tabela de Pontuação</span>
                 </button>
@@ -1290,6 +1322,109 @@
                 <div class="detail-actions" id="detailActions" style="display: none; margin-top: 20px; text-align: right;">
                     <button id="editEventBtn" class="edit-btn">Editar</button>
                 </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Tabela de Pontuação -->
+    <div id="pontuacoesModal" class="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Tabela de Pontuação</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="pontuacoes-content">
+                <h3>Armas</h3>
+                <table class="pontuacoes-table">
+                    <tr>
+                        <td>Apreensão de arma de fogo</td>
+                        <td class="points">100 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Apreensão de arma branca</td>
+                        <td class="points">25 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Apreensão de simulacro</td>
+                        <td class="points">40 pts</td>
+                    </tr>
+                </table>
+                
+                <h3>Entorpecentes</h3>
+                <table class="pontuacoes-table">
+                    <tr>
+                        <td>Até 20g</td>
+                        <td class="points">20 pts</td>
+                    </tr>
+                    <tr>
+                        <td>21g-50g</td>
+                        <td class="points">35 pts</td>
+                    </tr>
+                    <tr>
+                        <td>51g-100g</td>
+                        <td class="points">50 pts</td>
+                    </tr>
+                    <tr>
+                        <td>101g-200g</td>
+                        <td class="points">70 pts</td>
+                    </tr>
+                    <tr>
+                        <td>201g-499g</td>
+                        <td class="points">90 pts</td>
+                    </tr>
+                    <tr>
+                        <td>500g-999g</td>
+                        <td class="points">120 pts</td>
+                    </tr>
+                    <tr>
+                        <td>1kg-1,9kg</td>
+                        <td class="points">160 pts</td>
+                    </tr>
+                    <tr>
+                        <td>2kg+</td>
+                        <td class="points">200 pts</td>
+                    </tr>
+                </table>
+                
+                <h3>Crimes</h3>
+                <table class="pontuacoes-table">
+                    <tr>
+                        <td>Furto</td>
+                        <td class="points">60 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Homicídio</td>
+                        <td class="points">150 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Maria da Penha</td>
+                        <td class="points">60 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Ato infracional</td>
+                        <td class="points">50 pts</td>
+                    </tr>
+                </table>
+                
+                <h3>Veículos e Foragidos</h3>
+                <table class="pontuacoes-table">
+                    <tr>
+                        <td>Recuperação de veículo</td>
+                        <td class="points">100 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Veículo com adulteração</td>
+                        <td class="points">60 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Mandado de prisão</td>
+                        <td class="points">100 pts</td>
+                    </tr>
+                    <tr>
+                        <td>Descumprimento de medida</td>
+                        <td class="points">70 pts</td>
+                    </tr>
+                </table>
             </div>
         </div>
     </div>
@@ -2257,6 +2392,14 @@
                 });
             }
             
+            // Função para abrir modal com tabela de pontuações
+            function abrirModalPontuacoes() {
+                const pontuacoesModal = document.getElementById('pontuacoesModal');
+                if (pontuacoesModal) {
+                    pontuacoesModal.style.display = 'flex';
+                }
+            }
+            
             // Configurar botões e formulários
             function configurarModals() {
                 // Configurar o botão de adicionar evento
@@ -2307,6 +2450,14 @@
                             
                             alert('Pontuação zerada com sucesso!');
                         }
+                    };
+                }
+                
+                // Configurar botão de tabela de pontuação
+                const pontosBtn = document.getElementById('pontosBtn');
+                if (pontosBtn) {
+                    pontosBtn.onclick = function() {
+                        abrirModalPontuacoes();
                     };
                 }
                 
