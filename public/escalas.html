@@ -560,6 +560,277 @@
         }
         
         /* Responsividade */
+        /* Estilos para botões de edição */
+        .edit-btn {
+            background-color: rgba(59, 130, 246, 0.1);
+            color: #3b82f6;
+            border: 1px solid rgba(59, 130, 246, 0.3);
+            border-radius: 6px;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            margin-left: auto;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .edit-btn:hover {
+            background-color: rgba(59, 130, 246, 0.2);
+            transform: translateY(-2px);
+        }
+        
+        .aniversariantes-titulo,
+        .equipe-title,
+        .info-title {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        /* Estilos para os modais */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            visibility: hidden;
+            opacity: 0;
+            transition: opacity 0.3s ease, visibility 0.3s ease;
+        }
+        
+        .modal-overlay.active {
+            visibility: visible;
+            opacity: 1;
+        }
+        
+        .modal-container {
+            background-color: white;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+            padding: 1.5rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+            position: relative;
+            transform: translateY(20px);
+            transition: transform 0.3s ease;
+        }
+        
+        .modal-overlay.active .modal-container {
+            transform: translateY(0);
+        }
+        
+        .modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 1.5rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid #e2e8f0;
+        }
+        
+        .modal-title {
+            font-size: 1.3rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        
+        .modal-close {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            font-size: 1.5rem;
+            color: #64748b;
+            transition: color 0.2s ease;
+        }
+        
+        .modal-close:hover {
+            color: #e11d48;
+        }
+        
+        .modal-body {
+            margin-bottom: 1.5rem;
+        }
+        
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+            color: #334155;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+            margin-bottom: 0.5rem;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-select {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            transition: border-color 0.2s ease;
+            margin-bottom: 0.5rem;
+            background-color: white;
+        }
+        
+        .form-select:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+        
+        .form-button {
+            padding: 0.6rem 1.2rem;
+            background-color: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background-color 0.2s ease, transform 0.2s ease;
+        }
+        
+        .form-button:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+        }
+        
+        .form-button.cancel {
+            background-color: #f1f5f9;
+            color: #64748b;
+            border: 1px solid #cbd5e1;
+            margin-right: 0.5rem;
+        }
+        
+        .form-button.cancel:hover {
+            background-color: #e2e8f0;
+        }
+        
+        .form-button.danger {
+            background-color: #ef4444;
+        }
+        
+        .form-button.danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid #e2e8f0;
+        }
+        
+        .item-list {
+            max-height: 300px;
+            overflow-y: auto;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            padding: 0.5rem 0;
+        }
+        
+        .item-row {
+            display: flex;
+            align-items: center;
+            padding: 0.75rem 1rem;
+            border-bottom: 1px solid #f1f5f9;
+        }
+        
+        .item-row:last-child {
+            border-bottom: none;
+        }
+        
+        .item-text {
+            flex: 1;
+        }
+        
+        .item-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .item-btn {
+            background-color: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 4px;
+            color: #64748b;
+            transition: color 0.2s ease, background-color 0.2s ease;
+        }
+        
+        .item-btn:hover {
+            background-color: rgba(100, 116, 139, 0.1);
+        }
+        
+        .item-btn.edit:hover {
+            color: #0284c7;
+        }
+        
+        .item-btn.delete:hover {
+            color: #e11d48;
+        }
+        
+        .login-form {
+            max-width: 350px;
+            margin: 0 auto;
+        }
+        
+        /* Alertas */
+        .alert {
+            padding: 0.75rem 1rem;
+            border-radius: 6px;
+            margin-bottom: 1rem;
+            font-size: 0.95rem;
+        }
+        
+        .alert-info {
+            background-color: #e0f2fe;
+            color: #0284c7;
+            border-left: 4px solid #0284c7;
+        }
+        
+        .alert-error {
+            background-color: #fee2e2;
+            color: #b91c1c;
+            border-left: 4px solid #b91c1c;
+        }
+        
+        .alert-success {
+            background-color: #dcfce7;
+            color: #15803d;
+            border-left: 4px solid #15803d;
+        }
+        
         @media (max-width: 768px) {
             header {
                 flex-direction: column;
@@ -888,6 +1159,9 @@
                     <div class="equipe-title">
                         <span class="equipe-title-badge badge-bravo">BRAVO</span>
                         Equipe Bravo (9 Policiais)
+                        <button id="editEquipeBravoBtn" class="edit-btn admin-only" style="display: none;">
+                            <span>✏️</span> Editar
+                        </button>
                     </div>
                     <ul class="equipe-membros">
                         <li class="equipe-membro"><strong>1º SGT PM OLIMAR</strong></li>
@@ -906,6 +1180,9 @@
                     <div class="equipe-title">
                         <span class="equipe-title-badge badge-charlie">CHARLIE</span>
                         Equipe Charlie (10 Policiais)
+                        <button id="editEquipeCharlieBtn" class="edit-btn admin-only" style="display: none;">
+                            <span>✏️</span> Editar
+                        </button>
                     </div>
                     <ul class="equipe-membros">
                         <li class="equipe-membro"><strong>2º SGT PM PINHEIRO</strong></li>
@@ -924,7 +1201,12 @@
             
             <div class="info-container">
                 <div class="info-box box-ferias">
-                    <div class="info-title">1 - FÉRIAS</div>
+                    <div class="info-title">
+                        1 - FÉRIAS
+                        <button id="editFeriasBtn" class="edit-btn admin-only" style="display: none;">
+                            <span>✏️</span> Editar
+                        </button>
+                    </div>
                     <ul class="info-list">
                         <li class="info-item">
                             <span class="info-destaque">CB PM ALAX</span> (BRAVO)
@@ -936,7 +1218,12 @@
                 </div>
                 
                 <div class="info-box box-licencas">
-                    <div class="info-title">2 - LICENÇA ESPECIAL</div>
+                    <div class="info-title">
+                        2 - LICENÇA ESPECIAL
+                        <button id="editLicencasBtn" class="edit-btn admin-only" style="display: none;">
+                            <span>✏️</span> Editar
+                        </button>
+                    </div>
                     <ul class="info-list">
                         <li class="info-item">
                             <span class="info-destaque">2º SGT PM A. TAVARES</span> (EXPEDIENTE)
@@ -945,7 +1232,12 @@
                 </div>
                 
                 <div class="info-box box-expediente">
-                    <div class="info-title">3 - EXPEDIENTE</div>
+                    <div class="info-title">
+                        3 - EXPEDIENTE
+                        <button id="editExpedienteBtn" class="edit-btn admin-only" style="display: none;">
+                            <span>✏️</span> Editar
+                        </button>
+                    </div>
                     <ul class="info-list">
                         <li class="info-item">CAP QOPM MUNIZ</li>
                         <li class="info-item">
@@ -982,6 +1274,126 @@
         </div>
     </div>
     
+    <!-- Modais para edição de conteúdo -->
+    <!-- Modal de Login -->
+    <div id="loginModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">Acesso Administrativo</div>
+                <button class="modal-close" id="closeLoginModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="loginAlert" class="alert alert-error" style="display: none;"></div>
+                <form id="loginForm" class="login-form">
+                    <div class="form-group">
+                        <label class="form-label" for="username">Usuário</label>
+                        <input type="text" id="username" name="username" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="password">Senha</label>
+                        <input type="password" id="password" name="password" class="form-input" required>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button class="form-button cancel" id="cancelLogin">Cancelar</button>
+                <button class="form-button" id="submitLogin">Entrar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Aniversariantes -->
+    <div id="aniversariantesModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title">Editar Aniversariantes</div>
+                <button class="modal-close" id="closeAniversariantesModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="item-list" id="aniversariantesList">
+                    <!-- Lista de aniversariantes será preenchida via JavaScript -->
+                </div>
+                <button class="form-button" id="addAniversarianteBtn">Adicionar Novo</button>
+                
+                <div id="aniversarianteForm" style="display: none; margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: #334155;">Dados do Aniversariante</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="aniversarianteNome">Nome</label>
+                        <input type="text" id="aniversarianteNome" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="aniversarianteData">Data do Aniversário</label>
+                        <input type="date" id="aniversarianteData" class="form-input" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label" for="aniversarianteCargo">Cargo/Função</label>
+                        <input type="text" id="aniversarianteCargo" class="form-input" required>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="form-button cancel" id="cancelAniversarianteForm">Cancelar</button>
+                        <button class="form-button" id="saveAniversarianteForm">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Equipe -->
+    <div id="equipeModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title" id="equipeModalTitle">Editar Equipe</div>
+                <button class="modal-close" id="closeEquipeModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="item-list" id="equipeMembersList">
+                    <!-- Lista de membros da equipe será preenchida via JavaScript -->
+                </div>
+                <button class="form-button" id="addMembroBtn">Adicionar Novo</button>
+                
+                <div id="membroForm" style="display: none; margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: #334155;">Dados do Policial</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="membroNome">Nome Completo</label>
+                        <input type="text" id="membroNome" class="form-input" required>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="form-button cancel" id="cancelMembroForm">Cancelar</button>
+                        <button class="form-button" id="saveMembroForm">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal de Edição de Informações (Férias, Licenças, Expediente) -->
+    <div id="infoModal" class="modal-overlay">
+        <div class="modal-container">
+            <div class="modal-header">
+                <div class="modal-title" id="infoModalTitle">Editar Informações</div>
+                <button class="modal-close" id="closeInfoModal">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="item-list" id="infoList">
+                    <!-- Lista de informações será preenchida via JavaScript -->
+                </div>
+                <button class="form-button" id="addInfoBtn">Adicionar Novo</button>
+                
+                <div id="infoForm" style="display: none; margin-top: 1.5rem;">
+                    <h3 style="margin-bottom: 1rem; font-size: 1.1rem; color: #334155;">Dados da Informação</h3>
+                    <div class="form-group">
+                        <label class="form-label" for="infoTexto">Informação</label>
+                        <input type="text" id="infoTexto" class="form-input" required>
+                    </div>
+                    <div style="display: flex; gap: 0.5rem; margin-top: 1rem;">
+                        <button class="form-button cancel" id="cancelInfoForm">Cancelar</button>
+                        <button class="form-button" id="saveInfoForm">Salvar</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         &copy; 2025 - 20ª CIPM - Quadro de Distribuição de Guarnições
     </footer>
@@ -1027,6 +1439,748 @@
                     cell.style.zIndex = '5';
                 }
             });
+            
+            // Sistema de autenticação
+            let isAdmin = false;
+            const adminButtons = document.querySelectorAll('.admin-only');
+            
+            function checkLocalAuth() {
+                const userData = localStorage.getItem('escalasUserData');
+                if (userData) {
+                    try {
+                        const user = JSON.parse(userData);
+                        if (user && user.isAdmin) {
+                            isAdmin = true;
+                            showAdminUI();
+                        }
+                    } catch (e) {
+                        console.error('Erro ao processar dados de autenticação:', e);
+                        localStorage.removeItem('escalasUserData');
+                    }
+                }
+            }
+            
+            function showAdminUI() {
+                adminButtons.forEach(btn => {
+                    btn.style.display = 'flex';
+                });
+                document.getElementById('loginBtn').textContent = 'Sair';
+                document.getElementById('loginBtn').addEventListener('click', logout, { once: true });
+            }
+            
+            function hideAdminUI() {
+                adminButtons.forEach(btn => {
+                    btn.style.display = 'none';
+                });
+                document.getElementById('loginBtn').innerHTML = '<span>🔐</span><span>Área Administrativa</span>';
+                document.getElementById('loginBtn').addEventListener('click', openLoginModal, { once: true });
+            }
+            
+            function logout() {
+                isAdmin = false;
+                localStorage.removeItem('escalasUserData');
+                hideAdminUI();
+                alert('Você saiu da área administrativa.');
+            }
+            
+            // Gerenciamento de login
+            const loginBtn = document.getElementById('loginBtn');
+            const loginModal = document.getElementById('loginModal');
+            const closeLoginModal = document.getElementById('closeLoginModal');
+            const cancelLogin = document.getElementById('cancelLogin');
+            const submitLogin = document.getElementById('submitLogin');
+            const loginForm = document.getElementById('loginForm');
+            const loginAlert = document.getElementById('loginAlert');
+            
+            function openLoginModal() {
+                loginModal.classList.add('active');
+                document.getElementById('username').focus();
+            }
+            
+            function closeLoginModalHandler() {
+                loginModal.classList.remove('active');
+                loginForm.reset();
+                loginAlert.style.display = 'none';
+            }
+            
+            function handleLogin(e) {
+                e.preventDefault();
+                const username = document.getElementById('username').value;
+                const password = document.getElementById('password').value;
+                
+                console.log('Tentando login com:', { username, password });
+                
+                // Validação simples - Somente para demonstração
+                if (username === 'admin' && password === 'admin123') {
+                    const userData = {
+                        id: 1,
+                        username: 'admin',
+                        fullName: 'Administrador',
+                        isAdmin: true
+                    };
+                    
+                    localStorage.setItem('escalasUserData', JSON.stringify(userData));
+                    isAdmin = true;
+                    console.log('Login bem-sucedido:', userData);
+                    
+                    closeLoginModalHandler();
+                    showAdminUI();
+                } else {
+                    loginAlert.textContent = 'Usuário ou senha incorretos. Tente novamente.';
+                    loginAlert.style.display = 'block';
+                    console.error('Erro no login:', {});
+                }
+            }
+            
+            // Inicialização dos dados
+            function initializeLocalStorage() {
+                // Inicializar aniversariantes
+                if (!localStorage.getItem('aniversariantes')) {
+                    const aniversariantesDefault = [
+                        {
+                            id: 1,
+                            nome: 'TEN VANILSON',
+                            data: '2025-04-15',
+                            cargo: 'Chefe do P2 e P4'
+                        },
+                        {
+                            id: 2,
+                            nome: 'SD DA SILVA',
+                            data: '2025-04-22',
+                            cargo: 'Equipe Charlie'
+                        }
+                    ];
+                    localStorage.setItem('aniversariantes', JSON.stringify(aniversariantesDefault));
+                }
+                
+                // Inicializar equipes
+                if (!localStorage.getItem('equipe_alfa')) {
+                    const equipesDefault = {
+                        alfa: [
+                            '2º SGT PM PEIXOTO',
+                            '3º SGT PM RODRIGO',
+                            '3º SGT PM LEDO',
+                            '3º SGT PM NUNES',
+                            '3º SGT PM AMARAL',
+                            'CB PM CARLA',
+                            'CB PM FELIPE',
+                            'CB PM BARROS',
+                            'CB PM A. SILVA',
+                            'SD PM LUAN',
+                            'SD PM NAVARRO'
+                        ],
+                        bravo: [
+                            '1º SGT PM OLIMAR',
+                            '2º SGT PM FÁBIO',
+                            '3º SGT PM ANA CLEIDE',
+                            '3º SGT PM GLEIDSON',
+                            '3º SGT PM CARLOS EDUARDO',
+                            '3º SGT PM NEGRÃO',
+                            'CB PM BRASIL',
+                            'SD PM MARVÃO',
+                            'SD PM IDELVAN'
+                        ],
+                        charlie: [
+                            '2º SGT PM PINHEIRO',
+                            '3º SGT PM RAFAEL',
+                            'CB PM MIQUEIAS',
+                            'CB PM M. PAIXÃO',
+                            'SD PM CHAGAS',
+                            'SD PM CARVALHO',
+                            'SD PM GOVEIA',
+                            'SD PM ALMEIDA',
+                            'SD PM PATRIK',
+                            'SD PM GUIMARÃES'
+                        ]
+                    };
+                    
+                    localStorage.setItem('equipe_alfa', JSON.stringify(equipesDefault.alfa));
+                    localStorage.setItem('equipe_bravo', JSON.stringify(equipesDefault.bravo));
+                    localStorage.setItem('equipe_charlie', JSON.stringify(equipesDefault.charlie));
+                }
+                
+                // Inicializar informações administrativas
+                if (!localStorage.getItem('info_ferias')) {
+                    const infoDefault = {
+                        ferias: [
+                            'CB PM ALAX (BRAVO)',
+                            'CB PM VELOSO (BRAVO)'
+                        ],
+                        licencas: [
+                            '2º SGT PM A. TAVARES (EXPEDIENTE)'
+                        ],
+                        expediente: [
+                            'CAP QOPM MUNIZ',
+                            '1º TEN QOPM MONTEIRO (CHEFE DO P1 E P3)',
+                            'TEN VANILSON (CHEFE DO P2 E P4)',
+                            'SUB TEN ANDRÉ (AUXL. DO P2)',
+                            '3º SGT PM CUNHA (AUXL. DO P)',
+                            '3º SGT PM CARAVELAS (AUXL. DO P4)',
+                            'CB PM TONI (AUXL. DO P4)',
+                            'SD PM S. CORREA (ESTAFETA)',
+                            'SD PM RODRIGUES (AUXL. DO P4)'
+                        ]
+                    };
+                    
+                    localStorage.setItem('info_ferias', JSON.stringify(infoDefault.ferias));
+                    localStorage.setItem('info_licencas', JSON.stringify(infoDefault.licencas));
+                    localStorage.setItem('info_expediente', JSON.stringify(infoDefault.expediente));
+                }
+            }
+            
+            // Event Listeners
+            loginBtn.addEventListener('click', openLoginModal, { once: true });
+            closeLoginModal.addEventListener('click', closeLoginModalHandler);
+            cancelLogin.addEventListener('click', closeLoginModalHandler);
+            submitLogin.addEventListener('click', handleLogin);
+            
+            // Inicialização
+            initializeLocalStorage();
+            checkLocalAuth();
+            
+            // Implementar a edição dos aniversariantes
+            const editAniversariantesBtn = document.getElementById('editAniversariantesBtn');
+            const aniversariantesModal = document.getElementById('aniversariantesModal');
+            const closeAniversariantesModal = document.getElementById('closeAniversariantesModal');
+            const aniversariantesList = document.getElementById('aniversariantesList');
+            const addAniversarianteBtn = document.getElementById('addAniversarianteBtn');
+            const aniversarianteForm = document.getElementById('aniversarianteForm');
+            const cancelAniversarianteForm = document.getElementById('cancelAniversarianteForm');
+            const saveAniversarianteForm = document.getElementById('saveAniversarianteForm');
+            
+            let editingAniversarianteId = null;
+            
+            function openAniversariantesModal() {
+                renderAniversariantesList();
+                aniversariantesModal.classList.add('active');
+            }
+            
+            function closeAniversariantesModal() {
+                aniversariantesModal.classList.remove('active');
+                hideAniversarianteForm();
+            }
+            
+            function renderAniversariantesList() {
+                const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+                aniversariantesList.innerHTML = '';
+                
+                aniversariantes.forEach(aniversariante => {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'item-row';
+                    
+                    const dataFormatada = formatarData(aniversariante.data);
+                    
+                    itemRow.innerHTML = `
+                        <div class="item-text">
+                            <strong>${aniversariante.nome}</strong> - ${dataFormatada}<br>
+                            <small>${aniversariante.cargo}</small>
+                        </div>
+                        <div class="item-actions">
+                            <button class="item-btn edit" data-id="${aniversariante.id}">✏️</button>
+                            <button class="item-btn delete" data-id="${aniversariante.id}">🗑️</button>
+                        </div>
+                    `;
+                    
+                    aniversariantesList.appendChild(itemRow);
+                });
+                
+                // Adicionar event listeners
+                const editButtons = aniversariantesList.querySelectorAll('.item-btn.edit');
+                const deleteButtons = aniversariantesList.querySelectorAll('.item-btn.delete');
+                
+                editButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.getAttribute('data-id'));
+                        editAniversariante(id);
+                    });
+                });
+                
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const id = parseInt(btn.getAttribute('data-id'));
+                        deleteAniversariante(id);
+                    });
+                });
+            }
+            
+            function showAniversarianteForm() {
+                aniversarianteForm.style.display = 'block';
+                addAniversarianteBtn.style.display = 'none';
+            }
+            
+            function hideAniversarianteForm() {
+                aniversarianteForm.style.display = 'none';
+                addAniversarianteBtn.style.display = 'block';
+                document.getElementById('aniversarianteNome').value = '';
+                document.getElementById('aniversarianteData').value = '';
+                document.getElementById('aniversarianteCargo').value = '';
+                editingAniversarianteId = null;
+            }
+            
+            function addAniversariante() {
+                showAniversarianteForm();
+            }
+            
+            function editAniversariante(id) {
+                const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+                const aniversariante = aniversariantes.find(a => a.id === id);
+                
+                if (aniversariante) {
+                    document.getElementById('aniversarianteNome').value = aniversariante.nome;
+                    document.getElementById('aniversarianteData').value = aniversariante.data;
+                    document.getElementById('aniversarianteCargo').value = aniversariante.cargo;
+                    editingAniversarianteId = id;
+                    showAniversarianteForm();
+                }
+            }
+            
+            function saveAniversariante() {
+                const nome = document.getElementById('aniversarianteNome').value;
+                const data = document.getElementById('aniversarianteData').value;
+                const cargo = document.getElementById('aniversarianteCargo').value;
+                
+                if (!nome || !data || !cargo) {
+                    alert('Preencha todos os campos!');
+                    return;
+                }
+                
+                const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+                
+                if (editingAniversarianteId) {
+                    // Editar existente
+                    const index = aniversariantes.findIndex(a => a.id === editingAniversarianteId);
+                    if (index !== -1) {
+                        aniversariantes[index] = {
+                            id: editingAniversarianteId,
+                            nome,
+                            data,
+                            cargo
+                        };
+                    }
+                } else {
+                    // Adicionar novo
+                    const newId = aniversariantes.length > 0 ? Math.max(...aniversariantes.map(a => a.id)) + 1 : 1;
+                    aniversariantes.push({
+                        id: newId,
+                        nome,
+                        data,
+                        cargo
+                    });
+                }
+                
+                localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
+                hideAniversarianteForm();
+                renderAniversariantesList();
+                updateAniversariantesUI();
+            }
+            
+            function deleteAniversariante(id) {
+                if (confirm('Tem certeza que deseja excluir este aniversariante?')) {
+                    let aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+                    aniversariantes = aniversariantes.filter(a => a.id !== id);
+                    localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
+                    renderAniversariantesList();
+                    updateAniversariantesUI();
+                }
+            }
+            
+            function formatarData(dataISO) {
+                const data = new Date(dataISO);
+                const dia = data.getDate().toString().padStart(2, '0');
+                const mes = (data.getMonth() + 1).toString().padStart(2, '0');
+                
+                const nomesMeses = [
+                    'Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho',
+                    'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'
+                ];
+                
+                return `${dia} de ${nomesMeses[data.getMonth()]}`;
+            }
+            
+            function updateAniversariantesUI() {
+                const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+                const container = document.querySelector('.aniversariantes-lista');
+                container.innerHTML = '';
+                
+                aniversariantes.forEach(aniv => {
+                    const card = document.createElement('div');
+                    card.className = 'aniversariante-card aniversariante-destaque';
+                    
+                    const dataFormatada = formatarData(aniv.data);
+                    
+                    card.innerHTML = `
+                        <div class="aniversariante-nome">${aniv.nome}</div>
+                        <div class="aniversariante-data">
+                            <span>🗓️</span>
+                            <span>${dataFormatada}</span>
+                        </div>
+                        <div class="aniversariante-cargo">${aniv.cargo}</div>
+                    `;
+                    
+                    container.appendChild(card);
+                });
+            }
+            
+            // Event listeners para aniversariantes
+            editAniversariantesBtn.addEventListener('click', openAniversariantesModal);
+            closeAniversariantesModal.addEventListener('click', closeAniversariantesModal);
+            addAniversarianteBtn.addEventListener('click', addAniversariante);
+            cancelAniversarianteForm.addEventListener('click', hideAniversarianteForm);
+            saveAniversarianteForm.addEventListener('click', saveAniversariante);
+            
+            // Implementar edição de equipes
+            const editEquipeAlfaBtn = document.getElementById('editEquipeAlfaBtn');
+            const editEquipeBravoBtn = document.getElementById('editEquipeBravoBtn');
+            const editEquipeCharlieBtn = document.getElementById('editEquipeCharlieBtn');
+            const equipeModal = document.getElementById('equipeModal');
+            const closeEquipeModal = document.getElementById('closeEquipeModal');
+            const equipeMembersList = document.getElementById('equipeMembersList');
+            const equipeModalTitle = document.getElementById('equipeModalTitle');
+            const addMembroBtn = document.getElementById('addMembroBtn');
+            const membroForm = document.getElementById('membroForm');
+            const cancelMembroForm = document.getElementById('cancelMembroForm');
+            const saveMembroForm = document.getElementById('saveMembroForm');
+            
+            let currentEquipe = null;
+            let editingMembroIndex = null;
+            
+            function openEquipeModal(equipe) {
+                currentEquipe = equipe;
+                equipeModalTitle.textContent = `Editar Equipe ${equipe.toUpperCase()}`;
+                renderEquipeMembersList();
+                equipeModal.classList.add('active');
+            }
+            
+            function closeEquipeModal() {
+                equipeModal.classList.remove('active');
+                hideMembroForm();
+                currentEquipe = null;
+            }
+            
+            function renderEquipeMembersList() {
+                const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+                equipeMembersList.innerHTML = '';
+                
+                membros.forEach((membro, index) => {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'item-row';
+                    
+                    itemRow.innerHTML = `
+                        <div class="item-text">
+                            <strong>${membro}</strong>
+                        </div>
+                        <div class="item-actions">
+                            <button class="item-btn edit" data-index="${index}">✏️</button>
+                            <button class="item-btn delete" data-index="${index}">🗑️</button>
+                        </div>
+                    `;
+                    
+                    equipeMembersList.appendChild(itemRow);
+                });
+                
+                // Adicionar event listeners
+                const editButtons = equipeMembersList.querySelectorAll('.item-btn.edit');
+                const deleteButtons = equipeMembersList.querySelectorAll('.item-btn.delete');
+                
+                editButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        editMembro(index);
+                    });
+                });
+                
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        deleteMembro(index);
+                    });
+                });
+            }
+            
+            function showMembroForm() {
+                membroForm.style.display = 'block';
+                addMembroBtn.style.display = 'none';
+            }
+            
+            function hideMembroForm() {
+                membroForm.style.display = 'none';
+                addMembroBtn.style.display = 'block';
+                document.getElementById('membroNome').value = '';
+                editingMembroIndex = null;
+            }
+            
+            function addMembro() {
+                showMembroForm();
+            }
+            
+            function editMembro(index) {
+                const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+                if (index >= 0 && index < membros.length) {
+                    document.getElementById('membroNome').value = membros[index];
+                    editingMembroIndex = index;
+                    showMembroForm();
+                }
+            }
+            
+            function saveMembro() {
+                const nome = document.getElementById('membroNome').value;
+                
+                if (!nome) {
+                    alert('Preencha o nome do policial!');
+                    return;
+                }
+                
+                const membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+                
+                if (editingMembroIndex !== null) {
+                    // Editar existente
+                    membros[editingMembroIndex] = nome;
+                } else {
+                    // Adicionar novo
+                    membros.push(nome);
+                }
+                
+                localStorage.setItem(`equipe_${currentEquipe}`, JSON.stringify(membros));
+                hideMembroForm();
+                renderEquipeMembersList();
+                updateEquipesUI();
+            }
+            
+            function deleteMembro(index) {
+                if (confirm('Tem certeza que deseja excluir este policial da equipe?')) {
+                    let membros = JSON.parse(localStorage.getItem(`equipe_${currentEquipe}`) || '[]');
+                    membros.splice(index, 1);
+                    localStorage.setItem(`equipe_${currentEquipe}`, JSON.stringify(membros));
+                    renderEquipeMembersList();
+                    updateEquipesUI();
+                }
+            }
+            
+            function updateEquipesUI() {
+                const equipes = ['alfa', 'bravo', 'charlie'];
+                
+                equipes.forEach(equipe => {
+                    const membros = JSON.parse(localStorage.getItem(`equipe_${equipe}`) || '[]');
+                    const container = document.querySelector(`.equipe-${equipe} .equipe-membros`);
+                    container.innerHTML = '';
+                    
+                    membros.forEach(membro => {
+                        const li = document.createElement('li');
+                        li.className = 'equipe-membro';
+                        li.innerHTML = `<strong>${membro}</strong>`;
+                        container.appendChild(li);
+                    });
+                    
+                    // Atualizar o contador de policiais no título
+                    const title = document.querySelector(`.equipe-${equipe} .equipe-title`);
+                    const badge = title.querySelector(`.equipe-title-badge.badge-${equipe}`);
+                    const editBtn = title.querySelector(`#editEquipe${equipe.charAt(0).toUpperCase() + equipe.slice(1)}Btn`);
+                    
+                    title.innerHTML = '';
+                    title.appendChild(badge);
+                    title.appendChild(document.createTextNode(` Equipe ${equipe.charAt(0).toUpperCase() + equipe.slice(1)} (${membros.length} Policiais)`));
+                    if (editBtn) {
+                        title.appendChild(editBtn);
+                    }
+                });
+            }
+            
+            // Event listeners para equipes
+            if (editEquipeAlfaBtn) {
+                editEquipeAlfaBtn.addEventListener('click', () => openEquipeModal('alfa'));
+            }
+            if (editEquipeBravoBtn) {
+                editEquipeBravoBtn.addEventListener('click', () => openEquipeModal('bravo'));
+            }
+            if (editEquipeCharlieBtn) {
+                editEquipeCharlieBtn.addEventListener('click', () => openEquipeModal('charlie'));
+            }
+            closeEquipeModal.addEventListener('click', closeEquipeModal);
+            addMembroBtn.addEventListener('click', addMembro);
+            cancelMembroForm.addEventListener('click', hideMembroForm);
+            saveMembroForm.addEventListener('click', saveMembro);
+            
+            // Implementar edição de informações administrativas
+            const editFeriasBtn = document.getElementById('editFeriasBtn');
+            const editLicencasBtn = document.getElementById('editLicencasBtn');
+            const editExpedienteBtn = document.getElementById('editExpedienteBtn');
+            const infoModal = document.getElementById('infoModal');
+            const closeInfoModal = document.getElementById('closeInfoModal');
+            const infoList = document.getElementById('infoList');
+            const infoModalTitle = document.getElementById('infoModalTitle');
+            const addInfoBtn = document.getElementById('addInfoBtn');
+            const infoForm = document.getElementById('infoForm');
+            const cancelInfoForm = document.getElementById('cancelInfoForm');
+            const saveInfoForm = document.getElementById('saveInfoForm');
+            
+            let currentInfoType = null;
+            let editingInfoIndex = null;
+            
+            function openInfoModal(infoType) {
+                const infoTypes = {
+                    'ferias': 'Férias',
+                    'licencas': 'Licença Especial',
+                    'expediente': 'Expediente'
+                };
+                
+                currentInfoType = infoType;
+                infoModalTitle.textContent = `Editar ${infoTypes[infoType]}`;
+                renderInfoList();
+                infoModal.classList.add('active');
+            }
+            
+            function closeInfoModal() {
+                infoModal.classList.remove('active');
+                hideInfoForm();
+                currentInfoType = null;
+            }
+            
+            function renderInfoList() {
+                const infos = JSON.parse(localStorage.getItem(`info_${currentInfoType}`) || '[]');
+                infoList.innerHTML = '';
+                
+                infos.forEach((info, index) => {
+                    const itemRow = document.createElement('div');
+                    itemRow.className = 'item-row';
+                    
+                    itemRow.innerHTML = `
+                        <div class="item-text">
+                            ${info}
+                        </div>
+                        <div class="item-actions">
+                            <button class="item-btn edit" data-index="${index}">✏️</button>
+                            <button class="item-btn delete" data-index="${index}">🗑️</button>
+                        </div>
+                    `;
+                    
+                    infoList.appendChild(itemRow);
+                });
+                
+                // Adicionar event listeners
+                const editButtons = infoList.querySelectorAll('.item-btn.edit');
+                const deleteButtons = infoList.querySelectorAll('.item-btn.delete');
+                
+                editButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        editInfo(index);
+                    });
+                });
+                
+                deleteButtons.forEach(btn => {
+                    btn.addEventListener('click', () => {
+                        const index = parseInt(btn.getAttribute('data-index'));
+                        deleteInfo(index);
+                    });
+                });
+            }
+            
+            function showInfoForm() {
+                infoForm.style.display = 'block';
+                addInfoBtn.style.display = 'none';
+            }
+            
+            function hideInfoForm() {
+                infoForm.style.display = 'none';
+                addInfoBtn.style.display = 'block';
+                document.getElementById('infoTexto').value = '';
+                editingInfoIndex = null;
+            }
+            
+            function addInfo() {
+                showInfoForm();
+            }
+            
+            function editInfo(index) {
+                const infos = JSON.parse(localStorage.getItem(`info_${currentInfoType}`) || '[]');
+                if (index >= 0 && index < infos.length) {
+                    document.getElementById('infoTexto').value = infos[index];
+                    editingInfoIndex = index;
+                    showInfoForm();
+                }
+            }
+            
+            function saveInfo() {
+                const texto = document.getElementById('infoTexto').value;
+                
+                if (!texto) {
+                    alert('Preencha a informação!');
+                    return;
+                }
+                
+                const infos = JSON.parse(localStorage.getItem(`info_${currentInfoType}`) || '[]');
+                
+                if (editingInfoIndex !== null) {
+                    // Editar existente
+                    infos[editingInfoIndex] = texto;
+                } else {
+                    // Adicionar novo
+                    infos.push(texto);
+                }
+                
+                localStorage.setItem(`info_${currentInfoType}`, JSON.stringify(infos));
+                hideInfoForm();
+                renderInfoList();
+                updateInfoUI();
+            }
+            
+            function deleteInfo(index) {
+                if (confirm('Tem certeza que deseja excluir esta informação?')) {
+                    let infos = JSON.parse(localStorage.getItem(`info_${currentInfoType}`) || '[]');
+                    infos.splice(index, 1);
+                    localStorage.setItem(`info_${currentInfoType}`, JSON.stringify(infos));
+                    renderInfoList();
+                    updateInfoUI();
+                }
+            }
+            
+            function updateInfoUI() {
+                const infoTypes = ['ferias', 'licencas', 'expediente'];
+                
+                infoTypes.forEach(type => {
+                    const infos = JSON.parse(localStorage.getItem(`info_${type}`) || '[]');
+                    const container = document.querySelector(`.box-${type} .info-list`);
+                    container.innerHTML = '';
+                    
+                    infos.forEach(info => {
+                        const li = document.createElement('li');
+                        li.className = 'info-item';
+                        
+                        // Verifica se a informação contém parênteses para destacar
+                        if (info.includes('(')) {
+                            const parts = info.split('(');
+                            const nome = parts[0].trim();
+                            const complemento = '(' + parts[1];
+                            
+                            li.innerHTML = `<span class="info-destaque">${nome}</span> ${complemento}`;
+                        } else {
+                            li.textContent = info;
+                        }
+                        
+                        container.appendChild(li);
+                    });
+                });
+            }
+            
+            // Event listeners para informações administrativas
+            if (editFeriasBtn) {
+                editFeriasBtn.addEventListener('click', () => openInfoModal('ferias'));
+            }
+            if (editLicencasBtn) {
+                editLicencasBtn.addEventListener('click', () => openInfoModal('licencas'));
+            }
+            if (editExpedienteBtn) {
+                editExpedienteBtn.addEventListener('click', () => openInfoModal('expediente'));
+            }
+            closeInfoModal.addEventListener('click', closeInfoModal);
+            addInfoBtn.addEventListener('click', addInfo);
+            cancelInfoForm.addEventListener('click', hideInfoForm);
+            saveInfoForm.addEventListener('click', saveInfo);
+            
+            // Inicializar a interface com dados do localStorage
+            updateAniversariantesUI();
+            updateEquipesUI();
+            updateInfoUI();
         });
     </script>
 </body>
