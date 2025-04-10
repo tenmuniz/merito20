@@ -279,7 +279,6 @@
             font-weight: bold;
             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
             transition: transform 0.2s ease;
-            background-color: #f97316;
             color: white;
             white-space: nowrap;
         }
@@ -289,17 +288,18 @@
             margin-right: 3px;
         }
         
-        .card:nth-child(1) .ranking {
+        /* Classes específicas para cada posição do ranking */
+        .primeiro-lugar {
             background: linear-gradient(45deg, #ffd700, #ffeb3b);
             color: #333;
         }
         
-        .card:nth-child(2) .ranking {
+        .segundo-lugar {
             background: linear-gradient(45deg, #c0c0c0, #e0e0e0);
             color: #333;
         }
         
-        .card:nth-child(3) .ranking {
+        .terceiro-lugar {
             background: linear-gradient(45deg, #cd7f32, #d7a06c);
             color: #333;
         }
@@ -977,11 +977,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO ALFA</div>
-                        <div class="ranking"><span>1º</span>Lugar</div>
+                        <div class="ranking terceiro-lugar"><span>3º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
-                        <div id="alfa-points" class="points-value">0</div>
+                        <div id="alfa-points" class="points-value">95</div>
                     </div>
 
                 </div>
@@ -989,11 +989,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name">GUARNIÇÃO BRAVO</div>
-                        <div class="ranking"><span>2º</span>Lugar</div>
+                        <div class="ranking primeiro-lugar"><span>1º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
-                        <div id="bravo-points" class="points-value">0</div>
+                        <div id="bravo-points" class="points-value">180</div>
                     </div>
 
                 </div>
@@ -1001,11 +1001,11 @@
                 <div class="card">
                     <div class="card-header">
                         <div class="team-name" style="display: inline-block; white-space: nowrap; margin-right: 10px;">GUARNIÇÃO CHARLIE</div>
-                        <div class="ranking"><span>1º</span>Lugar</div>
+                        <div class="ranking segundo-lugar"><span>2º</span>Lugar</div>
                     </div>
                     <div class="points-container">
                         <div class="points-label">Pontuação Total</div>
-                        <div id="charlie-points" class="points-value">0</div>
+                        <div id="charlie-points" class="points-value">150</div>
                     </div>
 
                 </div>
@@ -1016,25 +1016,25 @@
                 <div class="podium-container">
                     <div class="podium-position second-place">
                         <div class="podium-number">2</div>
-                        <div class="podium-team">BRAVO</div>
+                        <div class="podium-team">CHARLIE</div>
                         <div class="podium-points-container">
-                            <span class="podium-points">0</span>
+                            <span class="podium-points">150</span>
                             <span class="podium-points-label">pts</span>
                         </div>
                     </div>
                     <div class="podium-position first-place">
                         <div class="podium-number">1</div>
-                        <div class="podium-team">ALFA</div>
+                        <div class="podium-team">BRAVO</div>
                         <div class="podium-points-container">
-                            <span class="podium-points">0</span>
+                            <span class="podium-points">180</span>
                             <span class="podium-points-label">pts</span>
                         </div>
                     </div>
                     <div class="podium-position third-place">
                         <div class="podium-number">3</div>
-                        <div class="podium-team">CHARLIE</div>
+                        <div class="podium-team">ALFA</div>
                         <div class="podium-points-container">
-                            <span class="podium-points">0</span>
+                            <span class="podium-points">95</span>
                             <span class="podium-points-label">pts</span>
                         </div>
                     </div>
