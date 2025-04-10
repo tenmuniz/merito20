@@ -7,6 +7,22 @@ document.addEventListener('DOMContentLoaded', function() {
     console.log("Inicializando sistema de autenticação...");
     criarModalLogin();
     setupAdminButton();
+    
+    // Bloquear funções de edição de equipes por segurança
+    window.toggleEditMode = function() {
+        console.warn("Funcionalidade de edição de equipes desativada");
+        return false;
+    };
+    
+    window.addMilitaryToTeam = function() {
+        console.warn("Funcionalidade de adição de militares às equipes desativada");
+        return false;
+    };
+    
+    window.initTeamEditor = function() {
+        console.warn("Editor de equipes desativado");
+        return false;
+    };
 });
 
 function criarModalLogin() {
@@ -147,13 +163,20 @@ function verificarAutenticacao() {
 function atualizarInterfaceAutenticada() {
     console.log("Atualizando interface para usuário autenticado");
     
-    // Mostrar elementos administrativos
+    // Mostrar elementos administrativos, exceto os relacionados à edição de equipes
     const adminElements = document.querySelectorAll('.admin-only');
     adminElements.forEach(el => {
-        const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
-        el.style.display = originalDisplay;
-        el.style.pointerEvents = 'auto';
-        el.style.cursor = 'pointer';
+        const id = el.id || '';
+        // Se o ID contém "editEquipe", não mostrar o elemento
+        if (!id.includes('editEquipe')) {
+            const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
+            el.style.display = originalDisplay;
+            el.style.pointerEvents = 'auto';
+            el.style.cursor = 'pointer';
+        } else {
+            // Manter ocultos os elementos de edição de equipes
+            el.style.display = 'none';
+        }
     });
     
     // Mostrar a área administrativa

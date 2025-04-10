@@ -83,9 +83,13 @@ document.addEventListener('DOMContentLoaded', function() {
             adminBotoes.style.display = 'flex';
         }
         
-        // Mostrar outros elementos administrativos
+        // Mostrar apenas elementos administrativos que não sejam de edição de equipes
         document.querySelectorAll('.admin-only').forEach(el => {
-            el.style.display = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
+            // Verificar se o elemento não está relacionado à edição de equipes
+            const id = el.id || '';
+            if (!id.includes('editEquipe')) {
+                el.style.display = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
+            }
         });
     }
     
