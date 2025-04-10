@@ -629,7 +629,7 @@
             backdrop-filter: blur(5px);
         }
         
-        .login-modal-content, .modal-content, .detail-modal-content {
+        .login-modal-content, .detail-modal-content {
             background-color: white;
             padding: 2.5rem;
             border-radius: 12px;
@@ -637,6 +637,31 @@
             max-width: 520px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             animation: modal-appear 0.3s ease;
+        }
+        
+        /* Estilo especial para o modal de adicionar evento */
+        .modal-content {
+            background: linear-gradient(135deg, #ffffff, #f8f9fa);
+            padding: 2.5rem;
+            border-radius: 16px;
+            width: 100%;
+            max-width: 580px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.25);
+            animation: modal-appear 0.4s ease;
+            border: 1px solid rgba(59, 130, 246, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+        
+        .modal-content::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            height: 6px;
+            background: linear-gradient(90deg, #4CAF50, #2E7D32);
+            border-radius: 16px 16px 0 0;
         }
         
         @keyframes modal-appear {
@@ -689,44 +714,112 @@
             color: #374151;
         }
         
+        /* Estilos aprimorados para campos de formulário */
         input, select, textarea {
             width: 100%;
-            padding: 0.9rem;
-            border: 1px solid #d1d5db;
-            border-radius: 6px;
+            padding: 0.9rem 1.2rem;
+            border: 2px solid #e2e8f0;
+            border-radius: 10px;
             font-size: 1rem;
-            transition: border 0.2s ease, box-shadow 0.2s ease;
+            transition: all 0.3s ease;
+            background-color: #f8fafc;
+            color: #334155;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.05);
         }
         
         input:focus, select:focus, textarea:focus {
-            border-color: #3b82f6;
-            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2);
+            border-color: #4CAF50;
+            box-shadow: 0 0 0 4px rgba(76, 175, 80, 0.15);
             outline: none;
+            background-color: #fff;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='16' height='16' viewBox='0 0 24 24' fill='none' stroke='%234b5563' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 1rem center;
+            background-size: 1em;
+            padding-right: 2.5rem;
+        }
+        
+        optgroup {
+            font-weight: bold;
+            color: #4CAF50;
+            background-color: #f0fdf4;
+        }
+        
+        optgroup option {
+            color: #334155;
+            font-weight: normal;
+            background-color: #fff;
         }
         
         textarea {
             resize: vertical;
-            min-height: 100px;
+            min-height: 120px;
+            line-height: 1.6;
         }
         
+        .eventForm label {
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 0.95rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+        }
+        
+        .eventForm label::before {
+            content: '';
+            display: inline-block;
+            width: 4px;
+            height: 16px;
+            background: linear-gradient(to bottom, #4CAF50, #2E7D32);
+            margin-right: 8px;
+            border-radius: 2px;
+        }
+        
+        /* Botão de submit aprimorado */
         .submit-btn {
-            background: linear-gradient(to right, #1e3a8a, #3949ab);
+            background: linear-gradient(135deg, #4CAF50, #2E7D32);
             color: white;
             border: none;
-            padding: 0.9rem 1.2rem;
-            border-radius: 6px;
+            padding: 1rem 1.2rem;
+            border-radius: 10px;
             cursor: pointer;
-            font-weight: bold;
+            font-weight: 600;
+            font-size: 1.1rem;
             width: 100%;
-            margin-top: 1.5rem;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.15);
+            margin-top: 2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
             transition: all 0.3s ease;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+            z-index: 1;
+        }
+        
+        .submit-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, rgba(255,255,255,0.2), rgba(255,255,255,0));
+            transition: all 0.4s ease;
+            z-index: -1;
         }
         
         .submit-btn:hover {
-            background: linear-gradient(to right, #3949ab, #5c6bc0);
-            box-shadow: 0 6px 15px rgba(0,0,0,0.2);
-            transform: translateY(-2px);
+            background: linear-gradient(135deg, #388E3C, #2E7D32);
+            box-shadow: 0 6px 20px rgba(0,0,0,0.2);
+            transform: translateY(-3px);
+        }
+        
+        .submit-btn:hover::before {
+            left: 100%;
         }
         
         .edit-btn {
@@ -1258,7 +1351,7 @@
                 <h2 class="modal-title">Adicionar Novo Evento</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <form id="eventForm">
+            <form id="eventForm" class="eventForm">
                 <div class="form-group">
                     <label for="eventDate">Data do Evento:</label>
                     <input type="date" id="eventDate" required>
@@ -1456,7 +1549,7 @@
                 <h2 class="modal-title">Editar Aniversariantes</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <form id="aniversariantesForm">
+            <form id="aniversariantesForm" class="eventForm">
                 <div class="form-group">
                     <label for="aniversariantesMes">Mês:</label>
                     <select id="aniversariantesMes" required>
@@ -1490,7 +1583,7 @@
                 <h2 class="modal-title">Editar Guarnições</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <form id="editTeamsForm">
+            <form id="editTeamsForm" class="eventForm">
                 <div class="form-group">
                     <label for="titleMes">Mês do Ranking:</label>
                     <select id="titleMes" required>
@@ -1532,7 +1625,7 @@
                 <h2 class="modal-title">Editar Evento</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <form id="editForm">
+            <form id="editForm" class="eventForm">
                 <input type="hidden" id="editEventId">
                 <div class="form-group">
                     <label for="editEventDate">Data do Evento:</label>
