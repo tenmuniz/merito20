@@ -1037,11 +1037,7 @@
                         <span>➕</span>
                         <span>Adicionar Evento</span>
                     </button>
-                    <button id="editTeamsBtn" class="admin-btn admin-only" style="display: none;">
-                        <span>✏️</span>
-                        <span>Editar Guarnições</span>
-                    </button>
-                    <button id="resetBtn" class="admin-btn warning-btn admin-only" style="display: none;">
+                    <button id="resetBtn" class="admin-btn warning-btn" style="display: none;">
                         <span>🔄</span>
                         <span>Zerar Pontos</span>
                     </button>
@@ -1193,6 +1189,12 @@
                         const addEventBtn = document.getElementById('addEventBtn');
                         if (addEventBtn) {
                             addEventBtn.style.display = 'inline-flex';
+                        }
+                        
+                        // Mostrar botão de zerar pontos
+                        const resetBtn = document.getElementById('resetBtn');
+                        if (resetBtn) {
+                            resetBtn.style.display = 'inline-flex';
                         }
                         
                         // Atualizar botão de login
@@ -2164,13 +2166,22 @@
             // Verificar se o usuário já está autenticado
             function verificarAutenticacao() {
                 const userData = localStorage.getItem('escalasUserData');
+                const resetBtn = document.getElementById('resetBtn');
+                
                 if (userData) {
                     try {
                         const usuario = JSON.parse(userData);
                         if (usuario && usuario.isAdmin) {
+                            console.log("Usuário autenticado. Mostrando botões administrativos");
+                            
                             // Usuário autenticado, mostrar botão de adicionar eventos
                             if (addEventBtn) {
                                 addEventBtn.style.display = 'inline-flex';
+                            }
+                            
+                            // Mostrar botão de zerar pontos
+                            if (resetBtn) {
+                                resetBtn.style.display = 'inline-flex';
                             }
                             
                             // Atualizar botão de login para "Sair"
@@ -2193,6 +2204,9 @@
                     }
                 }
                 
+                // Usuário não autenticado
+                console.log("Usuário não autenticado. Ocultando botões administrativos");
+                
                 // Atualizar botão de login
                 if (loginBtn) {
                     loginBtn.innerHTML = '<span class="login-icon">🔑</span><span>Login</span>';
@@ -2200,6 +2214,7 @@
                     // Configurar evento de abrir modal
                     loginBtn.onclick = function() {
                         console.log("Login clicado");
+                        console.log("Abrindo modal de login");
                         if (loginModal) {
                             loginModal.style.display = 'flex';
                         }
@@ -2209,6 +2224,10 @@
                 // Esconder botões administrativos
                 if (addEventBtn) {
                     addEventBtn.style.display = 'none';
+                }
+                
+                if (resetBtn) {
+                    resetBtn.style.display = 'none';
                 }
                 
                 return false;
@@ -2277,6 +2296,32 @@
                         eventModal.style.display = 'none';
                     });
                 }
+            }
+            
+            // Configurar botão de zerar pontos
+            const resetBtn = document.getElementById('resetBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', function() {
+                    if (confirm('Tem certeza que deseja zerar todos os pontos das guarnições? Esta ação não pode ser desfeita.')) {
+                        // Zerar pontos das guarnições
+                        localStorage.removeItem('events');
+                        
+                        // Atualizar pontuação na interface
+                        document.getElementById('alfa-points').textContent = '0';
+                        document.getElementById('bravo-points').textContent = '0';
+                        document.getElementById('charlie-points').textContent = '0';
+                        
+                        // Atualizar o pódio
+                        document.querySelectorAll('.podium-points').forEach(el => {
+                            el.textContent = '0';
+                        });
+                        
+                        // Limpar a tabela de eventos
+                        document.getElementById('eventsTableBody').innerHTML = '';
+                        
+                        alert('Pontuação zerada com sucesso!');
+                    }
+                });
             }
             
             // Inicializar verificação de autenticação
