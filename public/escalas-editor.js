@@ -229,14 +229,20 @@ function showRemoveButtons(equipe) {
     const container = document.querySelector(`.equipe-${equipe} .equipe-membros`);
     if (!container) return;
     
-    // Obter membros da equipe
+    // Obter membros da equipe já ordenados por patente/graduação
     const members = JSON.parse(localStorage.getItem(`equipe_${equipe}`)) || [];
+    const sortedMembers = sortMilitariesByRank(members);
+    
+    // Se a ordem mudou, salvar a lista ordenada
+    if (JSON.stringify(members) !== JSON.stringify(sortedMembers)) {
+        localStorage.setItem(`equipe_${equipe}`, JSON.stringify(sortedMembers));
+    }
     
     // Limpar o container
     container.innerHTML = '';
     
     // Adicionar cada membro com botão de remoção
-    members.forEach((member, index) => {
+    sortedMembers.forEach((member, index) => {
         const li = document.createElement('li');
         li.className = 'equipe-membro';
         li.innerHTML = `
@@ -274,6 +280,43 @@ function updateAddMemberForm(equipe) {
             ${availableMilitaries.map(mil => `<option value="${mil}">${mil}</option>`).join('')}
         `;
     }
+}
+
+// Função para ordenar militares por hierarquia
+function sortMilitariesByRank(militaries) {
+    // Ordenação de patentes/graduações
+    const rankOrder = {
+        'CEL PM': 1,
+        'TC PM': 2,
+        'MAJ PM': 3,
+        'CAP PM': 4,
+        '1º TEN PM': 5,
+        '2º TEN PM': 6,
+        'ASP OF PM': 7,
+        'SUB TEN PM': 8,
+        '1º SGT PM': 9,
+        '2º SGT PM': 10,
+        '3º SGT PM': 11,
+        'CB PM': 12,
+        'SD PM': 13
+    };
+
+    return [...militaries].sort((a, b) => {
+        // Extrair patente/graduação do nome do militar
+        const getRank = (name) => {
+            for (const rank in rankOrder) {
+                if (name.includes(rank)) {
+                    return rankOrder[rank];
+                }
+            }
+            return 99; // Padrão para não identificados
+        };
+
+        const rankA = getRank(a);
+        const rankB = getRank(b);
+        
+        return rankA - rankB;
+    });
 }
 
 // Adicionar um militar a uma equipe
@@ -321,11 +364,15 @@ function addMemberToTeam(military, team) {
             return;
         }
         
+        // Adicionar o militar e ordenar a equipe por hierarquia
         members.push(military);
-        localStorage.setItem(`equipe_${team}`, JSON.stringify(members));
+        const sortedMembers = sortMilitariesByRank(members);
+        
+        // Salvar a equipe ordenada
+        localStorage.setItem(`equipe_${team}`, JSON.stringify(sortedMembers));
         
         // Atualizar o contador de militares na equipe
-        updateTeamCount(team, members.length);
+        updateTeamCount(team, sortedMembers.length);
         
     } catch (error) {
         console.error('Erro ao adicionar militar:', error);
@@ -383,13 +430,20 @@ function updateTeamMembers(team) {
     const container = document.querySelector(`.equipe-${team} .equipe-membros`);
     if (!container) return;
     
+    // Obter membros e garantir que estão ordenados por patente/graduação
     const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+    const sortedMembers = sortMilitariesByRank(members);
+    
+    // Se a ordem mudou, salvar a lista ordenada
+    if (JSON.stringify(members) !== JSON.stringify(sortedMembers)) {
+        localStorage.setItem(`equipe_${team}`, JSON.stringify(sortedMembers));
+    }
     
     // Limpar o container
     container.innerHTML = '';
     
     // Adicionar cada membro
-    members.forEach(member => {
+    sortedMembers.forEach(member => {
         const li = document.createElement('li');
         li.className = 'equipe-membro';
         li.innerHTML = `<strong>${member}</strong>`;
@@ -397,7 +451,7 @@ function updateTeamMembers(team) {
     });
     
     // Atualizar o contador de militares na equipe
-    updateTeamCount(team, members.length);
+    updateTeamCount(team, sortedMembers.length);
 }
 
 // Adicionar estilos específicos para o editor
