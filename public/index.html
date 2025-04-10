@@ -2101,6 +2101,122 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Sistema de meritocracia 20ª CIPM carregado");
+            
+            // Configurar o formulário de login
+            const loginSubmitBtn = document.getElementById('loginSubmitBtn');
+            const loginModal = document.getElementById('loginModal');
+            const loginError = document.getElementById('loginError');
+            const loginBtn = document.getElementById('loginBtn');
+            const addEventBtn = document.getElementById('addEventBtn');
+            const closeLoginBtn = document.querySelector('#loginModal .close-btn');
+            
+            // Verificar se o usuário já está autenticado
+            function verificarAutenticacao() {
+                const userData = localStorage.getItem('escalasUserData');
+                if (userData) {
+                    try {
+                        const usuario = JSON.parse(userData);
+                        if (usuario && usuario.isAdmin) {
+                            // Usuário autenticado, mostrar botão de adicionar eventos
+                            if (addEventBtn) {
+                                addEventBtn.style.display = 'inline-flex';
+                            }
+                            
+                            // Atualizar botão de login para "Sair"
+                            if (loginBtn) {
+                                loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
+                                
+                                // Limpar eventos anteriores
+                                const novoBtn = loginBtn.cloneNode(true);
+                                loginBtn.parentNode.replaceChild(novoBtn, loginBtn);
+                                
+                                // Adicionar evento de logout
+                                novoBtn.addEventListener('click', function() {
+                                    localStorage.removeItem('escalasUserData');
+                                    alert('Logout realizado com sucesso!');
+                                    window.location.reload();
+                                });
+                            }
+                            
+                            return true;
+                        }
+                    } catch (e) {
+                        console.error('Erro ao verificar autenticação:', e);
+                        localStorage.removeItem('escalasUserData');
+                    }
+                }
+                
+                // Atualizar botão de login
+                if (loginBtn) {
+                    loginBtn.innerHTML = '<span class="login-icon">🔑</span><span>Login</span>';
+                    
+                    // Limpar eventos anteriores
+                    const novoBtn = loginBtn.cloneNode(true);
+                    loginBtn.parentNode.replaceChild(novoBtn, loginBtn);
+                    
+                    // Adicionar evento de abrir modal
+                    novoBtn.addEventListener('click', function() {
+                        console.log("Login clicado");
+                        if (loginModal) {
+                            loginModal.style.display = 'flex';
+                        }
+                    });
+                }
+                
+                // Esconder botões administrativos
+                if (addEventBtn) {
+                    addEventBtn.style.display = 'none';
+                }
+                
+                return false;
+            }
+            
+            // Configurar botão de login no modal
+            if (loginSubmitBtn) {
+                loginSubmitBtn.addEventListener('click', function() {
+                    const username = document.getElementById('username').value;
+                    const password = document.getElementById('password').value;
+                    
+                    if (username === 'admin' && password === 'admin123') {
+                        // Login bem-sucedido
+                        const userData = {
+                            id: 1,
+                            username: 'admin',
+                            fullName: 'Administrador',
+                            isAdmin: true
+                        };
+                        
+                        localStorage.setItem('escalasUserData', JSON.stringify(userData));
+                        
+                        // Fechar o modal
+                        loginModal.style.display = 'none';
+                        
+                        // Mostrar mensagem de sucesso
+                        alert('Login realizado com sucesso!');
+                        
+                        // Atualizar interface
+                        verificarAutenticacao();
+                    } else {
+                        // Login falhou
+                        if (loginError) {
+                            loginError.style.display = 'block';
+                            setTimeout(() => {
+                                loginError.style.display = 'none';
+                            }, 3000);
+                        }
+                    }
+                });
+            }
+            
+            // Configurar fechamento do modal
+            if (closeLoginBtn) {
+                closeLoginBtn.addEventListener('click', function() {
+                    loginModal.style.display = 'none';
+                });
+            }
+            
+            // Inicializar verificação de autenticação
+            verificarAutenticacao();
         });
     </script>
 </body>
