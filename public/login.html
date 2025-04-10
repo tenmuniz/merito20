@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Automático</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f8f9fa;
+        }
+        
+        .container {
+            background-color: white;
+            padding: 30px;
+            border-radius: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+        }
+        
+        h1 {
+            color: #1e3a8a;
+            margin-top: 0;
+        }
+        
+        .btn {
+            background-color: #1e3a8a;
+            color: white;
+            border: none;
+            padding: 12px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            margin: 10px 0;
+            width: 100%;
+            transition: background-color 0.3s;
+        }
+        
+        .btn:hover {
+            background-color: #1e40af;
+        }
+        
+        .success {
+            color: #10b981;
+            font-weight: bold;
+            margin-top: 15px;
+            display: none;
+        }
+        
+        .links {
+            margin-top: 20px;
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+        
+        a {
+            color: #3b82f6;
+            text-decoration: none;
+        }
+        
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Login Administrador</h1>
+        <p>Clique no botão abaixo para fazer login como administrador automaticamente:</p>
+        
+        <button id="loginBtn" class="btn">Login Automático (admin/admin123)</button>
+        
+        <div id="success" class="success">
+            Login realizado com sucesso! Agora você pode acessar as funcionalidades administrativas.
+        </div>
+        
+        <div class="links">
+            <a href="index.html">Ir para Página Principal</a>
+            <a href="escalas.html">Ir para Escala de Serviço</a>
+            <a href="temp.html">Ir para Editor de Equipes</a>
+        </div>
+    </div>
+    
+    <script>
+        document.getElementById('loginBtn').addEventListener('click', function() {
+            // Dados do usuário admin
+            const userData = {
+                id: 1,
+                username: 'admin',
+                fullName: 'Administrador',
+                isAdmin: true
+            };
+            
+            // Salvar no localStorage
+            localStorage.setItem('escalasUserData', JSON.stringify(userData));
+            
+            // Mostrar mensagem de sucesso
+            document.getElementById('success').style.display = 'block';
+            this.disabled = true;
+            this.textContent = 'Login Realizado com Sucesso!';
+            this.style.backgroundColor = '#10b981';
+        });
+    </script>
+</body>
+</html>
