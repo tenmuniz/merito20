@@ -1,0 +1,1018 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor de Equipes - 20ª CIPM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a237e, #283593, #3949ab, #303f9f);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            border-bottom: 3px solid #ff0000;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 2rem auto;
+            padding: 0 1rem;
+        }
+        
+        .tabs {
+            display: flex;
+            margin-bottom: 1.5rem;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 1rem;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            background-color: #f8f9fa;
+            border-bottom-color: #1e3a8a;
+            color: #1e3a8a;
+        }
+        
+        .tab:hover:not(.active) {
+            background-color: #f1f5f9;
+        }
+        
+        .tab-alfa {
+            color: #ef4444;
+        }
+        
+        .tab-bravo {
+            color: #10b981;
+        }
+        
+        .tab-charlie {
+            color: #3b82f6;
+        }
+        
+        .panel {
+            display: none;
+            background: white;
+            padding: 1.5rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            margin-bottom: 2rem;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        .team-members {
+            margin-bottom: 2rem;
+        }
+        
+        .team-member {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0.8rem;
+            border-bottom: 1px solid #e5e7eb;
+            margin-bottom: 0.5rem;
+            background-color: #f8fafc;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+        
+        .team-member:hover {
+            background-color: #f1f5f9;
+            transform: translateX(5px);
+        }
+        
+        .team-member-name {
+            font-weight: 500;
+        }
+        
+        .team-member-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+        
+        .btn {
+            padding: 0.6rem 1.2rem;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        
+        .btn-primary {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #1e40af;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-danger:hover {
+            background-color: #dc2626;
+        }
+        
+        .btn-secondary {
+            background-color: #6b7280;
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #4b5563;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #059669;
+        }
+        
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 500;
+        }
+        
+        input, select {
+            width: 100%;
+            padding: 0.8rem;
+            border: 1px solid #d1d5db;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+        }
+        
+        .action-buttons {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 2rem;
+        }
+        
+        .footer {
+            margin-top: 3rem;
+            text-align: center;
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+        
+        .footer a {
+            color: #1e3a8a;
+            text-decoration: none;
+        }
+        
+        .footer a:hover {
+            text-decoration: underline;
+        }
+        
+        /* Estilos do modal */
+        .modal-backdrop {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .modal-backdrop.active {
+            display: flex;
+        }
+        
+        .modal {
+            background-color: white;
+            width: 90%;
+            max-width: 500px;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+        
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #1e3a8a;
+        }
+        
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6b7280;
+        }
+        
+        .modal-footer {
+            display: flex;
+            justify-content: flex-end;
+            margin-top: 1.5rem;
+            gap: 0.8rem;
+        }
+        
+        /* Banco de dados de todos os militares */
+        .all-members-list {
+            max-height: 300px;
+            overflow-y: auto;
+            margin-bottom: 1.5rem;
+            border: 1px solid #e5e7eb;
+            border-radius: 4px;
+            padding: 0.5rem;
+        }
+        
+        .military-item {
+            padding: 0.5rem;
+            cursor: pointer;
+            border-radius: 4px;
+            margin-bottom: 0.25rem;
+        }
+        
+        .military-item:hover {
+            background-color: #f1f5f9;
+        }
+        
+        .tab-content {
+            margin-top: 1rem;
+        }
+        
+        /* Cores específicas das equipes */
+        .panel-alfa {
+            border-top: 4px solid #ef4444;
+        }
+        
+        .panel-bravo {
+            border-top: 4px solid #10b981;
+        }
+        
+        .panel-charlie {
+            border-top: 4px solid #3b82f6;
+        }
+        
+        .team-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .team-title {
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+        
+        .team-alfa {
+            color: #ef4444;
+        }
+        
+        .team-bravo {
+            color: #10b981;
+        }
+        
+        .team-charlie {
+            color: #3b82f6;
+        }
+        
+        /* Melhorado: destacar botão excluir */
+        .btn-remove-member {
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            background-color: #ef4444;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-remove-member:before {
+            content: "🗑️";
+            font-size: 1.1em;
+        }
+        
+        .btn-remove-member:hover {
+            background-color: #b91c1c;
+            transform: scale(1.05);
+        }
+        
+        .no-militaries-message {
+            text-align: center;
+            padding: 1.5rem;
+            color: #6b7280;
+            font-style: italic;
+        }
+        
+        .available-militaries-title {
+            font-weight: bold;
+            font-size: 1.1rem;
+            margin-top: 1rem;
+            color: #1e3a8a;
+        }
+        
+        /* Animação para destacar itens novos */
+        @keyframes highlight {
+            0% { background-color: #fef3c7; }
+            100% { background-color: #f8fafc; }
+        }
+        
+        .highlight {
+            animation: highlight 2s ease;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Editor de Equipes - 20ª CIPM</h1>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab tab-alfa active" data-panel="panel-alfa">Equipe Alfa</div>
+            <div class="tab tab-bravo" data-panel="panel-bravo">Equipe Bravo</div>
+            <div class="tab tab-charlie" data-panel="panel-charlie">Equipe Charlie</div>
+            <div class="tab" data-panel="panel-available">Militares Disponíveis</div>
+        </div>
+        
+        <!-- Painel Alfa -->
+        <div class="panel panel-alfa active" id="panel-alfa">
+            <div class="team-header">
+                <div class="team-title team-alfa">Equipe Alfa</div>
+                <button id="add-to-alfa" class="btn btn-primary">Adicionar Militar</button>
+            </div>
+            
+            <div class="team-members" id="alfa-members">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+        
+        <!-- Painel Bravo -->
+        <div class="panel panel-bravo" id="panel-bravo">
+            <div class="team-header">
+                <div class="team-title team-bravo">Equipe Bravo</div>
+                <button id="add-to-bravo" class="btn btn-primary">Adicionar Militar</button>
+            </div>
+            
+            <div class="team-members" id="bravo-members">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+        
+        <!-- Painel Charlie -->
+        <div class="panel panel-charlie" id="panel-charlie">
+            <div class="team-header">
+                <div class="team-title team-charlie">Equipe Charlie</div>
+                <button id="add-to-charlie" class="btn btn-primary">Adicionar Militar</button>
+            </div>
+            
+            <div class="team-members" id="charlie-members">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+        
+        <!-- Painel Militares Disponíveis -->
+        <div class="panel" id="panel-available">
+            <div class="team-header">
+                <div class="team-title">Militares Disponíveis</div>
+                <button id="add-new-military" class="btn btn-primary">Cadastrar Novo Militar</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="search-military">Pesquisar:</label>
+                <input type="text" id="search-military" placeholder="Digite nome, posto ou graduação...">
+            </div>
+            
+            <div class="available-militaries-title">Militares não alocados em nenhuma equipe:</div>
+            <div class="all-members-list" id="available-members">
+                <!-- Será preenchido dinamicamente -->
+            </div>
+        </div>
+        
+        <div class="action-buttons">
+            <a href="index.html" class="btn btn-secondary">Voltar para a Página Inicial</a>
+            <button id="save-changes" class="btn btn-success">Salvar Todas as Alterações</button>
+        </div>
+    </div>
+    
+    <!-- Modal para adicionar militar -->
+    <div class="modal-backdrop" id="add-military-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title">Adicionar Militar</div>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="military-name">Nome do Militar:</label>
+                <input type="text" id="military-name" placeholder="Ex: 3º SGT JOSÉ SILVA">
+            </div>
+            
+            <div class="form-group">
+                <label for="military-team">Adicionar à Equipe:</label>
+                <select id="military-team">
+                    <option value="alfa">Alfa</option>
+                    <option value="bravo">Bravo</option>
+                    <option value="charlie">Charlie</option>
+                    <option value="none">Não alocar (deixar disponível)</option>
+                </select>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-cancel">Cancelar</button>
+                <button class="btn btn-primary" id="confirm-add-military">Adicionar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal para selecionar militar -->
+    <div class="modal-backdrop" id="select-military-modal">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-title" id="select-modal-title">Adicionar à Equipe</div>
+                <button class="close-btn">&times;</button>
+            </div>
+            
+            <div class="form-group">
+                <label for="military-list">Selecione um militar disponível:</label>
+                <select id="military-list" size="10" style="height: 250px;">
+                    <!-- Será preenchido dinamicamente -->
+                </select>
+            </div>
+            
+            <div class="modal-footer">
+                <button class="btn btn-secondary modal-cancel">Cancelar</button>
+                <button class="btn btn-primary" id="confirm-select-military">Adicionar</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Script de inicialização da página -->
+    <script>
+        // Banco de dados completo de todos os militares
+        const allMilitaryDatabase = [
+            "1º SGT PM OLIMAR",
+            "2º SGT PM PINHEIRO",
+            "2º SGT PM PEIXOTO",
+            "3º SGT PM RODRIGO",
+            "3º SGT PM LEDO",
+            "3º SGT PM NUNES",
+            "3º SGT PM AMARAL",
+            "3º SGT PM ANA CLEIDE",
+            "3º SGT PM GLEIDSON",
+            "3º SGT PM CARLOS EDUARDO",
+            "3º SGT PM NEGRÃO",
+            "3º SGT PM RAFAEL",
+            "CB PM BRASIL",
+            "CB PM CARLA",
+            "CB PM FELIPE",
+            "CB PM BARROS",
+            "CB PM A. SILVA",
+            "CB PM MIQUEIAS",
+            "CB PM M. PAIXÃO",
+            "SD PM MARVÃO",
+            "SD PM IDELVAN",
+            "SD PM LUAN",
+            "SD PM NAVARRO",
+            "SD PM CHAGAS",
+            "SD PM CARVALHO",
+            "SD PM GOVEIA",
+            "SD PM ALMEIDA",
+            "SD PM PATRIK",
+            "SD PM GUIMARÃES"
+        ];
+        
+        // Valores padrão caso não existam as equipes no localStorage
+        const defaultTeams = {
+            alfa: [
+                "2º SGT PM PEIXOTO",
+                "3º SGT PM RODRIGO",
+                "3º SGT PM LEDO",
+                "3º SGT PM NUNES",
+                "3º SGT PM AMARAL",
+                "CB PM CARLA",
+                "CB PM FELIPE",
+                "CB PM BARROS",
+                "CB PM A. SILVA",
+                "SD PM LUAN",
+                "SD PM NAVARRO"
+            ],
+            bravo: [
+                "1º SGT PM OLIMAR",
+                "2º SGT PM FÁBIO",
+                "3º SGT PM ANA CLEIDE",
+                "3º SGT PM GLEIDSON",
+                "3º SGT PM CARLOS EDUARDO",
+                "3º SGT PM NEGRÃO",
+                "CB PM BRASIL",
+                "SD PM MARVÃO",
+                "SD PM IDELVAN"
+            ],
+            charlie: [
+                "2º SGT PM PINHEIRO",
+                "3º SGT PM RAFAEL",
+                "CB PM MIQUEIAS",
+                "CB PM M. PAIXÃO",
+                "SD PM CHAGAS",
+                "SD PM CARVALHO",
+                "SD PM GOVEIA",
+                "SD PM ALMEIDA",
+                "SD PM PATRIK",
+                "SD PM GUIMARÃES"
+            ]
+        };
+        
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar dados padrão se necessário
+            initializeDefaultData();
+            
+            // Configuração das abas
+            setupTabs();
+            
+            // Carregar dados das equipes
+            loadTeamData();
+            
+            // Carregar militares disponíveis
+            loadAvailableMilitaries();
+            
+            // Configurar pesquisa de militares
+            setupSearchMilitary();
+            
+            // Configurar botões e modais
+            setupButtons();
+        });
+        
+        // Inicializar dados padrão das equipes se não existirem
+        function initializeDefaultData() {
+            for (const team in defaultTeams) {
+                if (!localStorage.getItem(`equipe_${team}`)) {
+                    localStorage.setItem(`equipe_${team}`, JSON.stringify(defaultTeams[team]));
+                }
+            }
+        }
+        
+        // Configurar as abas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const panels = document.querySelectorAll('.panel');
+                    panels.forEach(panel => panel.classList.remove('active'));
+                    
+                    const panelId = tab.dataset.panel;
+                    document.getElementById(panelId).classList.add('active');
+                });
+            });
+        }
+        
+        // Carregar dados das equipes
+        function loadTeamData() {
+            const teams = ['alfa', 'bravo', 'charlie'];
+            
+            teams.forEach(team => {
+                try {
+                    const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                    renderTeamMembers(team, members);
+                } catch (error) {
+                    console.error(`Erro ao carregar equipe ${team}:`, error);
+                }
+            });
+        }
+        
+        // Renderizar membros da equipe
+        function renderTeamMembers(team, members) {
+            const container = document.getElementById(`${team}-members`);
+            container.innerHTML = '';
+            
+            if (members.length === 0) {
+                container.innerHTML = '<div class="no-militaries-message">Nenhum militar nesta equipe.</div>';
+                return;
+            }
+            
+            members.forEach((member, index) => {
+                const memberElement = document.createElement('div');
+                memberElement.className = 'team-member';
+                memberElement.innerHTML = `
+                    <div class="team-member-name">${member}</div>
+                    <div class="team-member-actions">
+                        <button class="btn btn-remove-member" data-team="${team}" data-index="${index}">Remover</button>
+                        <button class="btn btn-secondary btn-transfer-member" data-team="${team}" data-index="${index}">Transferir</button>
+                    </div>
+                `;
+                container.appendChild(memberElement);
+            });
+            
+            // Adicionar eventos para os botões
+            container.querySelectorAll('.btn-remove-member').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeMember(this.dataset.team, parseInt(this.dataset.index));
+                });
+            });
+            
+            container.querySelectorAll('.btn-transfer-member').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    transferMember(this.dataset.team, parseInt(this.dataset.index));
+                });
+            });
+        }
+        
+        // Carregar militares disponíveis (não alocados em nenhuma equipe)
+        function loadAvailableMilitaries() {
+            const container = document.getElementById('available-members');
+            container.innerHTML = '';
+            
+            // Obter todos os militares já alocados
+            const alfa = JSON.parse(localStorage.getItem('equipe_alfa')) || [];
+            const bravo = JSON.parse(localStorage.getItem('equipe_bravo')) || [];
+            const charlie = JSON.parse(localStorage.getItem('equipe_charlie')) || [];
+            
+            // Combinar todas as equipes para ver quem já está alocado
+            const allocatedMilitaries = [...alfa, ...bravo, ...charlie];
+            
+            // Filtrar apenas militares disponíveis (não alocados)
+            const availableMilitaries = allMilitaryDatabase.filter(
+                military => !allocatedMilitaries.includes(military)
+            );
+            
+            if (availableMilitaries.length === 0) {
+                container.innerHTML = '<div class="no-militaries-message">Todos os militares já estão alocados em equipes.</div>';
+                return;
+            }
+            
+            availableMilitaries.sort().forEach(military => {
+                const item = document.createElement('div');
+                item.className = 'military-item';
+                item.textContent = military;
+                item.addEventListener('click', function() {
+                    promptAssignMilitary(military);
+                });
+                container.appendChild(item);
+            });
+        }
+        
+        // Configurar pesquisa de militares
+        function setupSearchMilitary() {
+            document.getElementById('search-military').addEventListener('input', function() {
+                const query = this.value.toLowerCase();
+                const items = document.querySelectorAll('.military-item');
+                
+                items.forEach(item => {
+                    const text = item.textContent.toLowerCase();
+                    if (text.includes(query)) {
+                        item.style.display = 'block';
+                    } else {
+                        item.style.display = 'none';
+                    }
+                });
+            });
+        }
+        
+        // Configurar botões e modais
+        function setupButtons() {
+            // Botões para adicionar militar a uma equipe
+            document.getElementById('add-to-alfa').addEventListener('click', () => openSelectMilitaryModal('alfa'));
+            document.getElementById('add-to-bravo').addEventListener('click', () => openSelectMilitaryModal('bravo'));
+            document.getElementById('add-to-charlie').addEventListener('click', () => openSelectMilitaryModal('charlie'));
+            
+            // Botão para cadastrar novo militar
+            document.getElementById('add-new-military').addEventListener('click', openAddMilitaryModal);
+            
+            // Botões para fechar modais
+            document.querySelectorAll('.close-btn, .modal-cancel').forEach(btn => {
+                btn.addEventListener('click', closeAllModals);
+            });
+            
+            // Botões de confirmação dos modais
+            document.getElementById('confirm-add-military').addEventListener('click', confirmAddMilitary);
+            document.getElementById('confirm-select-military').addEventListener('click', confirmSelectMilitary);
+            
+            // Botão de salvar alterações
+            document.getElementById('save-changes').addEventListener('click', saveAllChanges);
+        }
+        
+        // Abrir modal para selecionar militar para uma equipe
+        function openSelectMilitaryModal(team) {
+            // Atualizar título do modal
+            document.getElementById('select-modal-title').textContent = `Adicionar à Equipe ${team.toUpperCase()}`;
+            
+            // Obter militares disponíveis
+            populateAvailableMilitaryList(team);
+            
+            // Mostrar o modal
+            document.getElementById('select-military-modal').classList.add('active');
+        }
+        
+        // Abrir modal para adicionar novo militar
+        function openAddMilitaryModal() {
+            document.getElementById('add-military-modal').classList.add('active');
+        }
+        
+        // Fechar todos os modais
+        function closeAllModals() {
+            document.querySelectorAll('.modal-backdrop').forEach(modal => {
+                modal.classList.remove('active');
+            });
+        }
+        
+        // Preencher lista de militares disponíveis para seleção
+        function populateAvailableMilitaryList(targetTeam) {
+            const select = document.getElementById('military-list');
+            select.innerHTML = '';
+            select.dataset.team = targetTeam;
+            
+            // Obter todos os militares já alocados
+            const alfa = JSON.parse(localStorage.getItem('equipe_alfa')) || [];
+            const bravo = JSON.parse(localStorage.getItem('equipe_bravo')) || [];
+            const charlie = JSON.parse(localStorage.getItem('equipe_charlie')) || [];
+            
+            // Combinar todas as equipes para ver quem já está alocado
+            const allocatedMilitaries = [...alfa, ...bravo, ...charlie];
+            
+            // Filtrar apenas militares disponíveis (não alocados)
+            const availableMilitaries = allMilitaryDatabase.filter(
+                military => !allocatedMilitaries.includes(military)
+            );
+            
+            if (availableMilitaries.length === 0) {
+                const option = document.createElement('option');
+                option.value = "";
+                option.textContent = "-- Todos os militares já estão alocados --";
+                select.appendChild(option);
+            } else {
+                availableMilitaries.sort().forEach(military => {
+                    const option = document.createElement('option');
+                    option.value = military;
+                    option.textContent = military;
+                    select.appendChild(option);
+                });
+            }
+        }
+        
+        // Confirmar adição de um novo militar
+        function confirmAddMilitary() {
+            const name = document.getElementById('military-name').value.trim();
+            const team = document.getElementById('military-team').value;
+            
+            if (!name) {
+                alert('Por favor, informe o nome do militar.');
+                return;
+            }
+            
+            // Verificar se já existe
+            if (allMilitaryDatabase.includes(name)) {
+                alert('Este militar já está cadastrado no sistema.');
+                return;
+            }
+            
+            // Adicionar ao banco de dados global
+            allMilitaryDatabase.push(name);
+            allMilitaryDatabase.sort();
+            
+            // Se for para adicionar a uma equipe
+            if (team !== 'none') {
+                addMilitaryToTeam(name, team);
+            }
+            
+            // Atualizar interface
+            loadAvailableMilitaries();
+            
+            // Limpar campos e fechar modal
+            document.getElementById('military-name').value = '';
+            closeAllModals();
+            
+            alert('Militar cadastrado com sucesso!');
+        }
+        
+        // Confirmar seleção de militar da lista
+        function confirmSelectMilitary() {
+            const select = document.getElementById('military-list');
+            const team = select.dataset.team;
+            
+            if (!select.value) {
+                alert('Por favor, selecione um militar da lista.');
+                return;
+            }
+            
+            addMilitaryToTeam(select.value, team);
+            closeAllModals();
+        }
+        
+        // Perguntar para qual equipe associar um militar
+        function promptAssignMilitary(military) {
+            const teams = ['alfa', 'bravo', 'charlie'];
+            let message = `Selecione a equipe para adicionar ${military}:\n\n`;
+            message += '1 - Equipe ALFA\n';
+            message += '2 - Equipe BRAVO\n';
+            message += '3 - Equipe CHARLIE\n';
+            
+            const choice = prompt(message, '1');
+            
+            if (choice) {
+                const index = parseInt(choice) - 1;
+                if (index >= 0 && index < teams.length) {
+                    addMilitaryToTeam(military, teams[index]);
+                } else {
+                    alert('Opção inválida. Por favor, escolha 1, 2 ou 3.');
+                }
+            }
+        }
+        
+        // Adicionar militar a uma equipe
+        function addMilitaryToTeam(military, team) {
+            try {
+                // Obter todos os militares já alocados em outras equipes
+                const otherTeams = ['alfa', 'bravo', 'charlie'].filter(t => t !== team);
+                let isInOtherTeam = false;
+                
+                for (const otherTeam of otherTeams) {
+                    const otherMembers = JSON.parse(localStorage.getItem(`equipe_${otherTeam}`)) || [];
+                    const index = otherMembers.indexOf(military);
+                    
+                    if (index !== -1) {
+                        if (confirm(`Este militar já está na equipe ${otherTeam.toUpperCase()}. Deseja transferi-lo para a equipe ${team.toUpperCase()}?`)) {
+                            // Remover da outra equipe
+                            otherMembers.splice(index, 1);
+                            localStorage.setItem(`equipe_${otherTeam}`, JSON.stringify(otherMembers));
+                            renderTeamMembers(otherTeam, otherMembers);
+                        } else {
+                            return;
+                        }
+                        isInOtherTeam = true;
+                        break;
+                    }
+                }
+                
+                // Adicionar à equipe selecionada
+                const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                
+                if (members.includes(military)) {
+                    alert(`Este militar já está na equipe ${team.toUpperCase()}.`);
+                    return;
+                }
+                
+                members.push(military);
+                localStorage.setItem(`equipe_${team}`, JSON.stringify(members));
+                
+                // Atualizar interface
+                renderTeamMembers(team, members);
+                loadAvailableMilitaries();
+                
+                // Dar feedback visual (destacar o militar adicionado)
+                const teamContainer = document.getElementById(`${team}-members`);
+                const lastItem = teamContainer.lastElementChild;
+                if (lastItem) {
+                    lastItem.classList.add('highlight');
+                }
+                
+                if (!isInOtherTeam) {
+                    alert(`Militar adicionado com sucesso à equipe ${team.toUpperCase()}.`);
+                }
+            } catch (error) {
+                console.error(`Erro ao adicionar militar à equipe ${team}:`, error);
+                alert('Erro ao adicionar militar. Tente novamente.');
+            }
+        }
+        
+        // Remover militar de uma equipe
+        function removeMember(team, index) {
+            if (!confirm(`Tem certeza que deseja remover este militar da equipe ${team.toUpperCase()}?`)) {
+                return;
+            }
+            
+            try {
+                const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                const removedMilitary = members[index];
+                
+                // Remover da equipe
+                members.splice(index, 1);
+                localStorage.setItem(`equipe_${team}`, JSON.stringify(members));
+                
+                // Atualizar interface
+                renderTeamMembers(team, members);
+                loadAvailableMilitaries();
+                
+                alert(`Militar removido com sucesso da equipe ${team.toUpperCase()}.`);
+            } catch (error) {
+                console.error(`Erro ao remover membro da equipe ${team}:`, error);
+                alert('Erro ao remover militar. Tente novamente.');
+            }
+        }
+        
+        // Transferir militar para outra equipe
+        function transferMember(fromTeam, index) {
+            try {
+                const members = JSON.parse(localStorage.getItem(`equipe_${fromTeam}`)) || [];
+                const military = members[index];
+                
+                if (!military) {
+                    alert('Militar não encontrado.');
+                    return;
+                }
+                
+                // Perguntar para qual equipe transferir
+                let message = `Para qual equipe deseja transferir ${military}?\n\n`;
+                const otherTeams = ['alfa', 'bravo', 'charlie'].filter(team => team !== fromTeam);
+                
+                otherTeams.forEach((team, i) => {
+                    message += `${i + 1} - Equipe ${team.toUpperCase()}\n`;
+                });
+                
+                const choice = prompt(message, '1');
+                
+                if (!choice) return;
+                
+                const targetIndex = parseInt(choice) - 1;
+                if (targetIndex < 0 || targetIndex >= otherTeams.length) {
+                    alert('Opção inválida.');
+                    return;
+                }
+                
+                const targetTeam = otherTeams[targetIndex];
+                
+                // Remover da equipe atual
+                members.splice(index, 1);
+                localStorage.setItem(`equipe_${fromTeam}`, JSON.stringify(members));
+                
+                // Adicionar à nova equipe
+                const targetMembers = JSON.parse(localStorage.getItem(`equipe_${targetTeam}`)) || [];
+                targetMembers.push(military);
+                localStorage.setItem(`equipe_${targetTeam}`, JSON.stringify(targetMembers));
+                
+                // Atualizar interface
+                renderTeamMembers(fromTeam, members);
+                renderTeamMembers(targetTeam, targetMembers);
+                
+                alert(`Militar transferido com sucesso para a equipe ${targetTeam.toUpperCase()}.`);
+            } catch (error) {
+                console.error('Erro ao transferir militar:', error);
+                alert('Erro ao transferir militar. Tente novamente.');
+            }
+        }
+        
+        // Salvar todas as alterações
+        function saveAllChanges() {
+            // As alterações já são salvas em tempo real no localStorage
+            // Aqui podemos adicionar validações ou sincronização com servidor se necessário
+            alert('Todas as alterações foram salvas com sucesso!');
+        }
+    </script>
+</body>
+</html>
