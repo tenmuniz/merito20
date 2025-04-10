@@ -2092,12 +2092,14 @@
             setTimeout(loadSavedData, 1000);
         });
     </script>
+    <!-- Incluir novo script de autenticação antes do script principal -->
+    <script src="/auth.js"></script>
     <script src="/pontuacoes.js"></script>
     <!-- Script para verificar autenticação global -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
-            // Verificar autenticação ao carregar a página
-            checkGlobalAuth();
+            console.log("DOM carregado, configurando autenticação global");
+            // A verificação já é feita pelo script auth.js
         });
     </script>
 </body>
