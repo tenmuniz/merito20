@@ -163,9 +163,9 @@ function atualizarInterfaceAutenticada() {
     }
     
     // Atualizar botão de login para "Sair"
-    const loginBtn = document.getElementById('adminLoginBtn');
+    const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
-        loginBtn.innerHTML = '<span>🔓</span><span>Sair</span>';
+        loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
         
         // Remover todos os event listeners existentes
         const newLoginBtn = loginBtn.cloneNode(true);
@@ -192,9 +192,9 @@ function atualizarInterfaceNaoAutenticada() {
     }
     
     // Atualizar botão para "Área Administrativa"
-    const loginBtn = document.getElementById('adminLoginBtn');
+    const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
-        loginBtn.innerHTML = '<span>🔒</span><span>Área Administrativa</span>';
+        loginBtn.innerHTML = '<span class="login-icon">🔒</span><span>Área Administrativa</span>';
         
         // Remover todos os event listeners existentes
         const newLoginBtn = loginBtn.cloneNode(true);
@@ -210,8 +210,8 @@ function atualizarInterfaceNaoAutenticada() {
 function setupAdminButton() {
     console.log("Configurando botão admin...");
     
-    // Procurar pelo botão de login existente
-    const loginBtn = document.getElementById('adminLoginBtn');
+    // Procurar pelo botão de login existente - ID correto é loginBtn
+    const loginBtn = document.getElementById('loginBtn');
     
     if (loginBtn) {
         console.log("Botão admin encontrado, configurando eventos");
@@ -220,8 +220,12 @@ function setupAdminButton() {
         if (verificarAutenticacao()) {
             // Já está configurado pela função verificarAutenticacao
         } else {
+            // Limpar eventos existentes para evitar conflitos
+            const newLoginBtn = loginBtn.cloneNode(true);
+            loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
+            
             // Configurar para abrir o modal de login
-            loginBtn.addEventListener('click', function() {
+            newLoginBtn.addEventListener('click', function() {
                 console.log("Clique no botão de login");
                 document.getElementById('loginModal').classList.add('active');
             });
