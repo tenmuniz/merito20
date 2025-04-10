@@ -1,0 +1,997 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Painel Administrativo - 20ª CIPM</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f0f2f5;
+            color: #333;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #1a237e, #283593, #3949ab, #303f9f);
+            color: white;
+            padding: 1.5rem;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.25);
+            border-bottom: 3px solid #ff0000;
+        }
+        
+        h1 {
+            margin: 0;
+            font-size: 1.8rem;
+            text-shadow: 1px 1px 3px rgba(0,0,0,0.25);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        .section {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+            padding: 20px;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            color: #1e3a8a;
+            margin-top: 0;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 10px;
+        }
+        
+        .table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .table th, .table td {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            text-align: left;
+        }
+        
+        .table th {
+            background-color: #f8fafc;
+            font-weight: 600;
+        }
+        
+        .team-alfa {
+            color: #ef4444;
+        }
+        
+        .team-bravo {
+            color: #10b981;
+        }
+        
+        .team-charlie {
+            color: #3b82f6;
+        }
+        
+        .btn {
+            padding: 8px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            margin-right: 5px;
+        }
+        
+        .btn-primary {
+            background-color: #1e3a8a;
+            color: white;
+        }
+        
+        .btn-danger {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .btn-success {
+            background-color: #10b981;
+            color: white;
+        }
+        
+        /* Formulários */
+        .form-group {
+            margin-bottom: 15px;
+        }
+        
+        label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: 500;
+        }
+        
+        input, select, textarea {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+        
+        .add-form {
+            margin-bottom: 20px;
+            padding: 15px;
+            background-color: #f8fafc;
+            border-radius: 8px;
+            border: 1px solid #e5e7eb;
+        }
+        
+        .form-title {
+            margin-top: 0;
+            margin-bottom: 15px;
+            font-size: 1.2rem;
+            color: #1e3a8a;
+        }
+        
+        /* Tabs */
+        .tabs {
+            display: flex;
+            margin-bottom: 20px;
+            background: white;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .tab {
+            flex: 1;
+            padding: 15px;
+            text-align: center;
+            font-weight: bold;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+        }
+        
+        .tab.active {
+            background-color: #f8f9fa;
+            border-bottom-color: #1e3a8a;
+            color: #1e3a8a;
+        }
+        
+        .panel {
+            display: none;
+        }
+        
+        .panel.active {
+            display: block;
+        }
+        
+        /* Listagem de militares */
+        .military-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .military-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+        }
+        
+        .military-item:hover {
+            background-color: #f8fafc;
+        }
+        
+        .military-name {
+            font-weight: 500;
+        }
+        
+        .military-actions {
+            display: flex;
+        }
+        
+        /* Estilo para botão excluir mais destacado */
+        .btn-remove {
+            background-color: #ef4444;
+            color: white;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-remove:before {
+            content: "🗑️";
+        }
+        
+        .btn-remove:hover {
+            background-color: #b91c1c;
+        }
+        
+        .footer {
+            text-align: center;
+            padding: 20px;
+            margin-top: 40px;
+            color: #6b7280;
+            border-top: 1px solid #e5e7eb;
+        }
+        
+        .nav-buttons {
+            margin-top: 30px;
+            text-align: center;
+        }
+        
+        .nav-buttons a {
+            margin: 0 10px;
+            text-decoration: none;
+        }
+        
+        /* Aniversariantes */
+        .birthday-list {
+            list-style: none;
+            padding: 0;
+        }
+        
+        .birthday-item {
+            padding: 10px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .birthday-date {
+            color: #6b7280;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Painel Administrativo - 20ª CIPM</h1>
+    </header>
+    
+    <div class="container">
+        <div class="tabs">
+            <div class="tab active" data-panel="panel-teams">Equipes</div>
+            <div class="tab" data-panel="panel-birthdays">Aniversariantes</div>
+            <div class="tab" data-panel="panel-vacations">Férias e Licenças</div>
+        </div>
+        
+        <!-- Painel de Equipes -->
+        <div class="panel active" id="panel-teams">
+            <div class="section">
+                <h2 class="section-title team-alfa">Equipe Alfa</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Militar na Equipe Alfa</h3>
+                    <div class="form-group">
+                        <input type="text" id="alfa-new-name" placeholder="Nome do Militar">
+                    </div>
+                    <button id="add-to-alfa" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="military-list" id="alfa-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title team-bravo">Equipe Bravo</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Militar na Equipe Bravo</h3>
+                    <div class="form-group">
+                        <input type="text" id="bravo-new-name" placeholder="Nome do Militar">
+                    </div>
+                    <button id="add-to-bravo" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="military-list" id="bravo-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title team-charlie">Equipe Charlie</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Militar na Equipe Charlie</h3>
+                    <div class="form-group">
+                        <input type="text" id="charlie-new-name" placeholder="Nome do Militar">
+                    </div>
+                    <button id="add-to-charlie" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="military-list" id="charlie-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Painel de Aniversariantes -->
+        <div class="panel" id="panel-birthdays">
+            <div class="section">
+                <h2 class="section-title">Aniversariantes</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Aniversariante</h3>
+                    <div class="form-group">
+                        <label for="birthday-name">Nome:</label>
+                        <input type="text" id="birthday-name" placeholder="Nome do Aniversariante">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday-date">Data de Aniversário:</label>
+                        <input type="date" id="birthday-date">
+                    </div>
+                    <div class="form-group">
+                        <label for="birthday-position">Cargo/Patente:</label>
+                        <input type="text" id="birthday-position" placeholder="Ex: 3º SGT PM">
+                    </div>
+                    <button id="add-birthday" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="birthday-list" id="birthdays-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Painel de Férias e Licenças -->
+        <div class="panel" id="panel-vacations">
+            <div class="section">
+                <h2 class="section-title">Férias</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Período de Férias</h3>
+                    <div class="form-group">
+                        <label for="vacation-name">Nome:</label>
+                        <input type="text" id="vacation-name" placeholder="Nome do Militar">
+                    </div>
+                    <div class="form-group">
+                        <label for="vacation-start">Data de Início:</label>
+                        <input type="date" id="vacation-start">
+                    </div>
+                    <div class="form-group">
+                        <label for="vacation-end">Data de Término:</label>
+                        <input type="date" id="vacation-end">
+                    </div>
+                    <button id="add-vacation" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="military-list" id="vacations-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h2 class="section-title">Licenças</h2>
+                
+                <div class="add-form">
+                    <h3 class="form-title">Adicionar Licença</h3>
+                    <div class="form-group">
+                        <label for="license-name">Nome:</label>
+                        <input type="text" id="license-name" placeholder="Nome do Militar">
+                    </div>
+                    <div class="form-group">
+                        <label for="license-type">Tipo de Licença:</label>
+                        <select id="license-type">
+                            <option value="Licença Saúde">Licença Saúde</option>
+                            <option value="Licença Maternidade">Licença Maternidade</option>
+                            <option value="Licença Paternidade">Licença Paternidade</option>
+                            <option value="Licença Prêmio">Licença Prêmio</option>
+                            <option value="Outro">Outro</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="license-start">Data de Início:</label>
+                        <input type="date" id="license-start">
+                    </div>
+                    <div class="form-group">
+                        <label for="license-end">Data de Término:</label>
+                        <input type="date" id="license-end">
+                    </div>
+                    <button id="add-license" class="btn btn-primary">Adicionar</button>
+                </div>
+                
+                <ul class="military-list" id="licenses-list">
+                    <!-- Será preenchido dinamicamente -->
+                </ul>
+            </div>
+        </div>
+        
+        <div class="nav-buttons">
+            <a href="index.html" class="btn btn-primary">Voltar para Página Inicial</a>
+            <a href="escalas.html" class="btn btn-primary">Ir para Escala de Serviço</a>
+        </div>
+    </div>
+    
+    <div class="footer">
+        <p>Sistema de Meritocracia da 20ª CIPM - Todos os direitos reservados</p>
+    </div>
+    
+    <script>
+        // Dados iniciais padrão
+        const defaultData = {
+            teams: {
+                alfa: [
+                    "2º SGT PM PEIXOTO",
+                    "3º SGT PM RODRIGO",
+                    "3º SGT PM LEDO",
+                    "3º SGT PM NUNES",
+                    "3º SGT PM AMARAL",
+                    "CB PM CARLA",
+                    "CB PM FELIPE",
+                    "CB PM BARROS",
+                    "CB PM A. SILVA",
+                    "SD PM LUAN",
+                    "SD PM NAVARRO"
+                ],
+                bravo: [
+                    "1º SGT PM OLIMAR",
+                    "2º SGT PM FÁBIO",
+                    "3º SGT PM ANA CLEIDE",
+                    "3º SGT PM GLEIDSON",
+                    "3º SGT PM CARLOS EDUARDO",
+                    "3º SGT PM NEGRÃO",
+                    "CB PM BRASIL",
+                    "SD PM MARVÃO",
+                    "SD PM IDELVAN"
+                ],
+                charlie: [
+                    "2º SGT PM PINHEIRO",
+                    "3º SGT PM RAFAEL",
+                    "CB PM MIQUEIAS",
+                    "CB PM M. PAIXÃO",
+                    "SD PM CHAGAS",
+                    "SD PM CARVALHO",
+                    "SD PM GOVEIA",
+                    "SD PM ALMEIDA",
+                    "SD PM PATRIK",
+                    "SD PM GUIMARÃES"
+                ]
+            },
+            birthdays: [
+                { name: "SGT PEIXOTO", date: "1980-04-15", position: "2º SGT PM" },
+                { name: "SD ALMEIDA", date: "1992-05-20", position: "SD PM" },
+                { name: "SGT ANA CLEIDE", date: "1985-07-10", position: "3º SGT PM" }
+            ],
+            vacations: [
+                { name: "SGT RODRIGO", start: "2025-06-01", end: "2025-06-30" },
+                { name: "CB FELIPE", start: "2025-07-15", end: "2025-08-15" }
+            ],
+            licenses: [
+                { name: "SD CHAGAS", type: "Licença Saúde", start: "2025-04-05", end: "2025-04-20" },
+                { name: "SGT ANA CLEIDE", type: "Licença Prêmio", start: "2025-08-01", end: "2025-09-01" }
+            ]
+        };
+        
+        // Inicializar aplicação
+        document.addEventListener('DOMContentLoaded', function() {
+            // Inicializar dados se necessário
+            initializeData();
+            
+            // Configurar as abas
+            setupTabs();
+            
+            // Carregar dados
+            loadTeamData();
+            loadBirthdaysData();
+            loadVacationsData();
+            loadLicensesData();
+            
+            // Configurar botões
+            setupButtons();
+        });
+        
+        // Inicializar dados padrão se não existirem
+        function initializeData() {
+            if (!localStorage.getItem('equipe_alfa')) {
+                localStorage.setItem('equipe_alfa', JSON.stringify(defaultData.teams.alfa));
+            }
+            
+            if (!localStorage.getItem('equipe_bravo')) {
+                localStorage.setItem('equipe_bravo', JSON.stringify(defaultData.teams.bravo));
+            }
+            
+            if (!localStorage.getItem('equipe_charlie')) {
+                localStorage.setItem('equipe_charlie', JSON.stringify(defaultData.teams.charlie));
+            }
+            
+            if (!localStorage.getItem('aniversariantes')) {
+                localStorage.setItem('aniversariantes', JSON.stringify(defaultData.birthdays));
+            }
+            
+            if (!localStorage.getItem('ferias')) {
+                localStorage.setItem('ferias', JSON.stringify(defaultData.vacations));
+            }
+            
+            if (!localStorage.getItem('licencas')) {
+                localStorage.setItem('licencas', JSON.stringify(defaultData.licenses));
+            }
+        }
+        
+        // Configurar as abas
+        function setupTabs() {
+            const tabs = document.querySelectorAll('.tab');
+            tabs.forEach(tab => {
+                tab.addEventListener('click', () => {
+                    tabs.forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    
+                    const panels = document.querySelectorAll('.panel');
+                    panels.forEach(panel => panel.classList.remove('active'));
+                    
+                    const panelId = tab.dataset.panel;
+                    document.getElementById(panelId).classList.add('active');
+                });
+            });
+        }
+        
+        // Carregar dados das equipes
+        function loadTeamData() {
+            loadTeam('alfa');
+            loadTeam('bravo');
+            loadTeam('charlie');
+        }
+        
+        // Carregar dados de uma equipe específica
+        function loadTeam(team) {
+            try {
+                const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                renderTeamMembers(team, members);
+            } catch (error) {
+                console.error(`Erro ao carregar equipe ${team}:`, error);
+            }
+        }
+        
+        // Renderizar membros de uma equipe
+        function renderTeamMembers(team, members) {
+            const container = document.getElementById(`${team}-list`);
+            container.innerHTML = '';
+            
+            if (members.length === 0) {
+                container.innerHTML = '<li class="military-item">Nenhum militar nesta equipe.</li>';
+                return;
+            }
+            
+            members.forEach((member, index) => {
+                const li = document.createElement('li');
+                li.className = 'military-item';
+                li.innerHTML = `
+                    <span class="military-name">${member}</span>
+                    <div class="military-actions">
+                        <button class="btn btn-remove" data-team="${team}" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+            
+            // Adicionar eventos para os botões de remover
+            container.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeMember(this.dataset.team, parseInt(this.dataset.index));
+                });
+            });
+        }
+        
+        // Remover um membro da equipe
+        function removeMember(team, index) {
+            try {
+                const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                
+                if (confirm(`Tem certeza que deseja remover ${members[index]} da equipe ${team.toUpperCase()}?`)) {
+                    members.splice(index, 1);
+                    localStorage.setItem(`equipe_${team}`, JSON.stringify(members));
+                    renderTeamMembers(team, members);
+                }
+            } catch (error) {
+                console.error(`Erro ao remover membro da equipe ${team}:`, error);
+            }
+        }
+        
+        // Carregar dados de aniversariantes
+        function loadBirthdaysData() {
+            try {
+                const birthdays = JSON.parse(localStorage.getItem('aniversariantes')) || [];
+                renderBirthdays(birthdays);
+            } catch (error) {
+                console.error('Erro ao carregar aniversariantes:', error);
+            }
+        }
+        
+        // Renderizar aniversariantes
+        function renderBirthdays(birthdays) {
+            const container = document.getElementById('birthdays-list');
+            container.innerHTML = '';
+            
+            if (birthdays.length === 0) {
+                container.innerHTML = '<li class="birthday-item">Nenhum aniversariante cadastrado.</li>';
+                return;
+            }
+            
+            // Ordenar por mês e dia
+            birthdays.sort((a, b) => {
+                const dateA = new Date(a.date);
+                const dateB = new Date(b.date);
+                
+                if (dateA.getMonth() !== dateB.getMonth()) {
+                    return dateA.getMonth() - dateB.getMonth();
+                }
+                
+                return dateA.getDate() - dateB.getDate();
+            });
+            
+            birthdays.forEach((birthday, index) => {
+                const date = new Date(birthday.date);
+                const day = date.getDate().toString().padStart(2, '0');
+                const month = (date.getMonth() + 1).toString().padStart(2, '0');
+                
+                const li = document.createElement('li');
+                li.className = 'birthday-item';
+                li.innerHTML = `
+                    <div>
+                        <strong>${birthday.name}</strong> - ${birthday.position}
+                        <div class="birthday-date">${day}/${month}</div>
+                    </div>
+                    <div class="military-actions">
+                        <button class="btn btn-remove" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+            
+            // Adicionar eventos para os botões de remover
+            container.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeBirthday(parseInt(this.dataset.index));
+                });
+            });
+        }
+        
+        // Remover um aniversariante
+        function removeBirthday(index) {
+            try {
+                const birthdays = JSON.parse(localStorage.getItem('aniversariantes')) || [];
+                
+                if (confirm(`Tem certeza que deseja remover este aniversariante?`)) {
+                    birthdays.splice(index, 1);
+                    localStorage.setItem('aniversariantes', JSON.stringify(birthdays));
+                    renderBirthdays(birthdays);
+                }
+            } catch (error) {
+                console.error('Erro ao remover aniversariante:', error);
+            }
+        }
+        
+        // Carregar dados de férias
+        function loadVacationsData() {
+            try {
+                const vacations = JSON.parse(localStorage.getItem('ferias')) || [];
+                renderVacations(vacations);
+            } catch (error) {
+                console.error('Erro ao carregar férias:', error);
+            }
+        }
+        
+        // Renderizar férias
+        function renderVacations(vacations) {
+            const container = document.getElementById('vacations-list');
+            container.innerHTML = '';
+            
+            if (vacations.length === 0) {
+                container.innerHTML = '<li class="military-item">Nenhum período de férias cadastrado.</li>';
+                return;
+            }
+            
+            // Ordenar por data de início
+            vacations.sort((a, b) => new Date(a.start) - new Date(b.start));
+            
+            vacations.forEach((vacation, index) => {
+                const start = new Date(vacation.start);
+                const end = new Date(vacation.end);
+                
+                const startFormatted = start.toLocaleDateString('pt-BR');
+                const endFormatted = end.toLocaleDateString('pt-BR');
+                
+                const li = document.createElement('li');
+                li.className = 'military-item';
+                li.innerHTML = `
+                    <div>
+                        <strong>${vacation.name}</strong>
+                        <div>${startFormatted} até ${endFormatted}</div>
+                    </div>
+                    <div class="military-actions">
+                        <button class="btn btn-remove" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+            
+            // Adicionar eventos para os botões de remover
+            container.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeVacation(parseInt(this.dataset.index));
+                });
+            });
+        }
+        
+        // Remover um período de férias
+        function removeVacation(index) {
+            try {
+                const vacations = JSON.parse(localStorage.getItem('ferias')) || [];
+                
+                if (confirm(`Tem certeza que deseja remover este período de férias?`)) {
+                    vacations.splice(index, 1);
+                    localStorage.setItem('ferias', JSON.stringify(vacations));
+                    renderVacations(vacations);
+                }
+            } catch (error) {
+                console.error('Erro ao remover período de férias:', error);
+            }
+        }
+        
+        // Carregar dados de licenças
+        function loadLicensesData() {
+            try {
+                const licenses = JSON.parse(localStorage.getItem('licencas')) || [];
+                renderLicenses(licenses);
+            } catch (error) {
+                console.error('Erro ao carregar licenças:', error);
+            }
+        }
+        
+        // Renderizar licenças
+        function renderLicenses(licenses) {
+            const container = document.getElementById('licenses-list');
+            container.innerHTML = '';
+            
+            if (licenses.length === 0) {
+                container.innerHTML = '<li class="military-item">Nenhuma licença cadastrada.</li>';
+                return;
+            }
+            
+            // Ordenar por data de início
+            licenses.sort((a, b) => new Date(a.start) - new Date(b.start));
+            
+            licenses.forEach((license, index) => {
+                const start = new Date(license.start);
+                const end = new Date(license.end);
+                
+                const startFormatted = start.toLocaleDateString('pt-BR');
+                const endFormatted = end.toLocaleDateString('pt-BR');
+                
+                const li = document.createElement('li');
+                li.className = 'military-item';
+                li.innerHTML = `
+                    <div>
+                        <strong>${license.name}</strong> - ${license.type}
+                        <div>${startFormatted} até ${endFormatted}</div>
+                    </div>
+                    <div class="military-actions">
+                        <button class="btn btn-remove" data-index="${index}">Excluir</button>
+                    </div>
+                `;
+                container.appendChild(li);
+            });
+            
+            // Adicionar eventos para os botões de remover
+            container.querySelectorAll('.btn-remove').forEach(btn => {
+                btn.addEventListener('click', function() {
+                    removeLicense(parseInt(this.dataset.index));
+                });
+            });
+        }
+        
+        // Remover uma licença
+        function removeLicense(index) {
+            try {
+                const licenses = JSON.parse(localStorage.getItem('licencas')) || [];
+                
+                if (confirm(`Tem certeza que deseja remover esta licença?`)) {
+                    licenses.splice(index, 1);
+                    localStorage.setItem('licencas', JSON.stringify(licenses));
+                    renderLicenses(licenses);
+                }
+            } catch (error) {
+                console.error('Erro ao remover licença:', error);
+            }
+        }
+        
+        // Configurar botões de adicionar
+        function setupButtons() {
+            // Botões de adicionar em equipes
+            document.getElementById('add-to-alfa').addEventListener('click', function() {
+                addMember('alfa');
+            });
+            
+            document.getElementById('add-to-bravo').addEventListener('click', function() {
+                addMember('bravo');
+            });
+            
+            document.getElementById('add-to-charlie').addEventListener('click', function() {
+                addMember('charlie');
+            });
+            
+            // Botão de adicionar aniversariante
+            document.getElementById('add-birthday').addEventListener('click', addBirthday);
+            
+            // Botão de adicionar férias
+            document.getElementById('add-vacation').addEventListener('click', addVacation);
+            
+            // Botão de adicionar licença
+            document.getElementById('add-license').addEventListener('click', addLicense);
+        }
+        
+        // Adicionar um membro a uma equipe
+        function addMember(team) {
+            const input = document.getElementById(`${team}-new-name`);
+            const name = input.value.trim();
+            
+            if (!name) {
+                alert('Por favor, informe o nome do militar.');
+                return;
+            }
+            
+            try {
+                const members = JSON.parse(localStorage.getItem(`equipe_${team}`)) || [];
+                
+                // Verificar se já existe na equipe
+                if (members.includes(name)) {
+                    alert(`Este militar já está na equipe ${team.toUpperCase()}.`);
+                    return;
+                }
+                
+                // Verificar se existe em outras equipes
+                const otherTeams = ['alfa', 'bravo', 'charlie'].filter(t => t !== team);
+                
+                for (const otherTeam of otherTeams) {
+                    const otherMembers = JSON.parse(localStorage.getItem(`equipe_${otherTeam}`)) || [];
+                    
+                    if (otherMembers.includes(name)) {
+                        if (confirm(`Este militar já está na equipe ${otherTeam.toUpperCase()}. Deseja movê-lo para a equipe ${team.toUpperCase()}?`)) {
+                            // Remover da outra equipe
+                            const index = otherMembers.indexOf(name);
+                            otherMembers.splice(index, 1);
+                            localStorage.setItem(`equipe_${otherTeam}`, JSON.stringify(otherMembers));
+                            renderTeamMembers(otherTeam, otherMembers);
+                        } else {
+                            return;
+                        }
+                    }
+                }
+                
+                members.push(name);
+                localStorage.setItem(`equipe_${team}`, JSON.stringify(members));
+                renderTeamMembers(team, members);
+                
+                // Limpar campo
+                input.value = '';
+                
+            } catch (error) {
+                console.error(`Erro ao adicionar membro à equipe ${team}:`, error);
+            }
+        }
+        
+        // Adicionar um aniversariante
+        function addBirthday() {
+            const name = document.getElementById('birthday-name').value.trim();
+            const date = document.getElementById('birthday-date').value;
+            const position = document.getElementById('birthday-position').value.trim();
+            
+            if (!name || !date) {
+                alert('Por favor, preencha o nome e a data de aniversário.');
+                return;
+            }
+            
+            try {
+                const birthdays = JSON.parse(localStorage.getItem('aniversariantes')) || [];
+                
+                // Adicionar novo aniversariante
+                birthdays.push({
+                    name,
+                    date,
+                    position
+                });
+                
+                localStorage.setItem('aniversariantes', JSON.stringify(birthdays));
+                renderBirthdays(birthdays);
+                
+                // Limpar campos
+                document.getElementById('birthday-name').value = '';
+                document.getElementById('birthday-date').value = '';
+                document.getElementById('birthday-position').value = '';
+                
+            } catch (error) {
+                console.error('Erro ao adicionar aniversariante:', error);
+            }
+        }
+        
+        // Adicionar um período de férias
+        function addVacation() {
+            const name = document.getElementById('vacation-name').value.trim();
+            const start = document.getElementById('vacation-start').value;
+            const end = document.getElementById('vacation-end').value;
+            
+            if (!name || !start || !end) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            if (new Date(start) > new Date(end)) {
+                alert('A data de início deve ser anterior à data de término.');
+                return;
+            }
+            
+            try {
+                const vacations = JSON.parse(localStorage.getItem('ferias')) || [];
+                
+                // Adicionar novo período de férias
+                vacations.push({
+                    name,
+                    start,
+                    end
+                });
+                
+                localStorage.setItem('ferias', JSON.stringify(vacations));
+                renderVacations(vacations);
+                
+                // Limpar campos
+                document.getElementById('vacation-name').value = '';
+                document.getElementById('vacation-start').value = '';
+                document.getElementById('vacation-end').value = '';
+                
+            } catch (error) {
+                console.error('Erro ao adicionar período de férias:', error);
+            }
+        }
+        
+        // Adicionar uma licença
+        function addLicense() {
+            const name = document.getElementById('license-name').value.trim();
+            const type = document.getElementById('license-type').value;
+            const start = document.getElementById('license-start').value;
+            const end = document.getElementById('license-end').value;
+            
+            if (!name || !start || !end) {
+                alert('Por favor, preencha todos os campos.');
+                return;
+            }
+            
+            if (new Date(start) > new Date(end)) {
+                alert('A data de início deve ser anterior à data de término.');
+                return;
+            }
+            
+            try {
+                const licenses = JSON.parse(localStorage.getItem('licencas')) || [];
+                
+                // Adicionar nova licença
+                licenses.push({
+                    name,
+                    type,
+                    start,
+                    end
+                });
+                
+                localStorage.setItem('licencas', JSON.stringify(licenses));
+                renderLicenses(licenses);
+                
+                // Limpar campos
+                document.getElementById('license-name').value = '';
+                document.getElementById('license-start').value = '';
+                document.getElementById('license-end').value = '';
+                
+            } catch (error) {
+                console.error('Erro ao adicionar licença:', error);
+            }
+        }
+    </script>
+</body>
+</html>
