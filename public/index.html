@@ -1942,7 +1942,9 @@
         }
         
         // Função para abrir o modal de edição de aniversariantes
-        function openAniversariantesModal() {
+        function openAniversariantesModal(e) {
+            e.stopPropagation(); // Impedir que o clique seja passado para o banner inteiro
+            
             // Preencher o formulário com dados atuais
             const textoMes = document.querySelector('.aniversario-texto').textContent.replace('Aniversariantes do mês de ', '');
             const nomes = document.getElementById('aniversariantes-texto').textContent;
@@ -1951,6 +1953,15 @@
             document.getElementById('aniversariantesNomes').value = nomes;
             
             document.getElementById('aniversariantesModal').style.display = 'flex';
+        }
+        
+        // Função para atualizar os aniversariantes na interface
+        function updateAniversariantes(mes, nomes) {
+            document.querySelector('.aniversario-texto').textContent = `Aniversariantes do mês de ${mes}`;
+            document.getElementById('aniversariantes-texto').textContent = nomes;
+            
+            // Salvar no localStorage para persistência
+            localStorage.setItem('aniversariantes', JSON.stringify({ mes, nomes }));
         }
         
         // Função para abrir o modal de edição de guarnições
@@ -1969,6 +1980,25 @@
             document.getElementById('teamCharlieName').value = charlieName;
             
             document.getElementById('editTeamsModal').style.display = 'flex';
+        }
+        
+        // Função para atualizar as guarnições na interface
+        function updateTeamsDisplay(mes, alfaName, bravoName, charlieName) {
+            // Atualizar título do ranking
+            document.querySelector('.podium-title').textContent = `RANKING DE ${mes} 2025`;
+            
+            // Atualizar nomes das guarnições nos cards
+            document.querySelector('.card:nth-child(1) .team-name').textContent = `GUARNIÇÃO ${alfaName}`;
+            document.querySelector('.card:nth-child(2) .team-name').textContent = `GUARNIÇÃO ${bravoName}`;
+            document.querySelector('.card:nth-child(3) .team-name').textContent = `GUARNIÇÃO ${charlieName}`;
+            
+            // Salvar no localStorage para persistência
+            localStorage.setItem('teams_display', JSON.stringify({ 
+                mes, 
+                alfaName, 
+                bravoName, 
+                charlieName 
+            }));
         }
         
         // Inicialização
@@ -2005,6 +2035,61 @@
             aniversarioBanner.querySelector('.aniversario-link').addEventListener('click', () => {
                 window.location.href = '/escalas.html';
             });
+            
+            // Configurar handlers para os formulários de edição
+            document.getElementById('aniversariantesForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const mes = document.getElementById('aniversariantesMes').value;
+                const nomes = document.getElementById('aniversariantesNomes').value;
+                
+                updateAniversariantes(mes, nomes);
+                
+                document.getElementById('aniversariantesModal').style.display = 'none';
+                alert('Aniversariantes atualizados com sucesso!');
+            });
+            
+            document.getElementById('editTeamsForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const mes = document.getElementById('titleMes').value;
+                const alfaName = document.getElementById('teamAlfaName').value;
+                const bravoName = document.getElementById('teamBravoName').value;
+                const charlieName = document.getElementById('teamCharlieName').value;
+                
+                updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
+                
+                document.getElementById('editTeamsModal').style.display = 'none';
+                alert('Configuração das guarnições atualizada com sucesso!');
+            });
+            
+            // Carregar dados salvos do localStorage
+            const loadSavedData = () => {
+                // Carregar aniversariantes
+                const savedAniversariantes = localStorage.getItem('aniversariantes');
+                if (savedAniversariantes) {
+                    try {
+                        const { mes, nomes } = JSON.parse(savedAniversariantes);
+                        updateAniversariantes(mes, nomes);
+                    } catch (e) {
+                        console.error('Erro ao carregar aniversariantes:', e);
+                    }
+                }
+                
+                // Carregar configuração de guarnições
+                const savedTeams = localStorage.getItem('teams_display');
+                if (savedTeams) {
+                    try {
+                        const { mes, alfaName, bravoName, charlieName } = JSON.parse(savedTeams);
+                        updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
+                    } catch (e) {
+                        console.error('Erro ao carregar configuração de guarnições:', e);
+                    }
+                }
+            };
+            
+            // Chamar após ter carregado os dados do banco para não sobrescrever
+            setTimeout(loadSavedData, 1000);
         });
     </script>
     <script src="/pontuacoes.js"></script>
