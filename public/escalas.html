@@ -1710,18 +1710,8 @@
             cancelAniversarianteForm.addEventListener('click', hideAniversarianteForm);
             saveAniversarianteForm.addEventListener('click', saveAniversariante);
             
-            // Implementar edição de equipes
-            const editEquipeAlfaBtn = document.getElementById('editEquipeAlfaBtn');
-            const editEquipeBravoBtn = document.getElementById('editEquipeBravoBtn');
-            const editEquipeCharlieBtn = document.getElementById('editEquipeCharlieBtn');
-            const equipeModal = document.getElementById('equipeModal');
-            const closeEquipeModal = document.getElementById('closeEquipeModal');
-            const equipeMembersList = document.getElementById('equipeMembersList');
-            const equipeModalTitle = document.getElementById('equipeModalTitle');
-            const addMembroBtn = document.getElementById('addMembroBtn');
-            const membroForm = document.getElementById('membroForm');
-            const cancelMembroForm = document.getElementById('cancelMembroForm');
-            const saveMembroForm = document.getElementById('saveMembroForm');
+            // A funcionalidade de edição de equipes foi removida
+            // A edição agora é restrita à área administrativa com autenticação apropriada
             
             let currentEquipe = null;
             let editingMembroIndex = null;
@@ -1853,14 +1843,11 @@
                         container.appendChild(li);
                     });
                     
-                    // Atualizar o contador de policiais no título de forma segura
-                    // para preservar os event listeners dos botões
+                    // Atualizar o contador de policiais no título de forma simples
                     const title = document.querySelector(`.equipe-${equipe} .equipe-title`);
                     const badge = title.querySelector(`.equipe-title-badge.badge-${equipe}`);
-                    const editBtn = document.getElementById(`editEquipe${equipe.charAt(0).toUpperCase() + equipe.slice(1)}Btn`);
                     
                     // Selecionar o nó de texto do título e atualizá-lo
-                    // em vez de limpar todo o conteúdo HTML
                     for (let i = 0; i < title.childNodes.length; i++) {
                         if (title.childNodes[i].nodeType === Node.TEXT_NODE) {
                             title.removeChild(title.childNodes[i]);
@@ -1868,30 +1855,14 @@
                         }
                     }
                     
-                    // Inserir o novo texto após o badge, antes do botão
+                    // Inserir o novo texto após o badge
                     const newText = document.createTextNode(` Equipe ${equipe.charAt(0).toUpperCase() + equipe.slice(1)} (${membros.length} Policiais)`);
-                    if (editBtn && editBtn.parentElement === title) {
-                        title.insertBefore(newText, editBtn);
-                    } else {
-                        title.appendChild(newText);
-                    }
+                    title.appendChild(newText);
                 });
             }
             
-            // Event listeners para equipes
-            if (editEquipeAlfaBtn) {
-                editEquipeAlfaBtn.addEventListener('click', () => openEquipeModal('alfa'));
-            }
-            if (editEquipeBravoBtn) {
-                editEquipeBravoBtn.addEventListener('click', () => openEquipeModal('bravo'));
-            }
-            if (editEquipeCharlieBtn) {
-                editEquipeCharlieBtn.addEventListener('click', () => openEquipeModal('charlie'));
-            }
-            closeEquipeModal.addEventListener('click', fecharEquipeModal);
-            addMembroBtn.addEventListener('click', addMembro);
-            cancelMembroForm.addEventListener('click', hideMembroForm);
-            saveMembroForm.addEventListener('click', saveMembro);
+            // Event listeners para edição de equipes foram removidos
+            // A funcionalidade agora é acessível apenas pela administração
             
             // Implementar edição de informações administrativas
             const editFeriasBtn = document.getElementById('editFeriasBtn');
@@ -2077,7 +2048,7 @@
             if (editExpedienteBtn) {
                 editExpedienteBtn.addEventListener('click', () => openInfoModal('expediente'));
             }
-            closeInfoModal.addEventListener('click', closeInfoModal);
+            closeInfoModal.addEventListener('click', () => closeInfoModal());
             addInfoBtn.addEventListener('click', addInfo);
             cancelInfoForm.addEventListener('click', hideInfoForm);
             saveInfoForm.addEventListener('click', saveInfo);
