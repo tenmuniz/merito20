@@ -15,6 +15,18 @@
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
         
+        /* Estilos aprimorados para botões administrativos */
+        .edit-btn, .admin-only {
+            cursor: pointer !important;
+            pointer-events: auto !important;
+            position: relative;
+            z-index: 10;
+        }
+        
+        .admin-only {
+            display: none;
+        }
+        
         body {
             background-color: #f0f2f5;
             color: #333;
@@ -563,6 +575,8 @@
         /* Estilos para botões de edição */
         .edit-btn {
             background-color: rgba(59, 130, 246, 0.1);
+            cursor: pointer !important;
+            pointer-events: auto !important;
             color: #3b82f6;
             border: 1px solid rgba(59, 130, 246, 0.3);
             border-radius: 6px;
