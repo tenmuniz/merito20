@@ -52,6 +52,404 @@ function checkGlobalAuth() {
     return false;
 }
 
+// Funções para modais de edição
+// Estas funções serão disponíveis globalmente para o script escalas.html
+function openAniversariantesModal() {
+    console.log("Abrindo modal de aniversariantes");
+    const aniversariantesModal = document.getElementById('aniversariantesModal');
+    if (aniversariantesModal) {
+        const aniversariantesList = document.getElementById('aniversariantesList');
+        if (aniversariantesList) {
+            renderAniversariantesList();
+        }
+        aniversariantesModal.classList.add('active');
+    }
+}
+
+function renderAniversariantesList() {
+    const aniversariantesList = document.getElementById('aniversariantesList');
+    if (!aniversariantesList) return;
+    
+    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+    aniversariantesList.innerHTML = '';
+    
+    aniversariantes.forEach(aniversariante => {
+        const itemRow = document.createElement('div');
+        itemRow.className = 'item-row';
+        
+        const data = new Date(aniversariante.data);
+        const dia = data.getDate().toString().padStart(2, '0');
+        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const mes = meses[data.getMonth()];
+        const dataFormatada = `${dia} de ${mes}`;
+        
+        itemRow.innerHTML = `
+            <div class="item-text">
+                <strong>${aniversariante.nome}</strong> - ${dataFormatada}<br>
+                <small>${aniversariante.cargo}</small>
+            </div>
+            <div class="item-actions">
+                <button class="item-btn edit" data-id="${aniversariante.id}">✏️</button>
+                <button class="item-btn delete" data-id="${aniversariante.id}">🗑️</button>
+            </div>
+        `;
+        
+        aniversariantesList.appendChild(itemRow);
+    });
+    
+    // Adicionar event listeners
+    const editButtons = aniversariantesList.querySelectorAll('.item-btn.edit');
+    const deleteButtons = aniversariantesList.querySelectorAll('.item-btn.delete');
+    
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.getAttribute('data-id'));
+            editAniversariante(id);
+        });
+    });
+    
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const id = parseInt(btn.getAttribute('data-id'));
+            deleteAniversariante(id);
+        });
+    });
+}
+
+function editAniversariante(id) {
+    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+    const aniversariante = aniversariantes.find(a => a.id === id);
+    
+    const aniversarianteNome = document.getElementById('aniversarianteNome');
+    const aniversarianteData = document.getElementById('aniversarianteData');
+    const aniversarianteCargo = document.getElementById('aniversarianteCargo');
+    const aniversarianteForm = document.getElementById('aniversarianteForm');
+    const addAniversarianteBtn = document.getElementById('addAniversarianteBtn');
+    
+    if (aniversariante && aniversarianteNome && aniversarianteData && aniversarianteCargo) {
+        aniversarianteNome.value = aniversariante.nome;
+        aniversarianteData.value = aniversariante.data;
+        aniversarianteCargo.value = aniversariante.cargo;
+        window.editingAniversarianteId = id;
+        
+        if (aniversarianteForm && addAniversarianteBtn) {
+            aniversarianteForm.style.display = 'block';
+            addAniversarianteBtn.style.display = 'none';
+        }
+    }
+}
+
+function deleteAniversariante(id) {
+    if (confirm('Tem certeza que deseja excluir este aniversariante?')) {
+        let aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+        aniversariantes = aniversariantes.filter(a => a.id !== id);
+        localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
+        renderAniversariantesList();
+        updateAniversariantesUI();
+    }
+}
+
+function openEquipeModal(equipe) {
+    console.log("Abrindo modal de equipe", equipe);
+    const equipeModal = document.getElementById('equipeModal');
+    if (equipeModal) {
+        const equipeModalTitle = document.getElementById('equipeModalTitle');
+        if (equipeModalTitle) {
+            equipeModalTitle.textContent = `Editar Equipe ${equipe.toUpperCase()}`;
+        }
+        
+        window.currentEquipe = equipe;
+        renderEquipeMembersList();
+        equipeModal.classList.add('active');
+    }
+}
+
+function renderEquipeMembersList() {
+    const equipeMembersList = document.getElementById('equipeMembersList');
+    if (!equipeMembersList || !window.currentEquipe) return;
+    
+    const membros = JSON.parse(localStorage.getItem(`equipe_${window.currentEquipe}`) || '[]');
+    equipeMembersList.innerHTML = '';
+    
+    membros.forEach((membro, index) => {
+        const itemRow = document.createElement('div');
+        itemRow.className = 'item-row';
+        
+        itemRow.innerHTML = `
+            <div class="item-text">
+                <strong>${membro}</strong>
+            </div>
+            <div class="item-actions">
+                <button class="item-btn edit" data-index="${index}">✏️</button>
+                <button class="item-btn delete" data-index="${index}">🗑️</button>
+            </div>
+        `;
+        
+        equipeMembersList.appendChild(itemRow);
+    });
+    
+    // Adicionar event listeners
+    const editButtons = equipeMembersList.querySelectorAll('.item-btn.edit');
+    const deleteButtons = equipeMembersList.querySelectorAll('.item-btn.delete');
+    
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-index'));
+            editMembro(index);
+        });
+    });
+    
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-index'));
+            deleteMembro(index);
+        });
+    });
+}
+
+function editMembro(index) {
+    if (!window.currentEquipe) return;
+    
+    const membros = JSON.parse(localStorage.getItem(`equipe_${window.currentEquipe}`) || '[]');
+    const membroNome = document.getElementById('membroNome');
+    const membroForm = document.getElementById('membroForm');
+    const addMembroBtn = document.getElementById('addMembroBtn');
+    
+    if (index >= 0 && index < membros.length && membroNome) {
+        membroNome.value = membros[index];
+        window.editingMembroIndex = index;
+        
+        if (membroForm && addMembroBtn) {
+            membroForm.style.display = 'block';
+            addMembroBtn.style.display = 'none';
+        }
+    }
+}
+
+function deleteMembro(index) {
+    if (!window.currentEquipe) return;
+    
+    if (confirm('Tem certeza que deseja remover este policial?')) {
+        let membros = JSON.parse(localStorage.getItem(`equipe_${window.currentEquipe}`) || '[]');
+        membros.splice(index, 1);
+        localStorage.setItem(`equipe_${window.currentEquipe}`, JSON.stringify(membros));
+        renderEquipeMembersList();
+        updateEquipesUI();
+    }
+}
+
+function openInfoModal(infoType) {
+    console.log("Abrindo modal de informações", infoType);
+    const infoModal = document.getElementById('infoModal');
+    if (infoModal) {
+        const infoModalTitle = document.getElementById('infoModalTitle');
+        const infoTypes = {
+            'ferias': 'Férias',
+            'licencas': 'Licença Especial',
+            'expediente': 'Expediente'
+        };
+        
+        if (infoModalTitle) {
+            infoModalTitle.textContent = `Editar ${infoTypes[infoType]}`;
+        }
+        
+        window.currentInfoType = infoType;
+        renderInfoList();
+        infoModal.classList.add('active');
+    }
+}
+
+function renderInfoList() {
+    const infoList = document.getElementById('infoList');
+    if (!infoList || !window.currentInfoType) return;
+    
+    const infos = JSON.parse(localStorage.getItem(`info_${window.currentInfoType}`) || '[]');
+    infoList.innerHTML = '';
+    
+    infos.forEach((info, index) => {
+        const itemRow = document.createElement('div');
+        itemRow.className = 'item-row';
+        
+        itemRow.innerHTML = `
+            <div class="item-text">
+                ${info}
+            </div>
+            <div class="item-actions">
+                <button class="item-btn edit" data-index="${index}">✏️</button>
+                <button class="item-btn delete" data-index="${index}">🗑️</button>
+            </div>
+        `;
+        
+        infoList.appendChild(itemRow);
+    });
+    
+    // Adicionar event listeners
+    const editButtons = infoList.querySelectorAll('.item-btn.edit');
+    const deleteButtons = infoList.querySelectorAll('.item-btn.delete');
+    
+    editButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-index'));
+            editInfo(index);
+        });
+    });
+    
+    deleteButtons.forEach(btn => {
+        btn.addEventListener('click', () => {
+            const index = parseInt(btn.getAttribute('data-index'));
+            deleteInfo(index);
+        });
+    });
+}
+
+function editInfo(index) {
+    if (!window.currentInfoType) return;
+    
+    const infos = JSON.parse(localStorage.getItem(`info_${window.currentInfoType}`) || '[]');
+    const infoTexto = document.getElementById('infoTexto');
+    const infoForm = document.getElementById('infoForm');
+    const addInfoBtn = document.getElementById('addInfoBtn');
+    
+    if (index >= 0 && index < infos.length && infoTexto) {
+        infoTexto.value = infos[index];
+        window.editingInfoIndex = index;
+        
+        if (infoForm && addInfoBtn) {
+            infoForm.style.display = 'block';
+            addInfoBtn.style.display = 'none';
+        }
+    }
+}
+
+function deleteInfo(index) {
+    if (!window.currentInfoType) return;
+    
+    if (confirm('Tem certeza que deseja excluir esta informação?')) {
+        let infos = JSON.parse(localStorage.getItem(`info_${window.currentInfoType}`) || '[]');
+        infos.splice(index, 1);
+        localStorage.setItem(`info_${window.currentInfoType}`, JSON.stringify(infos));
+        renderInfoList();
+        updateInfoUI();
+    }
+}
+
+// Funções de atualização UI
+function updateAniversariantesUI() {
+    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+    const container = document.querySelector('.aniversariantes-lista');
+    if (!container) return;
+    
+    // Ordenar aniversariantes por dia
+    aniversariantes.sort((a, b) => {
+        const dateA = new Date(a.data);
+        const dateB = new Date(b.data);
+        return dateA.getDate() - dateB.getDate();
+    });
+    
+    // Limpar o container
+    container.innerHTML = '';
+    
+    // Adicionar cada card de aniversariante
+    aniversariantes.forEach(aniv => {
+        const data = new Date(aniv.data);
+        const dia = data.getDate().toString().padStart(2, '0');
+        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+        const mes = meses[data.getMonth()];
+        const dataFormatada = `${dia} de ${mes}`;
+        
+        const card = document.createElement('div');
+        card.className = 'aniversariante-card aniversariante-destaque';
+        card.innerHTML = `
+            <div class="aniversariante-nome">${aniv.nome}</div>
+            <div class="aniversariante-data">
+                <span>🗓️</span>
+                <span>${dataFormatada}</span>
+            </div>
+            <div class="aniversariante-cargo">${aniv.cargo}</div>
+        `;
+        
+        container.appendChild(card);
+    });
+}
+
+function updateEquipesUI() {
+    const equipes = ['alfa', 'bravo', 'charlie'];
+    
+    equipes.forEach(equipe => {
+        const membros = JSON.parse(localStorage.getItem(`equipe_${equipe}`) || '[]');
+        const container = document.querySelector(`.equipe-${equipe} .equipe-membros`);
+        if (!container) return;
+        
+        // Limpar o container
+        container.innerHTML = '';
+        
+        // Adicionar cada membro da equipe
+        membros.forEach(membro => {
+            const li = document.createElement('li');
+            li.className = 'equipe-membro';
+            li.innerHTML = `<strong>${membro}</strong>`;
+            container.appendChild(li);
+        });
+        
+        // Atualizar título com o número de policiais
+        const title = document.querySelector(`.equipe-${equipe} .equipe-title`);
+        if (title) {
+            const titleText = title.textContent;
+            // Usar regex para substituir o número entre parênteses
+            const updatedText = titleText.replace(/\(\d+\s+Policiais\)/, `(${membros.length} Policiais)`);
+            title.innerHTML = ''; // Limpar o título
+            
+            // Adicionar badge
+            const badge = document.createElement('span');
+            badge.className = `equipe-title-badge badge-${equipe}`;
+            badge.textContent = equipe.toUpperCase();
+            title.appendChild(badge);
+            
+            // Adicionar texto atualizado
+            const textNode = document.createTextNode(` Equipe ${equipe.charAt(0).toUpperCase() + equipe.slice(1)} (${membros.length} Policiais)`);
+            title.appendChild(textNode);
+            
+            // Adicionar botão de edição
+            const editBtn = document.getElementById(`editEquipe${equipe.charAt(0).toUpperCase() + equipe.slice(1)}Btn`);
+            if (editBtn) {
+                title.appendChild(editBtn);
+            }
+        }
+    });
+}
+
+function updateInfoUI() {
+    const infoTypes = ['ferias', 'licencas', 'expediente'];
+    
+    infoTypes.forEach(type => {
+        const infos = JSON.parse(localStorage.getItem(`info_${type}`) || '[]');
+        const container = document.querySelector(`.box-${type} .info-list`);
+        if (!container) return;
+        
+        // Limpar o container
+        container.innerHTML = '';
+        
+        // Adicionar cada informação
+        infos.forEach(info => {
+            const li = document.createElement('li');
+            li.className = 'info-item';
+            
+            // Verificar se há parênteses para destacar
+            if (info.includes('(')) {
+                const parts = info.split('(');
+                const nome = parts[0].trim();
+                const complemento = '(' + parts[1];
+                
+                li.innerHTML = `<span class="info-destaque">${nome}</span> ${complemento}`;
+            } else {
+                li.textContent = info;
+            }
+            
+            container.appendChild(li);
+        });
+    });
+}
+
 // Função para inicializar os botões de edição
 function initEditButtons() {
     // Inicializar botões de edição de equipes
@@ -60,21 +458,41 @@ function initEditButtons() {
     const editEquipeCharlieBtn = document.getElementById('editEquipeCharlieBtn');
     
     if (editEquipeAlfaBtn) {
-        editEquipeAlfaBtn.onclick = () => openEquipeModal('alfa');
+        console.log("Configurando botão de edição Alfa");
+        editEquipeAlfaBtn.style.pointerEvents = 'auto';
+        editEquipeAlfaBtn.onclick = function() { 
+            console.log("Clicou em editar Alfa");
+            openEquipeModal('alfa'); 
+        };
     }
     
     if (editEquipeBravoBtn) {
-        editEquipeBravoBtn.onclick = () => openEquipeModal('bravo');
+        console.log("Configurando botão de edição Bravo");
+        editEquipeBravoBtn.style.pointerEvents = 'auto';
+        editEquipeBravoBtn.onclick = function() { 
+            console.log("Clicou em editar Bravo");
+            openEquipeModal('bravo'); 
+        };
     }
     
     if (editEquipeCharlieBtn) {
-        editEquipeCharlieBtn.onclick = () => openEquipeModal('charlie');
+        console.log("Configurando botão de edição Charlie");
+        editEquipeCharlieBtn.style.pointerEvents = 'auto';
+        editEquipeCharlieBtn.onclick = function() {
+            console.log("Clicou em editar Charlie");
+            openEquipeModal('charlie');
+        };
     }
     
     // Inicializar botões de edição de aniversariantes
     const editAniversariantesBtn = document.getElementById('editAniversariantesBtn');
     if (editAniversariantesBtn) {
-        editAniversariantesBtn.onclick = () => openAniversariantesModal();
+        console.log("Configurando botão de edição de aniversariantes");
+        editAniversariantesBtn.style.pointerEvents = 'auto';
+        editAniversariantesBtn.onclick = function() {
+            console.log("Clicou em editar aniversariantes");
+            openAniversariantesModal();
+        };
     }
     
     // Inicializar botões de edição de informações
@@ -83,15 +501,251 @@ function initEditButtons() {
     const editExpedienteBtn = document.getElementById('editExpedienteBtn');
     
     if (editFeriasBtn) {
-        editFeriasBtn.onclick = () => openInfoModal('ferias');
+        console.log("Configurando botão de edição de férias");
+        editFeriasBtn.style.pointerEvents = 'auto';
+        editFeriasBtn.onclick = function() {
+            console.log("Clicou em editar férias");
+            openInfoModal('ferias');
+        };
     }
     
     if (editLicencasBtn) {
-        editLicencasBtn.onclick = () => openInfoModal('licencas');
+        console.log("Configurando botão de edição de licenças");
+        editLicencasBtn.style.pointerEvents = 'auto';
+        editLicencasBtn.onclick = function() {
+            console.log("Clicou em editar licenças");
+            openInfoModal('licencas');
+        };
     }
     
     if (editExpedienteBtn) {
-        editExpedienteBtn.onclick = () => openInfoModal('expediente');
+        console.log("Configurando botão de edição de expediente");
+        editExpedienteBtn.style.pointerEvents = 'auto';
+        editExpedienteBtn.onclick = function() {
+            console.log("Clicou em editar expediente");
+            openInfoModal('expediente');
+        };
+    }
+    
+    // Configurar botões de gerenciamento de formulários
+    const closeAniversariantesModal = document.getElementById('closeAniversariantesModal');
+    if (closeAniversariantesModal) {
+        closeAniversariantesModal.onclick = function() {
+            const modal = document.getElementById('aniversariantesModal');
+            if (modal) modal.classList.remove('active');
+            const form = document.getElementById('aniversarianteForm');
+            if (form) form.style.display = 'none';
+            const addBtn = document.getElementById('addAniversarianteBtn');
+            if (addBtn) addBtn.style.display = 'block';
+        };
+    }
+    
+    const closeEquipeModalBtn = document.getElementById('closeEquipeModal');
+    if (closeEquipeModalBtn) {
+        closeEquipeModalBtn.onclick = function() {
+            const modal = document.getElementById('equipeModal');
+            if (modal) modal.classList.remove('active');
+            const form = document.getElementById('membroForm');
+            if (form) form.style.display = 'none';
+            const addBtn = document.getElementById('addMembroBtn');
+            if (addBtn) addBtn.style.display = 'block';
+            window.currentEquipe = null;
+        };
+    }
+    
+    const closeInfoModal = document.getElementById('closeInfoModal');
+    if (closeInfoModal) {
+        closeInfoModal.onclick = function() {
+            const modal = document.getElementById('infoModal');
+            if (modal) modal.classList.remove('active');
+            const form = document.getElementById('infoForm');
+            if (form) form.style.display = 'none';
+            const addBtn = document.getElementById('addInfoBtn');
+            if (addBtn) addBtn.style.display = 'block';
+            window.currentInfoType = null;
+        };
+    }
+    
+    // Configurar botões de adição e salvamento
+    const addAniversarianteBtn = document.getElementById('addAniversarianteBtn');
+    if (addAniversarianteBtn) {
+        addAniversarianteBtn.onclick = function() {
+            const form = document.getElementById('aniversarianteForm');
+            if (form) form.style.display = 'block';
+            addAniversarianteBtn.style.display = 'none';
+        };
+    }
+    
+    const addMembroBtn = document.getElementById('addMembroBtn');
+    if (addMembroBtn) {
+        addMembroBtn.onclick = function() {
+            const form = document.getElementById('membroForm');
+            if (form) form.style.display = 'block';
+            addMembroBtn.style.display = 'none';
+        };
+    }
+    
+    const addInfoBtn = document.getElementById('addInfoBtn');
+    if (addInfoBtn) {
+        addInfoBtn.onclick = function() {
+            const form = document.getElementById('infoForm');
+            if (form) form.style.display = 'block';
+            addInfoBtn.style.display = 'none';
+        };
+    }
+    
+    // Botões de salvamento
+    const saveAniversarianteForm = document.getElementById('saveAniversarianteForm');
+    if (saveAniversarianteForm) {
+        saveAniversarianteForm.onclick = function() {
+            const nome = document.getElementById('aniversarianteNome').value;
+            const data = document.getElementById('aniversarianteData').value;
+            const cargo = document.getElementById('aniversarianteCargo').value;
+            
+            if (!nome || !data || !cargo) {
+                alert('Preencha todos os campos!');
+                return;
+            }
+            
+            const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
+            
+            if (window.editingAniversarianteId) {
+                // Editar existente
+                const index = aniversariantes.findIndex(a => a.id === window.editingAniversarianteId);
+                if (index !== -1) {
+                    aniversariantes[index] = {
+                        id: window.editingAniversarianteId,
+                        nome,
+                        data,
+                        cargo
+                    };
+                }
+            } else {
+                // Adicionar novo
+                const newId = aniversariantes.length > 0 ? Math.max(...aniversariantes.map(a => a.id)) + 1 : 1;
+                aniversariantes.push({
+                    id: newId,
+                    nome,
+                    data,
+                    cargo
+                });
+            }
+            
+            localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
+            
+            // Ocultar formulário
+            const form = document.getElementById('aniversarianteForm');
+            if (form) form.style.display = 'none';
+            if (addAniversarianteBtn) addAniversarianteBtn.style.display = 'block';
+            
+            // Atualizar interface
+            renderAniversariantesList();
+            updateAniversariantesUI();
+        };
+    }
+    
+    const saveMembroForm = document.getElementById('saveMembroForm');
+    if (saveMembroForm) {
+        saveMembroForm.onclick = function() {
+            const nome = document.getElementById('membroNome').value;
+            
+            if (!nome) {
+                alert('Preencha o nome do policial!');
+                return;
+            }
+            
+            if (!window.currentEquipe) {
+                alert('Erro: Equipe não selecionada!');
+                return;
+            }
+            
+            const membros = JSON.parse(localStorage.getItem(`equipe_${window.currentEquipe}`) || '[]');
+            
+            if (window.editingMembroIndex !== null && window.editingMembroIndex !== undefined) {
+                // Editar existente
+                membros[window.editingMembroIndex] = nome;
+            } else {
+                // Adicionar novo
+                membros.push(nome);
+            }
+            
+            localStorage.setItem(`equipe_${window.currentEquipe}`, JSON.stringify(membros));
+            
+            // Ocultar formulário
+            const form = document.getElementById('membroForm');
+            if (form) form.style.display = 'none';
+            if (addMembroBtn) addMembroBtn.style.display = 'block';
+            
+            // Atualizar interface
+            renderEquipeMembersList();
+            updateEquipesUI();
+        };
+    }
+    
+    const saveInfoForm = document.getElementById('saveInfoForm');
+    if (saveInfoForm) {
+        saveInfoForm.onclick = function() {
+            const texto = document.getElementById('infoTexto').value;
+            
+            if (!texto) {
+                alert('Preencha a informação!');
+                return;
+            }
+            
+            if (!window.currentInfoType) {
+                alert('Erro: Tipo de informação não selecionado!');
+                return;
+            }
+            
+            const infos = JSON.parse(localStorage.getItem(`info_${window.currentInfoType}`) || '[]');
+            
+            if (window.editingInfoIndex !== null && window.editingInfoIndex !== undefined) {
+                // Editar existente
+                infos[window.editingInfoIndex] = texto;
+            } else {
+                // Adicionar novo
+                infos.push(texto);
+            }
+            
+            localStorage.setItem(`info_${window.currentInfoType}`, JSON.stringify(infos));
+            
+            // Ocultar formulário
+            const form = document.getElementById('infoForm');
+            if (form) form.style.display = 'none';
+            if (addInfoBtn) addInfoBtn.style.display = 'block';
+            
+            // Atualizar interface
+            renderInfoList();
+            updateInfoUI();
+        };
+    }
+    
+    // Botões de cancelamento
+    const cancelAniversarianteForm = document.getElementById('cancelAniversarianteForm');
+    if (cancelAniversarianteForm) {
+        cancelAniversarianteForm.onclick = function() {
+            const form = document.getElementById('aniversarianteForm');
+            if (form) form.style.display = 'none';
+            if (addAniversarianteBtn) addAniversarianteBtn.style.display = 'block';
+        };
+    }
+    
+    const cancelMembroForm = document.getElementById('cancelMembroForm');
+    if (cancelMembroForm) {
+        cancelMembroForm.onclick = function() {
+            const form = document.getElementById('membroForm');
+            if (form) form.style.display = 'none';
+            if (addMembroBtn) addMembroBtn.style.display = 'block';
+        };
+    }
+    
+    const cancelInfoForm = document.getElementById('cancelInfoForm');
+    if (cancelInfoForm) {
+        cancelInfoForm.onclick = function() {
+            const form = document.getElementById('infoForm');
+            if (form) form.style.display = 'none';
+            if (addInfoBtn) addInfoBtn.style.display = 'block';
+        };
     }
 }
 
