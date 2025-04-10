@@ -9,7 +9,8 @@ function checkGlobalAuth() {
                 console.log("Usuário autenticado como admin:", user);
                 
                 // Tornar visíveis todos os elementos administrativos
-                const adminElements = document.querySelectorAll('.admin-only');
+                // com exceção dos botões de edição (conforme solicitado)
+                const adminElements = document.querySelectorAll('.admin-only:not(.edit-btn)');
                 adminElements.forEach(el => {
                     // Preservar os event listeners originais ao mostrar os elementos
                     const originalDisplay = el.tagName.toLowerCase() === 'button' ? 'inline-flex' : 'block';
@@ -22,7 +23,7 @@ function checkGlobalAuth() {
                     el.style.zIndex = '100';
                 });
                 
-                // Inicializar listeners para botões de edição
+                // Chama initEditButtons, mas esta função agora oculta os botões de edição
                 initEditButtons();
                 
                 // Atualizar botão de login para "Sair"
@@ -450,82 +451,24 @@ function updateInfoUI() {
     });
 }
 
-// Função para inicializar os botões de edição
+// Função para inicializar os botões de edição (desativada)
 function initEditButtons() {
-    // Inicializar botões de edição de equipes
-    const editEquipeAlfaBtn = document.getElementById('editEquipeAlfaBtn');
-    const editEquipeBravoBtn = document.getElementById('editEquipeBravoBtn');
-    const editEquipeCharlieBtn = document.getElementById('editEquipeCharlieBtn');
+    // Os botões de edição foram desativados conforme solicitado pelo usuário
+    console.log("Botões de edição desativados por solicitação do usuário");
     
-    if (editEquipeAlfaBtn) {
-        console.log("Configurando botão de edição Alfa");
-        editEquipeAlfaBtn.style.pointerEvents = 'auto';
-        editEquipeAlfaBtn.onclick = function() { 
-            console.log("Clicou em editar Alfa");
-            openEquipeModal('alfa'); 
-        };
-    }
+    // Remover botões de edição da UI
+    const editButtons = [
+        'editEquipeAlfaBtn', 'editEquipeBravoBtn', 'editEquipeCharlieBtn',
+        'editAniversariantesBtn', 'editFeriasBtn', 'editLicencasBtn', 'editExpedienteBtn'
+    ];
     
-    if (editEquipeBravoBtn) {
-        console.log("Configurando botão de edição Bravo");
-        editEquipeBravoBtn.style.pointerEvents = 'auto';
-        editEquipeBravoBtn.onclick = function() { 
-            console.log("Clicou em editar Bravo");
-            openEquipeModal('bravo'); 
-        };
-    }
-    
-    if (editEquipeCharlieBtn) {
-        console.log("Configurando botão de edição Charlie");
-        editEquipeCharlieBtn.style.pointerEvents = 'auto';
-        editEquipeCharlieBtn.onclick = function() {
-            console.log("Clicou em editar Charlie");
-            openEquipeModal('charlie');
-        };
-    }
-    
-    // Inicializar botões de edição de aniversariantes
-    const editAniversariantesBtn = document.getElementById('editAniversariantesBtn');
-    if (editAniversariantesBtn) {
-        console.log("Configurando botão de edição de aniversariantes");
-        editAniversariantesBtn.style.pointerEvents = 'auto';
-        editAniversariantesBtn.onclick = function() {
-            console.log("Clicou em editar aniversariantes");
-            openAniversariantesModal();
-        };
-    }
-    
-    // Inicializar botões de edição de informações
-    const editFeriasBtn = document.getElementById('editFeriasBtn');
-    const editLicencasBtn = document.getElementById('editLicencasBtn');
-    const editExpedienteBtn = document.getElementById('editExpedienteBtn');
-    
-    if (editFeriasBtn) {
-        console.log("Configurando botão de edição de férias");
-        editFeriasBtn.style.pointerEvents = 'auto';
-        editFeriasBtn.onclick = function() {
-            console.log("Clicou em editar férias");
-            openInfoModal('ferias');
-        };
-    }
-    
-    if (editLicencasBtn) {
-        console.log("Configurando botão de edição de licenças");
-        editLicencasBtn.style.pointerEvents = 'auto';
-        editLicencasBtn.onclick = function() {
-            console.log("Clicou em editar licenças");
-            openInfoModal('licencas');
-        };
-    }
-    
-    if (editExpedienteBtn) {
-        console.log("Configurando botão de edição de expediente");
-        editExpedienteBtn.style.pointerEvents = 'auto';
-        editExpedienteBtn.onclick = function() {
-            console.log("Clicou em editar expediente");
-            openInfoModal('expediente');
-        };
-    }
+    editButtons.forEach(btnId => {
+        const btn = document.getElementById(btnId);
+        if (btn) {
+            btn.style.display = 'none';
+        }
+    });
+}
     
     // Configurar botões de gerenciamento de formulários
     const closeAniversariantesModal = document.getElementById('closeAniversariantesModal');
