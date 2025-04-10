@@ -1398,6 +1398,13 @@
         &copy; 2025 - 20ª CIPM - Quadro de Distribuição de Guarnições
     </footer>
 
+    <script src="/pontuacoes.js"></script>
+    <script>
+        // Verificar autenticação global ao carregar
+        document.addEventListener('DOMContentLoaded', function() {
+            checkGlobalAuth();
+        });
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             // Verificar se o mês atual é abril de 2025
@@ -1439,26 +1446,6 @@
                     cell.style.zIndex = '5';
                 }
             });
-            
-            // Sistema de autenticação
-            let isAdmin = false;
-            const adminButtons = document.querySelectorAll('.admin-only');
-            
-            function checkLocalAuth() {
-                const userData = localStorage.getItem('escalasUserData');
-                if (userData) {
-                    try {
-                        const user = JSON.parse(userData);
-                        if (user && user.isAdmin) {
-                            isAdmin = true;
-                            showAdminUI();
-                        }
-                    } catch (e) {
-                        console.error('Erro ao processar dados de autenticação:', e);
-                        localStorage.removeItem('escalasUserData');
-                    }
-                }
-            }
             
             function showAdminUI() {
                 adminButtons.forEach(btn => {
@@ -1640,7 +1627,6 @@
             
             // Inicialização
             initializeLocalStorage();
-            checkLocalAuth();
             
             // Implementar a edição dos aniversariantes
             const editAniversariantesBtn = document.getElementById('editAniversariantesBtn');

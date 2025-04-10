@@ -1,3 +1,47 @@
+// Sistema de autenticação global
+function checkGlobalAuth() {
+    const userData = localStorage.getItem('escalasUserData');
+    if (userData) {
+        try {
+            const user = JSON.parse(userData);
+            if (user && user.isAdmin) {
+                // Aplicar UI de admin em todas as páginas
+                const adminElements = document.querySelectorAll('.admin-only');
+                adminElements.forEach(el => {
+                    el.style.display = el.tagName.toLowerCase() === 'button' ? 'flex' : 'block';
+                });
+                
+                // Atualizar botão de login se existir
+                const loginBtn = document.getElementById('loginBtn');
+                if (loginBtn) {
+                    loginBtn.textContent = 'Sair';
+                    loginBtn.onclick = function() {
+                        logout();
+                        return false;
+                    };
+                }
+                
+                return true;
+            }
+        } catch (e) {
+            console.error('Erro ao processar dados de autenticação:', e);
+            localStorage.removeItem('escalasUserData');
+        }
+    }
+    return false;
+}
+
+function logout() {
+    localStorage.removeItem('escalasUserData');
+    alert('Você saiu da área administrativa.');
+    window.location.reload();
+}
+
+// Executar verificação de autenticação em todas as páginas
+document.addEventListener('DOMContentLoaded', function() {
+    checkGlobalAuth();
+});
+
 // Tabela de pontuações para o sistema de meritocracia
 const TABELA_PONTUACOES = {
     armas: [
