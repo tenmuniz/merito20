@@ -1464,16 +1464,20 @@
                 adminButtons.forEach(btn => {
                     btn.style.display = 'flex';
                 });
-                document.getElementById('loginBtn').textContent = 'Sair';
-                document.getElementById('loginBtn').addEventListener('click', logout, { once: true });
+                const loginButton = document.getElementById('loginBtn');
+                loginButton.textContent = 'Sair';
+                loginButton.removeEventListener('click', openLoginModal);
+                loginButton.addEventListener('click', logout);
             }
             
             function hideAdminUI() {
                 adminButtons.forEach(btn => {
                     btn.style.display = 'none';
                 });
-                document.getElementById('loginBtn').innerHTML = '<span>🔐</span><span>Área Administrativa</span>';
-                document.getElementById('loginBtn').addEventListener('click', openLoginModal, { once: true });
+                const loginButton = document.getElementById('loginBtn');
+                loginButton.innerHTML = '<span>🔐</span><span>Área Administrativa</span>';
+                loginButton.removeEventListener('click', logout);
+                loginButton.addEventListener('click', openLoginModal);
             }
             
             function logout() {
@@ -1629,7 +1633,7 @@
             }
             
             // Event Listeners
-            loginBtn.addEventListener('click', openLoginModal, { once: true });
+            loginBtn.addEventListener('click', openLoginModal);
             closeLoginModal.addEventListener('click', closeLoginModalHandler);
             cancelLogin.addEventListener('click', closeLoginModalHandler);
             submitLogin.addEventListener('click', handleLogin);
