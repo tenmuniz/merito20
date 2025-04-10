@@ -1563,7 +1563,7 @@
                 aniversariantesModal.classList.add('active');
             }
             
-            function closeAniversariantesModal() {
+            function fecharAniversariantesModal() {
                 aniversariantesModal.classList.remove('active');
                 hideAniversarianteForm();
             }
@@ -1731,7 +1731,7 @@
             
             // Event listeners para aniversariantes
             editAniversariantesBtn.addEventListener('click', openAniversariantesModal);
-            closeAniversariantesModal.addEventListener('click', closeAniversariantesModal);
+            closeAniversariantesModal.addEventListener('click', fecharAniversariantesModal);
             addAniversarianteBtn.addEventListener('click', addAniversariante);
             cancelAniversarianteForm.addEventListener('click', hideAniversarianteForm);
             saveAniversarianteForm.addEventListener('click', saveAniversariante);
