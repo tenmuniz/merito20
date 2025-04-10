@@ -1185,28 +1185,8 @@
                         // Mostrar mensagem de sucesso
                         alert('Login realizado com sucesso!');
                         
-                        // Mostrar botão de adicionar evento
-                        const addEventBtn = document.getElementById('addEventBtn');
-                        if (addEventBtn) {
-                            addEventBtn.style.display = 'inline-flex';
-                        }
-                        
-                        // Mostrar botão de zerar pontos
-                        const resetBtn = document.getElementById('resetBtn');
-                        if (resetBtn) {
-                            resetBtn.style.display = 'inline-flex';
-                        }
-                        
-                        // Atualizar botão de login
-                        const loginBtn = document.getElementById('loginBtn');
-                        if (loginBtn) {
-                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
-                            loginBtn.onclick = function() {
-                                localStorage.removeItem('escalasUserData');
-                                alert('Logout realizado com sucesso!');
-                                window.location.reload();
-                            };
-                        }
+                        // Recarregar a página para aplicar todas as alterações
+                        window.location.reload();
                     } else {
                         // Login falhou
                         document.getElementById('loginError').style.display = 'block';
@@ -2277,52 +2257,75 @@
                 });
             }
             
-            // Configurar botão de adicionar evento
-            const eventModal = document.getElementById('eventModal');
-            if (addEventBtn && eventModal) {
-                addEventBtn.addEventListener('click', function() {
-                    eventModal.style.display = 'flex';
-                    // Definir a data do evento como hoje por padrão
-                    const eventDateInput = document.getElementById('eventDate');
-                    if (eventDateInput) {
-                        eventDateInput.valueAsDate = new Date();
-                    }
-                });
+            // Configurar botões e formulários
+            function configurarModals() {
+                // Configurar o botão de adicionar evento
+                const eventModal = document.getElementById('eventModal');
+                const addEventBtn = document.getElementById('addEventBtn');
+                if (addEventBtn) {
+                    addEventBtn.onclick = function() {
+                        if (eventModal) {
+                            eventModal.style.display = 'flex';
+                            
+                            // Definir a data do evento como hoje por padrão
+                            const eventDateInput = document.getElementById('eventDate');
+                            if (eventDateInput) {
+                                eventDateInput.valueAsDate = new Date();
+                            }
+                        }
+                    };
+                }
                 
                 // Fechar modal de evento
                 const closeEventBtn = document.querySelector('#eventModal .close-btn');
-                if (closeEventBtn) {
-                    closeEventBtn.addEventListener('click', function() {
+                if (closeEventBtn && eventModal) {
+                    closeEventBtn.onclick = function() {
                         eventModal.style.display = 'none';
-                    });
+                    };
                 }
-            }
-            
-            // Configurar botão de zerar pontos
-            const resetBtn = document.getElementById('resetBtn');
-            if (resetBtn) {
-                resetBtn.addEventListener('click', function() {
-                    if (confirm('Tem certeza que deseja zerar todos os pontos das guarnições? Esta ação não pode ser desfeita.')) {
-                        // Zerar pontos das guarnições
-                        localStorage.removeItem('events');
-                        
-                        // Atualizar pontuação na interface
-                        document.getElementById('alfa-points').textContent = '0';
-                        document.getElementById('bravo-points').textContent = '0';
-                        document.getElementById('charlie-points').textContent = '0';
-                        
-                        // Atualizar o pódio
-                        document.querySelectorAll('.podium-points').forEach(el => {
-                            el.textContent = '0';
-                        });
-                        
-                        // Limpar a tabela de eventos
-                        document.getElementById('eventsTableBody').innerHTML = '';
-                        
-                        alert('Pontuação zerada com sucesso!');
-                    }
+                
+                // Configurar botão de zerar pontos
+                const resetBtn = document.getElementById('resetBtn');
+                if (resetBtn) {
+                    resetBtn.onclick = function() {
+                        if (confirm('Tem certeza que deseja zerar todos os pontos das guarnições? Esta ação não pode ser desfeita.')) {
+                            // Zerar pontos das guarnições
+                            localStorage.removeItem('events');
+                            
+                            // Atualizar pontuação na interface
+                            document.getElementById('alfa-points').textContent = '0';
+                            document.getElementById('bravo-points').textContent = '0';
+                            document.getElementById('charlie-points').textContent = '0';
+                            
+                            // Atualizar o pódio
+                            document.querySelectorAll('.podium-points').forEach(el => {
+                                el.textContent = '0';
+                            });
+                            
+                            // Limpar a tabela de eventos
+                            document.getElementById('eventsTableBody').innerHTML = '';
+                            
+                            alert('Pontuação zerada com sucesso!');
+                        }
+                    };
+                }
+                
+                // Configurar fechamento dos outros modais
+                const modals = document.querySelectorAll('.event-modal, .detail-modal, .login-modal');
+                const closeButtons = document.querySelectorAll('.close-btn');
+                
+                closeButtons.forEach(btn => {
+                    btn.onclick = function() {
+                        const modal = btn.closest('.event-modal, .detail-modal, .login-modal');
+                        if (modal) {
+                            modal.style.display = 'none';
+                        }
+                    };
                 });
             }
+            
+            // Chamar a configuração dos modais
+            configurarModals();
             
             // Inicializar verificação de autenticação
             verificarAutenticacao();
