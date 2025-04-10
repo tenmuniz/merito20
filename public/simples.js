@@ -13,13 +13,13 @@ document.addEventListener('DOMContentLoaded', function() {
             const btn = document.createElement('button');
             btn.id = 'loginBtn';
             btn.className = 'login-button';
-            btn.innerHTML = '<span class="login-icon">🔒</span><span>Área Administrativa</span>';
+            btn.innerHTML = '<span class="login-icon">🔑</span><span>Login</span>';
             header.appendChild(btn);
             configurarBotaoLogin(btn);
         } else {
             // Configure cada botão de login existente
             loginBtns.forEach(btn => {
-                if (btn.textContent.includes('Administrativa')) {
+                if (btn.id === 'loginBtn') {
                     console.log('Botão de login encontrado:', btn);
                     configurarBotaoLogin(btn);
                 }
@@ -45,10 +45,14 @@ document.addEventListener('DOMContentLoaded', function() {
                 logout();
             });
         } else {
-            novoBtn.innerHTML = '<span class="login-icon">🔒</span><span>Área Administrativa</span>';
+            novoBtn.innerHTML = '<span class="login-icon">🔑</span><span>Login</span>';
             novoBtn.addEventListener('click', function() {
                 console.log('Login clicado');
-                abrirModalLogin();
+                console.log('Abrindo modal de login');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                }
             });
         }
     }
