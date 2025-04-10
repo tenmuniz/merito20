@@ -927,6 +927,69 @@
         .aniversario-link:hover {
             background-color: rgba(255, 255, 255, 0.3);
         }
+
+        .admin-controls {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            position: relative;
+            z-index: 2;
+        }
+        
+        .edit-aniversario-btn {
+            background-color: rgba(255, 255, 255, 0.25);
+            border: none;
+            border-radius: 50%;
+            width: 35px;
+            height: 35px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        }
+        
+        .edit-aniversario-btn:hover {
+            background-color: rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
+        }
+        
+        /* Estilos para os botões de administração */
+        .admin-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .admin-btn {
+            background: linear-gradient(to right, #3949ab, #5c6bc0);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 0.9rem;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.15);
+        }
+        
+        .admin-btn:hover {
+            background: linear-gradient(to right, #283593, #3949ab);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+        
+        .warning-btn {
+            background: linear-gradient(to right, #ef4444, #f87171);
+        }
+        
+        .warning-btn:hover {
+            background: linear-gradient(to right, #dc2626, #ef4444);
+        }
         
         @keyframes pulse-banner {
             0% { box-shadow: 0 4px 15px rgba(139, 92, 246, 0.3); }
@@ -969,8 +1032,20 @@
         <div class="section">
             <div class="section-header">
                 <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
-                <button id="addEventBtn" style="display: none;">Adicionar Evento</button>
-                <button id="resetBtn" style="display: none;">Zerar Todos os Pontos</button>
+                <div class="admin-buttons" style="display: none;">
+                    <button id="addEventBtn" class="admin-btn">
+                        <span>➕</span>
+                        <span>Adicionar Evento</span>
+                    </button>
+                    <button id="editTeamsBtn" class="admin-btn">
+                        <span>✏️</span>
+                        <span>Editar Guarnições</span>
+                    </button>
+                    <button id="resetBtn" class="admin-btn warning-btn">
+                        <span>🔄</span>
+                        <span>Zerar Pontos</span>
+                    </button>
+                </div>
             </div>
             
             <div class="teams-grid">
@@ -1186,6 +1261,82 @@
         </div>
     </div>
     
+    <!-- Modal de Editar Aniversariantes -->
+    <div id="aniversariantesModal" class="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Aniversariantes</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="aniversariantesForm">
+                <div class="form-group">
+                    <label for="aniversariantesMes">Mês:</label>
+                    <select id="aniversariantesMes" required>
+                        <option value="Janeiro">Janeiro</option>
+                        <option value="Fevereiro">Fevereiro</option>
+                        <option value="Março">Março</option>
+                        <option value="Abril" selected>Abril</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Junho">Junho</option>
+                        <option value="Julho">Julho</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro">Setembro</option>
+                        <option value="Outubro">Outubro</option>
+                        <option value="Novembro">Novembro</option>
+                        <option value="Dezembro">Dezembro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="aniversariantesNomes">Nomes dos Aniversariantes:</label>
+                    <textarea id="aniversariantesNomes" rows="3" placeholder="Ex: 2º Ten Vanilson e SD Da Silva" required></textarea>
+                </div>
+                <button type="submit" class="submit-btn">Salvar Aniversariantes</button>
+            </form>
+        </div>
+    </div>
+    
+    <!-- Modal de Editar Guarnições -->
+    <div id="editTeamsModal" class="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Editar Guarnições</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <form id="editTeamsForm">
+                <div class="form-group">
+                    <label for="titleMes">Mês do Ranking:</label>
+                    <select id="titleMes" required>
+                        <option value="Janeiro">Janeiro</option>
+                        <option value="Fevereiro">Fevereiro</option>
+                        <option value="Março">Março</option>
+                        <option value="Abril" selected>Abril</option>
+                        <option value="Maio">Maio</option>
+                        <option value="Junho">Junho</option>
+                        <option value="Julho">Julho</option>
+                        <option value="Agosto">Agosto</option>
+                        <option value="Setembro">Setembro</option>
+                        <option value="Outubro">Outubro</option>
+                        <option value="Novembro">Novembro</option>
+                        <option value="Dezembro">Dezembro</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="teamAlfaName">Nome da Guarnição Alfa:</label>
+                    <input type="text" id="teamAlfaName" value="ALFA" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamBravoName">Nome da Guarnição Bravo:</label>
+                    <input type="text" id="teamBravoName" value="BRAVO" required>
+                </div>
+                <div class="form-group">
+                    <label for="teamCharlieName">Nome da Guarnição Charlie:</label>
+                    <input type="text" id="teamCharlieName" value="CHARLIE" required>
+                </div>
+                <button type="submit" class="submit-btn">Salvar Configuração</button>
+            </form>
+        </div>
+    </div>
+    
     <!-- Modal de Editar Evento -->
     <div id="editModal" class="event-modal">
         <div class="modal-content">
@@ -1261,10 +1412,15 @@
             <div class="aniversario-icone">🎂</div>
             <div>
                 <div class="aniversario-texto">Aniversariantes do mês de Abril</div>
-                <div class="aniversario-nomes">2º Ten Vanilson e SD Da Silva</div>
+                <div class="aniversario-nomes" id="aniversariantes-texto">2º Ten Vanilson e SD Da Silva</div>
             </div>
         </div>
-        <div class="aniversario-link">Ver mais detalhes</div>
+        <div class="admin-controls">
+            <div class="aniversario-link">Ver mais detalhes</div>
+            <button id="editAniversariantesBtn" class="edit-aniversario-btn" style="display: none;">
+                <span>✏️</span>
+            </button>
+        </div>
     </div>
     
     <footer>
@@ -1635,11 +1791,25 @@
                 
                 // Mostrar controles de admin se o usuário for administrador
                 if (user.isAdmin) {
-                    document.getElementById('addEventBtn').style.display = 'block';
-                    document.getElementById('resetBtn').style.display = 'block';
+                    // Mostrar botões de administração
+                    document.querySelector('.admin-buttons').style.display = 'flex';
+                    document.getElementById('editAniversariantesBtn').style.display = 'flex';
+                    
+                    // Mostrar ações de edição nos detalhes de eventos
+                    const detailActions = document.getElementById('detailActions');
+                    if (detailActions) {
+                        detailActions.style.display = 'block';
+                    }
                 } else {
-                    document.getElementById('addEventBtn').style.display = 'none';
-                    document.getElementById('resetBtn').style.display = 'none';
+                    // Esconder botões de administração
+                    document.querySelector('.admin-buttons').style.display = 'none';
+                    document.getElementById('editAniversariantesBtn').style.display = 'none';
+                    
+                    // Esconder ações de edição
+                    const detailActions = document.getElementById('detailActions');
+                    if (detailActions) {
+                        detailActions.style.display = 'none';
+                    }
                 }
                 
                 document.getElementById('loginModal').style.display = 'none';
@@ -1771,21 +1941,55 @@
             }
         }
         
+        // Função para abrir o modal de edição de aniversariantes
+        function openAniversariantesModal() {
+            // Preencher o formulário com dados atuais
+            const textoMes = document.querySelector('.aniversario-texto').textContent.replace('Aniversariantes do mês de ', '');
+            const nomes = document.getElementById('aniversariantes-texto').textContent;
+            
+            document.getElementById('aniversariantesMes').value = textoMes;
+            document.getElementById('aniversariantesNomes').value = nomes;
+            
+            document.getElementById('aniversariantesModal').style.display = 'flex';
+        }
+        
+        // Função para abrir o modal de edição de guarnições
+        function openTeamsModal() {
+            // Preencher o formulário com dados atuais
+            const mesRanking = document.querySelector('.podium-title').textContent.replace('RANKING DE ', '').replace(' 2025', '');
+            document.getElementById('titleMes').value = mesRanking;
+            
+            // Obter nomes das guarnições (sem o prefixo "GUARNIÇÃO")
+            const alfaName = document.querySelector('.card:nth-child(1) .team-name').textContent.replace('GUARNIÇÃO ', '');
+            const bravoName = document.querySelector('.card:nth-child(2) .team-name').textContent.replace('GUARNIÇÃO ', '');
+            const charlieName = document.querySelector('.card:nth-child(3) .team-name').textContent.replace('GUARNIÇÃO ', '');
+            
+            document.getElementById('teamAlfaName').value = alfaName;
+            document.getElementById('teamBravoName').value = bravoName;
+            document.getElementById('teamCharlieName').value = charlieName;
+            
+            document.getElementById('editTeamsModal').style.display = 'flex';
+        }
+        
         // Inicialização
         document.addEventListener('DOMContentLoaded', () => {
             fetchTeams();
             fetchEvents();
             setupModals();
             
-            // Por padrão, esconder o botão de adicionar evento até login
-            document.getElementById('addEventBtn').style.display = 'none';
-            document.getElementById('resetBtn').style.display = 'none';
+            // Por padrão, esconder os controles de administração até login
+            document.querySelector('.admin-buttons').style.display = 'none';
+            document.getElementById('editAniversariantesBtn').style.display = 'none';
             
             // Configurar o botão de editar no modal de detalhes
             document.getElementById('editEventBtn').addEventListener('click', openEditModal);
             
             // Configurar o botão de reset
             document.getElementById('resetBtn').addEventListener('click', resetAllData);
+            
+            // Configurar botões de edição de aniversariantes e guarnições
+            document.getElementById('editAniversariantesBtn').addEventListener('click', openAniversariantesModal);
+            document.getElementById('editTeamsBtn').addEventListener('click', openTeamsModal);
             
             // Configurar o evento para atualizar pontos automaticamente no modal de edição
             const editTypeSelect = document.getElementById('editEventType');
@@ -1797,7 +2001,8 @@
             });
             
             // Configurar evento do banner de aniversariantes
-            document.getElementById('aniversarioBanner').addEventListener('click', () => {
+            const aniversarioBanner = document.getElementById('aniversarioBanner');
+            aniversarioBanner.querySelector('.aniversario-link').addEventListener('click', () => {
                 window.location.href = '/escalas.html';
             });
         });
