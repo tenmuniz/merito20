@@ -1189,8 +1189,22 @@
                         // Mostrar mensagem de sucesso
                         alert('Login realizado com sucesso!');
                         
-                        // Recarregar a página para aplicar as alterações
-                        window.location.reload();
+                        // Mostrar botão de adicionar evento
+                        const addEventBtn = document.getElementById('addEventBtn');
+                        if (addEventBtn) {
+                            addEventBtn.style.display = 'inline-flex';
+                        }
+                        
+                        // Atualizar botão de login
+                        const loginBtn = document.getElementById('loginBtn');
+                        if (loginBtn) {
+                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
+                            loginBtn.onclick = function() {
+                                localStorage.removeItem('escalasUserData');
+                                alert('Logout realizado com sucesso!');
+                                window.location.reload();
+                            };
+                        }
                     } else {
                         // Login falhou
                         document.getElementById('loginError').style.display = 'block';
@@ -2136,33 +2150,8 @@
         document.addEventListener('DOMContentLoaded', function() {
             console.log("Sistema de meritocracia 20ª CIPM carregado");
             
-            // Verificar autenticação ao carregar a página
-            const userData = localStorage.getItem('escalasUserData');
-            if (userData) {
-                try {
-                    const usuario = JSON.parse(userData);
-                    if (usuario && usuario.isAdmin) {
-                        // Usuário autenticado, mostrar botão de adicionar eventos
-                        const addEventBtn = document.getElementById('addEventBtn');
-                        if (addEventBtn) {
-                            addEventBtn.style.display = 'inline-flex';
-                        }
-                        
-                        // Atualizar botão de login para "Sair"
-                        const loginBtn = document.getElementById('loginBtn');
-                        if (loginBtn) {
-                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
-                            loginBtn.onclick = function() {
-                                localStorage.removeItem('escalasUserData');
-                                alert('Logout realizado com sucesso!');
-                                window.location.reload();
-                            };
-                        }
-                    }
-                } catch (e) {
-                    console.error('Erro ao verificar autenticação:', e);
-                }
-            }
+            // Vamos remover esta verificação inicial e usar apenas a função verificarAutenticacao() abaixo
+            // para evitar duplicação de código e possíveis conflitos
             
             // Configurar o formulário de login
             const loginSubmitBtn = document.getElementById('loginSubmitBtn');
@@ -2188,16 +2177,12 @@
                             if (loginBtn) {
                                 loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
                                 
-                                // Limpar eventos anteriores
-                                const novoBtn = loginBtn.cloneNode(true);
-                                loginBtn.parentNode.replaceChild(novoBtn, loginBtn);
-                                
-                                // Adicionar evento de logout
-                                novoBtn.addEventListener('click', function() {
+                                // Configurar evento de logout
+                                loginBtn.onclick = function() {
                                     localStorage.removeItem('escalasUserData');
                                     alert('Logout realizado com sucesso!');
                                     window.location.reload();
-                                });
+                                };
                             }
                             
                             return true;
@@ -2212,17 +2197,13 @@
                 if (loginBtn) {
                     loginBtn.innerHTML = '<span class="login-icon">🔑</span><span>Login</span>';
                     
-                    // Limpar eventos anteriores
-                    const novoBtn = loginBtn.cloneNode(true);
-                    loginBtn.parentNode.replaceChild(novoBtn, loginBtn);
-                    
-                    // Adicionar evento de abrir modal
-                    novoBtn.addEventListener('click', function() {
+                    // Configurar evento de abrir modal
+                    loginBtn.onclick = function() {
                         console.log("Login clicado");
                         if (loginModal) {
                             loginModal.style.display = 'flex';
                         }
-                    });
+                    };
                 }
                 
                 // Esconder botões administrativos
