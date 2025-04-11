@@ -112,10 +112,19 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Função de logout
-    function logout() {
-        localStorage.removeItem('escalasUserData');
-        alert('Logout realizado com sucesso!');
-        window.location.reload();
+    async function logout() {
+        try {
+            // Chamar API de logout (opcional, pois estamos usando localStorage)
+            // A API não está sendo chamada agora, mas será importante se implementarmos sessões no servidor
+            
+            // Remover dados do usuário do localStorage
+            localStorage.removeItem('escalasUserData');
+            alert('Logout realizado com sucesso!');
+            window.location.reload();
+        } catch (error) {
+            console.error('Erro ao fazer logout:', error);
+            alert('Erro ao fazer logout: ' + error.message);
+        }
     }
     
     // Criar e abrir modal de login
@@ -153,19 +162,28 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.appendChild(modal);
             
             // Configurar eventos do modal
-            document.getElementById('fecharModal').addEventListener('click', function() {
-                modal.classList.remove('active');
-            });
+            const fecharModal = document.getElementById('fecharModal');
+            if (fecharModal) {
+                fecharModal.addEventListener('click', function() {
+                    modal.classList.remove('active');
+                });
+            }
             
-            document.getElementById('btnEntrar').addEventListener('click', fazerLogin);
+            const btnEntrar = document.getElementById('btnEntrar');
+            if (btnEntrar) {
+                btnEntrar.addEventListener('click', fazerLogin);
+            }
             
             // Permitir login com Enter
-            document.getElementById('password').addEventListener('keypress', function(e) {
-                if (e.key === 'Enter') {
-                    e.preventDefault();
-                    fazerLogin();
-                }
-            });
+            const passwordInput = document.getElementById('password');
+            if (passwordInput) {
+                passwordInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        e.preventDefault();
+                        fazerLogin();
+                    }
+                });
+            }
         }
         
         // Mostrar o modal
@@ -173,33 +191,48 @@ document.addEventListener('DOMContentLoaded', function() {
     }
     
     // Processar o login
-    function fazerLogin() {
+    async function fazerLogin() {
         const username = document.getElementById('username').value;
         const password = document.getElementById('password').value;
         
-        if (username === 'admin' && password === 'admin123') {
-            const userData = {
-                id: 1,
-                username: 'admin',
-                fullName: 'Administrador',
-                isAdmin: true
-            };
+        try {
+            const response = await fetch('/api/auth/login', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({ username, password })
+            });
             
+            if (!response.ok) {
+                throw new Error('Credenciais inválidas');
+            }
+            
+            // Login bem-sucedido
+            const userData = await response.json();
             localStorage.setItem('escalasUserData', JSON.stringify(userData));
             
-            document.getElementById('loginModal').classList.remove('active');
-            alert('Login realizado com sucesso!');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.classList.remove('active');
+            }
             
             // Atualizar a interface
             verificarAutenticacao();
             
             // Recarregar a página para garantir que tudo funcione
             window.location.reload();
-        } else {
-            document.getElementById('loginErro').style.display = 'block';
-            setTimeout(() => {
-                document.getElementById('loginErro').style.display = 'none';
-            }, 3000);
+        } catch (error) {
+            console.error('Erro no login:', error);
+            
+            const loginErro = document.getElementById('loginErro');
+            if (loginErro) {
+                loginErro.style.display = 'block';
+                loginErro.textContent = 'Usuário ou senha incorretos.';
+                setTimeout(() => {
+                    loginErro.style.display = 'none';
+                }, 3000);
+            }
         }
     }
     
