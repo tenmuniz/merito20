@@ -1311,30 +1311,42 @@
             </form>
             
             <script>
-                function realizarLogin() {
+                async function realizarLogin() {
                     const username = document.getElementById('username').value;
                     const password = document.getElementById('password').value;
                     
-                    if (username === 'admin' && password === 'admin123') {
-                        // Login bem-sucedido
-                        const userData = {
-                            id: 1,
-                            username: 'admin',
-                            fullName: 'Administrador',
-                            isAdmin: true
-                        };
+                    try {
+                        // Fazer requisição para a API de login
+                        const response = await fetch('/api/auth/login', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({ username, password })
+                        });
                         
+                        if (!response.ok) {
+                            throw new Error('Credenciais inválidas');
+                        }
+                        
+                        // Login com sucesso
+                        const userData = await response.json();
+                        
+                        // Salvar os dados do usuário no localStorage para manter a sessão
                         localStorage.setItem('escalasUserData', JSON.stringify(userData));
                         
                         // Fechar o modal
                         document.getElementById('loginModal').style.display = 'none';
                         
-                        // Recarregar a página para aplicar todas as alterações
-                        // Sem mostrar alert (para evitar dupla mensagem)
+                        // Recarregar a página para aplicar as mudanças
                         window.location.reload();
-                    } else {
+                    } catch (error) {
+                        console.error('Erro no login:', error);
+                        
                         // Login falhou
                         document.getElementById('loginError').style.display = 'block';
+                        document.getElementById('loginError').textContent = 'Usuário ou senha incorretos.';
+                        
                         setTimeout(() => {
                             document.getElementById('loginError').style.display = 'none';
                         }, 3000);
