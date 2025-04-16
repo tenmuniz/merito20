@@ -1391,7 +1391,7 @@
                         <span>🔄</span>
                         <span>Zerar Pontos</span>
                     </button>
-                    <button id="saveDataBtn" class="admin-btn save-btn" style="display: none;">
+                    <button id="saveDataBtn" class="admin-btn save-btn" style="display: none;" onclick="salvarEConfirmar()">
                         <span>💾</span>
                         <span>Salvar Dados</span>
                     </button>
@@ -3043,6 +3043,12 @@
                 // Salvar todos os meses no localStorage
                 localStorage.setItem('dadosMeses', JSON.stringify(savedMonthData));
                 console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
+            }
+            
+            // Função para salvar e mostrar mensagem de confirmação
+            function salvarEConfirmar() {
+                salvarDados();
+                alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
             }
             
             // Flag para controlar se estamos no processo de mudança de mês
