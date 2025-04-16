@@ -2147,7 +2147,8 @@
             setTimeout(loadSavedData, 1000);
         });
     </script>
-    <!-- Script de autenticação -->
+    <!-- Scripts de autenticação -->
+    <script src="/auth.js"></script>
     <script src="/simples.js"></script>
     <!-- Scripts originais substituídos por uma solução mais simples -->
     <script>
@@ -2191,20 +2192,7 @@
                                 loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
                                 
                                 // Configurar evento de logout
-                                loginBtn.onclick = async function() {
-                                    try {
-                                        // Chamar API de logout (opcional, pois estamos usando localStorage)
-                                        // A API não está sendo chamada agora, mas será importante se implementarmos sessões no servidor
-                                        
-                                        // Remover dados do usuário do localStorage
-                                        localStorage.removeItem('escalasUserData');
-                                        alert('Logout realizado com sucesso!');
-                                        window.location.reload();
-                                    } catch (error) {
-                                        console.error('Erro ao fazer logout:', error);
-                                        alert('Erro ao fazer logout: ' + error.message);
-                                    }
-                                };
+                                loginBtn.onclick = logout;
                             }
                             
                             return true;

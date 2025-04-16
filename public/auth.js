@@ -137,18 +137,40 @@ function validarCredenciais(username, password) {
     return (username === 'admin' && password === 'admin123');
 }
 
-function logout() {
-    // Remover dados do localStorage
-    localStorage.removeItem('escalasUserData');
-    
-    // Atualizar a UI para o estado não autenticado
-    atualizarInterfaceNaoAutenticada();
-    
-    // Exibir mensagem
-    alert('Logout realizado com sucesso!');
-    
-    // Recarregar a página para garantir que tudo seja resetado
-    window.location.reload();
+async function logout() {
+    try {
+        // Chamar a API de logout
+        const response = await fetch('/api/auth/logout', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            }
+        });
+        
+        if (!response.ok) {
+            throw new Error('Falha ao fazer logout da API');
+        }
+        
+        // Remover dados do localStorage
+        localStorage.removeItem('escalasUserData');
+        
+        // Atualizar a UI para o estado não autenticado
+        atualizarInterfaceNaoAutenticada();
+        
+        // Exibir mensagem
+        alert('Logout realizado com sucesso!');
+        
+        // Recarregar a página para garantir que tudo seja resetado
+        window.location.reload();
+    } catch (error) {
+        console.error('Erro ao fazer logout:', error);
+        
+        // Remover dados do localStorage de qualquer forma
+        localStorage.removeItem('escalasUserData');
+        
+        // Recarregar a página para garantir que tudo seja resetado
+        window.location.reload();
+    }
 }
 
 function verificarAutenticacao() {

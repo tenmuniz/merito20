@@ -223,6 +223,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       res.status(500).json({ message: error.message || "Erro no login" });
     }
   });
+  
+  // Logout
+  app.post("/api/auth/logout", (req, res) => {
+    try {
+      // Como estamos usando localStorage no cliente e não sessions no servidor,
+      // apenas respondemos com sucesso
+      res.json({ success: true, message: "Logout realizado com sucesso" });
+    } catch (error: any) {
+      console.error("Erro no logout:", error);
+      res.status(500).json({ message: error.message || "Erro no logout" });
+    }
+  });
 
   const httpServer = createServer(app);
   return httpServer;
