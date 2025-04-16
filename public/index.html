@@ -2300,7 +2300,7 @@
                         points,
                         eventDate: eventDateValue, // Usar a data exata selecionada pelo usuário
                         createdBy: 'Admin', // Temporário, deve ser o usuário logado
-                        monthYear: currentMonth + '_' + new Date().getFullYear() // Usar o mês atual
+                        monthYear: document.getElementById('mesAtual').textContent + '_' + new Date().getFullYear() // Usar o mês atual do título
                     })
                 });
                 
@@ -2316,7 +2316,8 @@
                 fetchEvents();
                 
                 // Atualizar o mês atual
-                console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", currentMonth);
+                const mesAtual = document.getElementById('mesAtual').textContent;
+                console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", mesAtual);
                 atualizarDadosMesAtual();
                 
             } catch (error) {
@@ -2373,7 +2374,8 @@
         
         // Função para resetar pontos e eventos do mês atual
         async function resetAllData() {
-            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${currentMonth} e zerar as pontuações das equipes para este mês. Esta ação não pode ser desfeita. Deseja continuar?`)) {
+            const mesAtual = document.getElementById('mesAtual').textContent;
+            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes para este mês. Esta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
             }
             
@@ -2384,7 +2386,7 @@
                         'Content-Type': 'application/json'
                     },
                     body: JSON.stringify({
-                        month: currentMonth
+                        month: mesAtual
                     })
                 });
                 
@@ -2393,12 +2395,12 @@
                 }
                 
                 // Invalidar o cache do mês atual
-                savedMonthData[currentMonth] = null;
+                savedMonthData[mesAtual] = null;
                 
                 // Recarregar dados específicos do mês atual
-                carregarDadosDoMes(currentMonth);
+                carregarDadosDoMes(mesAtual);
                 
-                alert(`Todos os eventos do mês de ${currentMonth} foram removidos e as pontuações zeradas com sucesso!`);
+                alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso!`);
             } catch (error) {
                 console.error('Erro ao resetar dados:', error);
                 alert('Erro ao resetar dados: ' + error.message);
@@ -2972,10 +2974,12 @@
             // Função para ser chamada quando novos eventos são adicionados
             // Isso vai limpar o cache para forçar a recarga dos dados
             function atualizarDadosMesAtual() {
+                // Obter o mês atual do título
+                const mesAtual = document.getElementById('mesAtual').textContent;
                 // Invalidar o cache do mês atual
-                savedMonthData[currentMonth] = null;
+                savedMonthData[mesAtual] = null;
                 // Recarregar os dados
-                carregarDadosDoMes(currentMonth);
+                carregarDadosDoMes(mesAtual);
             }
             
             // Função auxiliar para obter o nome da equipe por posição
