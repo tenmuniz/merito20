@@ -122,7 +122,7 @@ document.addEventListener('DOMContentLoaded', function() {
             
             // Remover dados do usuário do localStorage
             localStorage.removeItem('escalasUserData');
-            alert('Logout realizado com sucesso!');
+            // Não mostrar mensagem de logout
             window.location.reload();
         } catch (error) {
             console.error('Erro ao fazer logout:', error);

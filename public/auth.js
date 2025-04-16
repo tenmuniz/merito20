@@ -180,7 +180,7 @@ async function logout() {
         localStorage.removeItem('escalasUserData');
         
         // Confirmar para o usuário
-        alert('Logout realizado com sucesso!');
+        // Não mostrar mensagem de logout
         
         console.log("✅ Logout completo, interface atualizada");
     } catch (error) {
