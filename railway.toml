@@ -1,6 +1,6 @@
 [build]
-builder = "NIXPACKS"
-buildCommand = "npm install && node scripts/build.js"
+builder = "DOCKERFILE"
+watchPatterns = ["Dockerfile"]
 
 [deploy]
 startCommand = "node dist/index.js"
