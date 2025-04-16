@@ -22,7 +22,16 @@ if (fs.existsSync(envPath)) {
 const DEFAULT_DB_URL = 'postgresql://postgres:postgres@localhost:5432/meritocracia';
 
 // Usar a URL do banco de dados do ambiente ou a URL padrão
-const connectionString = process.env.DATABASE_URL || DEFAULT_DB_URL;
+// Verificação adicional para garantir que estamos usando a variável de ambiente em produção
+const connectionString = process.env.NODE_ENV === 'production' 
+  ? (process.env.DATABASE_URL || fail('DATABASE_URL não definida em produção'))
+  : (process.env.DATABASE_URL || DEFAULT_DB_URL);
+
+// Função auxiliar para falhar com uma mensagem clara
+function fail(message: string): never {
+  console.error(`ERRO CRÍTICO: ${message}`);
+  process.exit(1);
+}
 
 console.log(`Conectando ao banco de dados: ${connectionString.split('@')[1] || 'local'}`);
 

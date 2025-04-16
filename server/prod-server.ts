@@ -3,10 +3,31 @@
  * Não contém nenhuma referência ou importação de módulos de desenvolvimento (como Vite)
  */
 
-import 'dotenv/config';
+// Importar fs primeiro para que possamos usá-lo para carregar as variáveis de ambiente
+import fs from "fs";
+// Configurar variáveis de ambiente primeiro, antes de qualquer importação
+import dotenv from 'dotenv';
+// Tentar carregar variáveis de ambiente de diferentes locais possíveis
+try {
+  const envPaths = ['./.env', '../.env', '/app/.env'];
+  for (const envPath of envPaths) {
+    if (fs.existsSync(envPath)) {
+      console.log(`Carregando variáveis de ambiente de ${envPath}`);
+      dotenv.config({ path: envPath });
+      break;
+    }
+  }
+} catch (e) {
+  console.log('Não foi possível carregar arquivo .env, usando variáveis de ambiente do sistema');
+}
+
+// Mostrar as variáveis de ambiente disponíveis (apenas os nomes, não os valores)
+console.log('Variáveis de ambiente disponíveis:', Object.keys(process.env).join(', '));
+console.log('DATABASE_URL definida:', !!process.env.DATABASE_URL);
+
+// Continuar com as importações normais
 import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
-import fs from "fs";
 import { fileURLToPath } from "url";
 import { createServer, type Server } from "http";
 import { checkDatabaseConnection, db } from './db';

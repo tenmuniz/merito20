@@ -1,0 +1,121 @@
+You reached the start of the range → Apr 16, 2025 12:55 PM
+
+Starting Container
+
+Conectando ao banco de dados: localhost:5432/meritocracia
+
+3:56:26 PM [express] Iniciando servidor em modo produção
+
+Database connection failed: Error: connect ECONNREFUSED ::1:5432
+
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+
+    at cachedError (file:///app/node_modules/postgres/src/query.js:170:23)
+
+    at new Query (file:///app/node_modules/postgres/src/query.js:36:24)
+
+    at sql (file:///app/node_modules/postgres/src/index.js:112:11)
+
+    at checkDatabaseConnection (file:///app/dist/index.js:123:32) {
+
+  errno: -111,
+
+  code: 'ECONNREFUSED',
+
+  syscall: 'connect',
+
+  address: '::1',
+
+  port: 5432
+
+}
+
+3:56:26 PM [express] Conexão com banco de dados: FALHA
+
+Erro fatal na inicialização do servidor: Error: Não foi possível conectar ao banco de dados
+
+    at file:///app/dist/index.js:781:13
+
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Conectando ao banco de dados: localhost:5432/meritocracia
+
+3:56:28 PM [express] Iniciando servidor em modo produção
+
+Database connection failed: Error: connect ECONNREFUSED ::1:5432
+
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+
+    at cachedError (file:///app/node_modules/postgres/src/query.js:170:23)
+
+    at new Query (file:///app/node_modules/postgres/src/query.js:36:24)
+
+    at sql (file:///app/node_modules/postgres/src/index.js:112:11)
+
+    at checkDatabaseConnection (file:///app/dist/index.js:123:32) {
+
+  errno: -111,
+
+  code: 'ECONNREFUSED',
+
+  syscall: 'connect',
+
+  address: '::1',
+
+  port: 5432
+
+}
+
+3:56:28 PM [express] Conexão com banco de dados: FALHA
+
+Erro fatal na inicialização do servidor: Error: Não foi possível conectar ao banco de dados
+
+    at file:///app/dist/index.js:781:13
+
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Conectando ao banco de dados: localhost:5432/meritocracia
+
+3:56:33 PM [express] Iniciando servidor em modo produção
+
+Database connection failed: Error: connect ECONNREFUSED ::1:5432
+
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
+
+    at cachedError (file:///app/node_modules/postgres/src/query.js:170:23)
+
+    at new Query (file:///app/node_modules/postgres/src/query.js:36:24)
+
+    at sql (file:///app/node_modules/postgres/src/index.js:112:11)
+
+    at checkDatabaseConnection (file:///app/dist/index.js:123:32) {
+
+  errno: -111,
+
+  code: 'ECONNREFUSED',
+
+  syscall: 'connect',
+
+  address: '::1',
+
+  port: 5432
+
+}
+
+3:56:33 PM [express] Conexão com banco de dados: FALHA
+
+Erro fatal na inicialização do servidor: Error: Não foi possível conectar ao banco de dados
+
+    at file:///app/dist/index.js:781:13
+
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+
+Conectando ao banco de dados: localhost:5432/meritocracia
+
+3:56:34 PM [express] Iniciando servidor em modo produção
+
+Database connection failed: Error: connect ECONNREFUSED ::1:5432
+
+Erro fatal na inicialização do servidor: Error: Não foi possível conectar ao banco de dados
+
+    at TCPConnectWrap.afterConnect [as oncomplete] (node:net:1555:16)
