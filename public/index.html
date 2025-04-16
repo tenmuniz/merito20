@@ -1105,6 +1105,44 @@
             margin-top: 0.4rem;
         }
         
+        /* Estilos para o seletor de meses */
+        .month-selector-content {
+            padding: 15px 0;
+        }
+        
+        .month-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin: 5px;
+        }
+        
+        .month-btn {
+            background: linear-gradient(135deg, #f0f9ff, #e6f7ff);
+            border: 1px solid #93c5fd;
+            border-radius: 8px;
+            padding: 15px 10px;
+            font-size: 1rem;
+            font-weight: 600;
+            color: #1e40af;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+        }
+        
+        .month-btn:hover {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(59, 130, 246, 0.2);
+        }
+        
+        .month-btn.active, .month-btn:active {
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            transform: translateY(1px);
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+        
         /* Estilos do Modal de Detalhes */
         .detail-team {
             font-size: 1.3rem;
@@ -1596,6 +1634,32 @@
                 </div>
                 <div class="detail-actions" id="detailActions" style="display: none; margin-top: 20px; text-align: right;">
                     <button id="editEventBtn" class="edit-btn">Editar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Modal de Seleção de Mês -->
+    <div id="monthSelectorModal" class="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Selecionar Mês</h2>
+                <button class="close-btn">&times;</button>
+            </div>
+            <div class="month-selector-content">
+                <div class="month-grid">
+                    <button class="month-btn" data-month="JANEIRO">Janeiro</button>
+                    <button class="month-btn" data-month="FEVEREIRO">Fevereiro</button>
+                    <button class="month-btn" data-month="MARÇO">Março</button>
+                    <button class="month-btn" data-month="ABRIL">Abril</button>
+                    <button class="month-btn" data-month="MAIO">Maio</button>
+                    <button class="month-btn" data-month="JUNHO">Junho</button>
+                    <button class="month-btn" data-month="JULHO">Julho</button>
+                    <button class="month-btn" data-month="AGOSTO">Agosto</button>
+                    <button class="month-btn" data-month="SETEMBRO">Setembro</button>
+                    <button class="month-btn" data-month="OUTUBRO">Outubro</button>
+                    <button class="month-btn" data-month="NOVEMBRO">Novembro</button>
+                    <button class="month-btn" data-month="DEZEMBRO">Dezembro</button>
                 </div>
             </div>
         </div>
@@ -2457,6 +2521,7 @@
             function verificarAutenticacao() {
                 const userData = localStorage.getItem('escalasUserData');
                 const resetBtn = document.getElementById('resetBtn');
+                const alterarMesBtn = document.getElementById('alterarMesBtn');
                 
                 if (userData) {
                     try {
@@ -2472,6 +2537,11 @@
                             // Mostrar botão de zerar pontos
                             if (resetBtn) {
                                 resetBtn.style.display = 'inline-flex';
+                            }
+                            
+                            // Mostrar botão de alterar mês
+                            if (alterarMesBtn) {
+                                alterarMesBtn.style.display = 'flex';
                             }
                             
                             // Atualizar botão de login para "Sair"
