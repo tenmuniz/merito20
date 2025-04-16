@@ -2822,89 +2822,131 @@
                 }
             }
             
+            // Variável global para armazenar os eventos do mês atual
+            let currentMonthData = {
+                "alfa": { pontos: 0, posicao: 3 },
+                "bravo": { pontos: 0, posicao: 1 },
+                "charlie": { pontos: 0, posicao: 2 }
+            };
+            
+            // Um objeto para armazenar os dados salvos para cada mês
+            const savedMonthData = {
+                "JANEIRO": null,
+                "FEVEREIRO": null,
+                "MARÇO": null, 
+                "ABRIL": null,
+                "MAIO": null,
+                "JUNHO": null,
+                "JULHO": null,
+                "AGOSTO": null,
+                "SETEMBRO": null, 
+                "OUTUBRO": null,
+                "NOVEMBRO": null,
+                "DEZEMBRO": null
+            };
+            
+            // O mês atual que está sendo visualizado
+            let currentMonth = "ABRIL";
+            
             // Função para carregar dados específicos do mês
-            function carregarDadosDoMes(mes) {
-                // Simulação de dados diferentes para cada mês
-                // Em uma implementação real, você faria uma chamada à API com o mês como parâmetro
+            async function carregarDadosDoMes(mes) {
+                console.log(`Carregando dados do mês: ${mes}`);
+                currentMonth = mes;
                 
-                // Objeto com dados simulados para cada mês
-                const dadosPorMes = {
-                    "JANEIRO": {
-                        "alfa": { pontos: 120, posicao: 2 },
-                        "bravo": { pontos: 90, posicao: 3 },
-                        "charlie": { pontos: 160, posicao: 1 }
-                    },
-                    "FEVEREIRO": {
-                        "alfa": { pontos: 80, posicao: 3 },
-                        "bravo": { pontos: 150, posicao: 1 },
-                        "charlie": { pontos: 110, posicao: 2 }
-                    },
-                    "MARÇO": {
-                        "alfa": { pontos: 130, posicao: 2 },
-                        "bravo": { pontos: 180, posicao: 1 },
-                        "charlie": { pontos: 100, posicao: 3 }
-                    },
-                    "ABRIL": {
-                        "alfa": { pontos: 95, posicao: 3 },
-                        "bravo": { pontos: 180, posicao: 1 },
-                        "charlie": { pontos: 150, posicao: 2 }
-                    },
-                    "MAIO": {
-                        "alfa": { pontos: 210, posicao: 1 },
-                        "bravo": { pontos: 160, posicao: 2 },
-                        "charlie": { pontos: 95, posicao: 3 }
-                    },
-                    "JUNHO": {
-                        "alfa": { pontos: 140, posicao: 2 },
-                        "bravo": { pontos: 130, posicao: 3 },
-                        "charlie": { pontos: 180, posicao: 1 }
-                    },
-                    "JULHO": {
-                        "alfa": { pontos: 200, posicao: 1 },
-                        "bravo": { pontos: 170, posicao: 2 },
-                        "charlie": { pontos: 130, posicao: 3 }
-                    },
-                    "AGOSTO": {
-                        "alfa": { pontos: 110, posicao: 3 },
-                        "bravo": { pontos: 190, posicao: 1 },
-                        "charlie": { pontos: 140, posicao: 2 }
-                    },
-                    "SETEMBRO": {
-                        "alfa": { pontos: 150, posicao: 2 },
-                        "bravo": { pontos: 130, posicao: 3 },
-                        "charlie": { pontos: 200, posicao: 1 }
-                    },
-                    "OUTUBRO": {
-                        "alfa": { pontos: 120, posicao: 3 },
-                        "bravo": { pontos: 190, posicao: 1 },
-                        "charlie": { pontos: 180, posicao: 2 }
-                    },
-                    "NOVEMBRO": {
-                        "alfa": { pontos: 200, posicao: 1 },
-                        "bravo": { pontos: 170, posicao: 2 },
-                        "charlie": { pontos: 120, posicao: 3 }
-                    },
-                    "DEZEMBRO": {
-                        "alfa": { pontos: 180, posicao: 2 },
-                        "bravo": { pontos: 210, posicao: 1 },
-                        "charlie": { pontos: 150, posicao: 3 }
-                    }
-                };
+                // Salvar o mês atual no localStorage
+                localStorage.setItem('mesAtualRanking', mes);
                 
-                // Verificar se temos dados para este mês
-                if (!dadosPorMes[mes]) {
-                    console.log(`Não há dados disponíveis para o mês de ${mes}`);
+                // Se já temos dados salvos para este mês, use-os
+                if (savedMonthData[mes]) {
+                    console.log(`Usando dados em cache para o mês: ${mes}`);
+                    currentMonthData = savedMonthData[mes];
+                    atualizarUIComDadosAtuais();
                     return;
                 }
                 
-                const dados = dadosPorMes[mes];
+                try {
+                    console.log(`Buscando dados do servidor para o mês: ${mes}`);
+                    
+                    // Buscar eventos do mês específico e equipes
+                    const [eventsResponse, teamsResponse] = await Promise.all([
+                        fetch(`/api/events?month=${mes}`),
+                        fetch('/api/teams')
+                    ]);
+                    
+                    if (!eventsResponse.ok || !teamsResponse.ok) {
+                        throw new Error('Falha ao buscar dados do servidor');
+                    }
+                    
+                    const events = await eventsResponse.json();
+                    const teams = await teamsResponse.json();
+                    
+                    console.log(`Eventos carregados para ${mes}:`, events.length);
+                    console.log(`Equipes carregadas:`, teams.length);
+                    
+                    // Inicializar dados para as equipes com pontuação zero
+                    const novosDados = {
+                        "alfa": { pontos: 0, posicao: 0 },
+                        "bravo": { pontos: 0, posicao: 0 },
+                        "charlie": { pontos: 0, posicao: 0 }
+                    };
+                    
+                    // Calcular pontos somando eventos filtrados pelo mês
+                    events.forEach(event => {
+                        // Encontrar a equipe correspondente
+                        const team = teams.find(t => t.id === event.teamId);
+                        if (team) {
+                            const nomeEquipe = team.name.toLowerCase();
+                            if (novosDados[nomeEquipe]) {
+                                novosDados[nomeEquipe].pontos += event.points;
+                            }
+                        }
+                    });
+                    
+                    // Calcular as posições baseado nos pontos
+                    const equipesOrdenadas = Object.keys(novosDados)
+                        .sort((a, b) => novosDados[b].pontos - novosDados[a].pontos);
+                    
+                    for (let i = 0; i < equipesOrdenadas.length; i++) {
+                        novosDados[equipesOrdenadas[i]].posicao = i + 1;
+                    }
+                    
+                    console.log(`Dados calculados para ${mes}:`, novosDados);
+                    
+                    // Salvar os dados calculados para este mês
+                    currentMonthData = novosDados;
+                    savedMonthData[mes] = JSON.parse(JSON.stringify(novosDados)); // Deep copy
+                    
+                    // Atualizar a UI com os dados
+                    atualizarUIComDadosAtuais();
+                    
+                } catch (error) {
+                    console.error('Erro ao carregar dados do mês:', error);
+                    // Se houver erro, use dados padrão
+                    currentMonthData = {
+                        "alfa": { pontos: 0, posicao: 3 },
+                        "bravo": { pontos: 0, posicao: 1 },
+                        "charlie": { pontos: 0, posicao: 2 }
+                    };
+                    atualizarUIComDadosAtuais();
+                }
+            }
+            
+            // Função para atualizar a UI com os dados atuais
+            function atualizarUIComDadosAtuais() {
+                const dados = currentMonthData;
+                
+                // Atualizar o título com o mês atual
+                const mesAtualEl = document.getElementById('mesAtual');
+                if (mesAtualEl) {
+                    mesAtualEl.textContent = currentMonth;
+                }
                 
                 // Atualizar pontos nos cards
                 document.getElementById('alfa-points').textContent = dados.alfa.pontos;
                 document.getElementById('bravo-points').textContent = dados.bravo.pontos;
                 document.getElementById('charlie-points').textContent = dados.charlie.pontos;
                 
-                // Atualizar posições no pódio (que já tem a ordem visual fixa)
+                // Atualizar posições no pódio
                 document.querySelector('.first-place .podium-team').textContent = obterEquipePorPosicao(dados, 1).toUpperCase();
                 document.querySelector('.first-place .podium-points').textContent = obterPontosPorPosicao(dados, 1);
                 
@@ -2916,6 +2958,15 @@
                 
                 // Atualizar as classes de classificação nos cards
                 atualizarPosicoesCards(dados);
+            }
+            
+            // Função para ser chamada quando novos eventos são adicionados
+            // Isso vai limpar o cache para forçar a recarga dos dados
+            function atualizarDadosMesAtual() {
+                // Invalidar o cache do mês atual
+                savedMonthData[currentMonth] = null;
+                // Recarregar os dados
+                carregarDadosDoMes(currentMonth);
             }
             
             // Função auxiliar para obter o nome da equipe por posição

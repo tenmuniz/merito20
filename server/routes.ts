@@ -4,7 +4,7 @@ import { storage } from "./storage";
 import { type InsertEvent } from "@shared/schema";
 import { db } from './db';
 import { teams, events } from '@shared/schema';
-import { eq } from 'drizzle-orm';
+import { eq, and, sql } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
   // API Routes
@@ -53,7 +53,44 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Events
   app.get("/api/events", async (req, res) => {
     try {
-      const events = await storage.getEvents();
+      // Extrair o mês da query string, se fornecido
+      const month = req.query.month as string | undefined;
+      
+      let events;
+      if (month) {
+        // Se o mês foi especificado, filtre eventos pelo mês
+        try {
+          // Converter nome do mês para número (1-12)
+          const monthMap: {[key: string]: number} = {
+            'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4,
+            'MAIO': 5, 'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8,
+            'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
+          };
+          
+          const monthNumber = monthMap[month.toUpperCase()];
+          if (monthNumber) {
+            const year = new Date().getFullYear(); // Usar o ano atual
+            
+            // Buscar eventos do banco e filtrar manualmente pelo mês
+            const allEvents = await storage.getEvents();
+            events = allEvents.filter(event => {
+              const eventDate = new Date(event.eventDate);
+              return eventDate.getMonth() + 1 === monthNumber && eventDate.getFullYear() === year;
+            });
+          } else {
+            // Se o mês não for reconhecido, retorne todos os eventos
+            events = await storage.getEvents();
+          }
+        } catch (error) {
+          console.error('Erro ao filtrar eventos por mês:', error);
+          // Em caso de erro na filtragem, retorne todos os eventos
+          events = await storage.getEvents();
+        }
+      } else {
+        // Se nenhum mês for especificado, retorne todos os eventos
+        events = await storage.getEvents();
+      }
+      
       const formattedEvents = events.map(event => ({
         id: event.id,
         teamId: event.teamId,
@@ -65,6 +102,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         eventDate: event.eventDate,
         createdAt: event.createdAt
       }));
+      
       res.json(formattedEvents);
     } catch (error: any) {
       console.error("Erro ao buscar eventos:", error);
