@@ -2371,9 +2371,9 @@
             }
         });
         
-        // Função para resetar todos os pontos e eventos
+        // Função para resetar pontos e eventos do mês atual
         async function resetAllData() {
-            if (!confirm('ATENÇÃO: Esta ação irá remover TODOS os eventos e zerar as pontuações das equipes. Esta ação não pode ser desfeita. Deseja continuar?')) {
+            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${currentMonth} e zerar as pontuações das equipes para este mês. Esta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
             }
             
@@ -2382,18 +2382,23 @@
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
-                    }
+                    },
+                    body: JSON.stringify({
+                        month: currentMonth
+                    })
                 });
                 
                 if (!response.ok) {
                     throw new Error('Falha ao resetar dados');
                 }
                 
-                // Recarregar dados
-                fetchTeams();
-                fetchEvents();
+                // Invalidar o cache do mês atual
+                savedMonthData[currentMonth] = null;
                 
-                alert('Todos os eventos foram removidos e as pontuações zeradas com sucesso!');
+                // Recarregar dados específicos do mês atual
+                carregarDadosDoMes(currentMonth);
+                
+                alert(`Todos os eventos do mês de ${currentMonth} foram removidos e as pontuações zeradas com sucesso!`);
             } catch (error) {
                 console.error('Erro ao resetar dados:', error);
                 alert('Erro ao resetar dados: ' + error.message);

@@ -232,13 +232,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reset API - para zerar todos os eventos e pontos
+  // Reset API - para zerar eventos e pontos
   app.post("/api/reset", async (req, res) => {
     try {
-      // Usar o método da interface de storage para resetar os dados
-      await storage.resetAllData();
+      const { month } = req.body;
       
-      res.json({ success: true, message: "Todos os eventos foram excluídos e os pontos zerados." });
+      if (month) {
+        // Se um mês foi especificado, zerar apenas os eventos desse mês
+        console.log(`Zerando dados apenas para o mês: ${month}`);
+        const year = new Date().getFullYear();
+        const monthYear = `${month.toUpperCase()}_${year}`;
+        
+        // Buscar todos os eventos deste mês
+        const events = await storage.getEvents();
+        const eventsToDelete = events.filter(event => event.monthYear === monthYear);
+        
+        // Excluir os eventos um por um
+        for (const event of eventsToDelete) {
+          await storage.deleteEvent(event.id);
+        }
+        
+        // Zerar os pontos das equipes
+        const teams = await storage.getTeams();
+        for (const team of teams) {
+          await storage.updateTeamPoints(team.id, 0);
+        }
+        
+        res.json({ 
+          success: true, 
+          message: `Todos os eventos do mês de ${month} foram excluídos e os pontos zerados.`,
+          monthReset: month
+        });
+      } else {
+        // Se nenhum mês foi especificado, resetar todos os dados
+        await storage.resetAllData();
+        res.json({ success: true, message: "Todos os eventos foram excluídos e os pontos zerados." });
+      }
     } catch (error: any) {
       console.error("Erro ao resetar dados:", error);
       res.status(500).json({ message: error.message || "Erro ao resetar dados" });
