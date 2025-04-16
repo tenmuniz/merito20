@@ -26,8 +26,8 @@ try {
   execSync('vite build', { stdio: 'inherit' });
 
   // Construir o servidor com esbuild
-  console.log(`${colors.blue}Construindo servidor com esbuild...${colors.reset}`);
-  execSync('esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist', 
+  console.log(`${colors.blue}Construindo servidor com esbuild (versão de produção)...${colors.reset}`);
+  execSync('esbuild server/prod-index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js', 
     { stdio: 'inherit' });
 
   // Verificar se o diretório dist existe, se não, criá-lo
@@ -39,6 +39,45 @@ try {
   console.log(`${colors.yellow}Preparando healthcheck...${colors.reset}`);
   execSync('esbuild server/healthcheck.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/healthcheck.js', 
     { stdio: 'inherit' });
+  
+  // Garantir que todos os arquivos estáticos sejam copiados
+  console.log(`${colors.yellow}Copiando arquivos estáticos...${colors.reset}`);
+  
+  // Função para copiar recursivamente diretórios
+  function copyDirSync(src, dest) {
+    if (!fs.existsSync(dest)) {
+      fs.mkdirSync(dest, { recursive: true });
+    }
+    
+    const entries = fs.readdirSync(src, { withFileTypes: true });
+    
+    for (const entry of entries) {
+      const srcPath = path.join(src, entry.name);
+      const destPath = path.join(dest, entry.name);
+      
+      if (entry.isDirectory()) {
+        copyDirSync(srcPath, destPath);
+      } else {
+        fs.copyFileSync(srcPath, destPath);
+      }
+    }
+  }
+  
+  // Criar um diretório específico para arquivos estáticos no build
+  const staticDir = path.join(__dirname, '..', 'dist', 'public');
+  if (!fs.existsSync(staticDir)) {
+    fs.mkdirSync(staticDir, { recursive: true });
+  }
+  
+  // Copiar todo o conteúdo da pasta public para dist/public
+  const publicDir = path.join(__dirname, '..', 'public');
+  copyDirSync(publicDir, staticDir);
+  
+  // Listar os diretórios para debug
+  console.log('Conteúdo do diretório de build:');
+  execSync('ls -la dist', { stdio: 'inherit' });
+  console.log('Conteúdo do diretório público copiado:');
+  execSync('ls -la dist/public', { stdio: 'inherit' });
 
   console.log(`${colors.green}Build concluído com sucesso!${colors.reset}`);
 } catch (error) {

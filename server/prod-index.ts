@@ -6,6 +6,7 @@
 import 'dotenv/config';
 import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
+import fs from "fs";
 import { fileURLToPath } from "url";
 import { registerRoutes } from "./routes";
 import { checkDatabaseConnection } from "./db";
@@ -66,16 +67,58 @@ app.use((req, res, next) => {
 
 // Função para configurar servidor estático
 function configureStaticServer() {
-  // Servir arquivos estáticos do diretório public
-  const publicPath = path.join(process.cwd(), "public");
+  // Procurar em vários diretórios onde os arquivos estáticos podem estar
+  const possiblePaths = [
+    path.join(process.cwd(), "public"),
+    path.join(process.cwd(), "dist", "public")
+  ];
+  
+  // Verificar qual diretório existe
+  let publicPath = null;
+  for (const dirPath of possiblePaths) {
+    if (fs.existsSync(dirPath) && fs.existsSync(path.join(dirPath, 'index.html'))) {
+      publicPath = dirPath;
+      break;
+    } else {
+      log(`Diretório ${dirPath} não encontrado ou não contém index.html`, "static");
+      try {
+        if (fs.existsSync(dirPath)) {
+          log(`Conteúdo de ${dirPath}:`, "static");
+          const files = fs.readdirSync(dirPath);
+          log(files.join(', '), "static");
+        }
+      } catch (error: any) {
+        log(`Erro ao listar arquivos em ${dirPath}: ${error.message}`, "error");
+      }
+    }
+  }
+  
+  if (!publicPath) {
+    log('ERRO: Não foi possível encontrar diretório public válido', "error");
+    // Listar todos os arquivos na raiz para debug
+    log('Arquivos na raiz:', "debug");
+    try {
+      const rootFiles = fs.readdirSync(process.cwd());
+      log(rootFiles.join(', '), "debug");
+    } catch (error) {
+      log(`Erro ao listar arquivos na raiz: ${error.message}`, "error");
+    }
+    return;
+  }
+  
   log(`Configurando servidor estático para servir arquivos de ${publicPath}`, "static");
   
-  app.use(express.static(publicPath));
+  // Servir arquivos estáticos com configurações de cache
+  app.use(express.static(publicPath, {
+    etag: true,
+    lastModified: true,
+    maxAge: '1d' // Cache de 1 dia
+  }));
   
-  // Rota catch-all para SPA
+  // Rota catch-all para SPA - envia index.html para todas as rotas não-API
   app.get('*', (req, res) => {
     if (req.originalUrl.startsWith('/api')) {
-      return res.status(404).send('API endpoint não encontrado');
+      return res.status(404).json({ error: 'API endpoint não encontrado' });
     }
     res.sendFile(path.join(publicPath, 'index.html'));
   });
