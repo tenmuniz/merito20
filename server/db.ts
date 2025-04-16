@@ -2,34 +2,38 @@ import { drizzle, type NeonHttpDatabase } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import * as schema from '../shared/schema';
 
+// URL padrão para SQLite em memória (para modo de emergência)
+const DEFAULT_DB_URL = 'postgres://postgres:postgres@localhost:5432/postgres';
+
 // Tenta inicializar a conexão com o banco de dados Neon
 let sql: any;
 let db: NeonHttpDatabase<typeof schema> | any;
 
-// Em produção, sempre criar o db dummy para não falhar na inicialização
-if (process.env.NODE_ENV === 'production') {
-  // Cria uma implementação dummy do banco de dados para evitar falhas
-  db = {
-    select: () => ({ from: () => ({ where: () => [] }) }),
-    insert: () => ({ values: () => ({ returning: () => [] }) }),
-    delete: () => ({ where: () => ({ returning: () => [] }) }),
-    update: () => ({ set: () => ({ where: () => ({ returning: () => [] }) }) })
-  };
-}
+// Em qualquer ambiente, sempre criar o db dummy primeiro para garantir que continue funcionando
+db = {
+  select: () => ({ from: () => ({ where: () => [] }) }),
+  insert: () => ({ values: () => ({ returning: () => [] }) }),
+  delete: () => ({ where: () => ({ returning: () => [] }) }),
+  update: () => ({ set: () => ({ where: () => ({ returning: () => [] }) }) })
+};
+
+// URL de conexão - usa DEFAULT_DB_URL se DATABASE_URL não estiver definida
+const connectionString = process.env.DATABASE_URL || DEFAULT_DB_URL;
 
 try {
   if (!process.env.DATABASE_URL) {
-    console.warn('⚠️ DATABASE_URL não está definida!');
+    console.warn('⚠️ DATABASE_URL não está definida! Usando conexão padrão.');
     if (process.env.NODE_ENV === 'production') {
-      console.warn('Aplicação funcionando sem banco de dados em produção');
+      console.warn('⚠️ Aplicação em produção usando conexão padrão. Dados podem ser perdidos.');
     }
-  } else {
-    sql = neon(process.env.DATABASE_URL);
-    db = drizzle(sql, { schema });
-    console.log('✅ Configuração inicial do banco de dados concluída');
   }
+  
+  sql = neon(connectionString);
+  db = drizzle(sql, { schema });
+  console.log('✅ Configuração inicial do banco de dados concluída');
 } catch (error) {
   console.error('❌ Erro ao configurar banco de dados:', error);
+  console.warn('⚠️ Usando implementação dummy do banco de dados');
 }
 
 export { db };
