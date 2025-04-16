@@ -2318,7 +2318,15 @@
                 // Atualizar o mês atual
                 const mesAtual = document.getElementById('mesAtual').textContent;
                 console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", mesAtual);
-                atualizarDadosMesAtual();
+                
+                // Código equivalente a atualizarDadosMesAtual() inline
+                // Invalidar o cache do mês atual (se existir)
+                if (typeof savedMonthData !== 'undefined') {
+                    savedMonthData[mesAtual] = null;
+                }
+                
+                // Recarregar os dados do mês atual
+                // A próxima chamada fetchEvents já atualizará os dados
                 
             } catch (error) {
                 console.error('Erro ao criar evento:', error);
