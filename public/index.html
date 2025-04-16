@@ -2940,21 +2940,37 @@
             };
             
             // Um objeto para armazenar os dados salvos para cada mês
+            // Verifica se temos dados guardados no localStorage primeiro
+            let savedMonthDataFromStorage;
+            try {
+                savedMonthDataFromStorage = JSON.parse(localStorage.getItem('savedMonthData')) || {};
+                console.log('Carregando dados persistidos do localStorage');
+            } catch (e) {
+                console.error('Erro ao carregar dados do localStorage:', e);
+                savedMonthDataFromStorage = {};
+            }
+            
             // Objeto para armazenar dados de cada mês em cache, evitando múltiplas consultas ao servidor
             const savedMonthData = {
-                "JANEIRO": null,
-                "FEVEREIRO": null,
-                "MARÇO": null, 
-                "ABRIL": null,
-                "MAIO": null,
-                "JUNHO": null,
-                "JULHO": null,
-                "AGOSTO": null,
-                "SETEMBRO": null, 
-                "OUTUBRO": null,
-                "NOVEMBRO": null,
-                "DEZEMBRO": null
+                "JANEIRO": savedMonthDataFromStorage["JANEIRO"] || null,
+                "FEVEREIRO": savedMonthDataFromStorage["FEVEREIRO"] || null,
+                "MARÇO": savedMonthDataFromStorage["MARÇO"] || null, 
+                "ABRIL": savedMonthDataFromStorage["ABRIL"] || null,
+                "MAIO": savedMonthDataFromStorage["MAIO"] || null,
+                "JUNHO": savedMonthDataFromStorage["JUNHO"] || null,
+                "JULHO": savedMonthDataFromStorage["JULHO"] || null,
+                "AGOSTO": savedMonthDataFromStorage["AGOSTO"] || null,
+                "SETEMBRO": savedMonthDataFromStorage["SETEMBRO"] || null, 
+                "OUTUBRO": savedMonthDataFromStorage["OUTUBRO"] || null,
+                "NOVEMBRO": savedMonthDataFromStorage["NOVEMBRO"] || null,
+                "DEZEMBRO": savedMonthDataFromStorage["DEZEMBRO"] || null
             };
+            
+            // Função auxiliar para persistir dados no localStorage
+            function persistirDadosMeses() {
+                localStorage.setItem('savedMonthData', JSON.stringify(savedMonthData));
+                console.log('Dados dos meses persistidos no localStorage');
+            }
             
             // Flag para controlar se estamos no processo de mudança de mês
             let changingMonth = false;
@@ -2970,10 +2986,19 @@
                 // Salvar o mês atual no localStorage
                 localStorage.setItem('mesAtualRanking', mes);
                 
+                // Antes de mudar de mês, salve os dados do mês atual
+                if (currentMonth && currentMonth !== mes && currentMonthData) {
+                    console.log(`Salvando dados do mês anterior ${currentMonth} antes de mudar para ${mes}`);
+                    savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
+                    
+                    // Persistir os dados no localStorage sempre que mudar de mês
+                    persistirDadosMeses();
+                }
+                
                 // Se já temos dados salvos para este mês, use-os
                 if (savedMonthData[mes]) {
                     console.log(`Usando dados em cache para o mês: ${mes}`);
-                    currentMonthData = savedMonthData[mes];
+                    currentMonthData = JSON.parse(JSON.stringify(savedMonthData[mes])); // Deep copy para evitar referências
                     atualizarUIComDadosAtuais();
                     return;
                 }
@@ -3030,6 +3055,9 @@
                     currentMonthData = novosDados;
                     savedMonthData[mes] = JSON.parse(JSON.stringify(novosDados)); // Deep copy
                     
+                    // Persistir dados no localStorage para evitar perda na atualização da página
+                    persistirDadosMeses();
+                    
                     // Atualizar a UI com os dados
                     atualizarUIComDadosAtuais();
                     
@@ -3079,9 +3107,19 @@
             function atualizarDadosMesAtual() {
                 // Obter o mês atual do título
                 const mesAtual = document.getElementById('mesAtual').textContent;
-                // Invalidar o cache do mês atual
+                
+                // Salvar explicitamente quaisquer dados atuais antes de recarregar
+                if (currentMonthData) {
+                    console.log(`Salvando dados atuais antes de atualizar para o mês: ${mesAtual}`);
+                    savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
+                    persistirDadosMeses();
+                }
+                
+                // Invalidar o cache do mês atual para forçar nova consulta ao servidor
                 savedMonthData[mesAtual] = null;
-                // Recarregar os dados
+                
+                // Recarregar os dados do servidor para este mês
+                console.log(`Atualizando dados para o mês: ${mesAtual}`);
                 carregarDadosDoMes(mesAtual);
             }
             
