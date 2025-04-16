@@ -3,28 +3,10 @@ builder = "nixpacks"
 buildCommand = "npm run build"
 
 [deploy]
-startCommand = "npm start"
+# Configuração para usar o script personalizado de inicialização
+startCommand = "node start.js"
 healthcheckPath = "/health"
-healthcheckTimeout = 300
-restartPolicyType = "on_failure"
-restartPolicyMaxRetries = 5
+healthcheckTimeout = 90
 
-[phases.setup]
-nixPkgs = ["nodejs", "postgresql"]
-
-[phases.build]
-cmds = ["npm ci"]
-
-[phases.install]
-cmds = ["npm install"]
-
-[phases.release]
-cmds = ["node -e 'console.log(\"Application ready to start\")'" ]
-
-[[hooks]]
-type = "prebuild"
-command = "echo 'Preparing to build...'"
-
-[[hooks]]
-type = "build"
-command = "npm run db:push || echo 'Migration failed, continuing anyway'"
+[nixpacks]
+start = "node start.js"
