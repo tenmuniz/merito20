@@ -154,14 +154,31 @@ async function logout() {
         // Remover dados do localStorage
         localStorage.removeItem('escalasUserData');
         
+        // Ocultar imediatamente os botões administrativos
+        console.log("Logout bem-sucedido, ocultando botões administrativos...");
+        
+        // Ocultar botão de adicionar eventos
+        const addEventBtn = document.getElementById('addEventBtn');
+        if (addEventBtn) {
+            addEventBtn.style.display = 'none';
+            console.log("Botão 'Adicionar Evento' ocultado");
+        }
+        
+        // Ocultar botão de resetar pontos
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.style.display = 'none';
+            console.log("Botão 'Zerar Pontos' ocultado");
+        }
+        
         // Atualizar a UI para o estado não autenticado
         atualizarInterfaceNaoAutenticada();
         
         // Exibir mensagem
         alert('Logout realizado com sucesso!');
         
-        // Recarregar a página para garantir que tudo seja resetado
-        window.location.reload();
+        // Não precisamos mais recarregar a página, já que estamos atualizando a UI diretamente
+        // window.location.reload();
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
         

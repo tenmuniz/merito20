@@ -2258,7 +2258,28 @@
                         // Fechar o modal
                         loginModal.style.display = 'none';
                         
-                        // Atualizar interface
+                        // Atualizar interface - Mostrar imediatamente os botões administrativos
+                        console.log("Login bem-sucedido, atualizando interface...");
+                        
+                        // Botão de adicionar eventos
+                        const addEventBtn = document.getElementById('addEventBtn');
+                        if (addEventBtn) {
+                            addEventBtn.style.display = 'inline-flex';
+                            console.log("Botão 'Adicionar Evento' exibido");
+                        } else {
+                            console.error("Botão 'Adicionar Evento' não encontrado");
+                        }
+                        
+                        // Botão de resetar pontos
+                        const resetBtn = document.getElementById('resetBtn');
+                        if (resetBtn) {
+                            resetBtn.style.display = 'inline-flex';
+                            console.log("Botão 'Zerar Pontos' exibido");
+                        } else {
+                            console.error("Botão 'Zerar Pontos' não encontrado");
+                        }
+                        
+                        // Também chama a função verificarAutenticacao para atualizar o restante da interface
                         verificarAutenticacao();
                     } catch (error) {
                         console.error('Erro no login:', error);
