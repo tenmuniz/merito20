@@ -19,7 +19,7 @@ RUN echo "Building frontend..."
 RUN npx vite build
 # Compilar backend com esbuild
 RUN echo "Building backend..."
-RUN npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+RUN npx esbuild server/prod-index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js
 # Compilar healthcheck
 RUN echo "Building healthcheck..."
 RUN npx esbuild server/healthcheck.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/healthcheck.js
@@ -31,6 +31,7 @@ FROM node:18-alpine AS production
 
 # Definir variáveis de ambiente
 ENV NODE_ENV=production
+ENV PORT=5000
 
 # Instalar ferramentas necessárias
 RUN apk add --no-cache curl
@@ -44,18 +45,21 @@ COPY package*.json ./
 # Instalar apenas dependências de produção
 RUN npm ci --only=production
 
-# Copiar arquivos de build
+# Copiar arquivos compilados e públicos
 COPY --from=builder /app/dist ./dist
-# Copiar arquivos públicos (diretório public e os arquivos gerados no dist/public)
 COPY --from=builder /app/public ./public
-COPY --from=builder /app/dist/public ./dist/public
+
+# Debug - listar arquivos copiados
+RUN echo "Listando diretórios após cópia:" && ls -la && \
+    echo "Conteúdo de ./dist:" && ls -la ./dist && \
+    echo "Conteúdo de ./public:" && ls -la ./public
 
 # Expor porta
 EXPOSE 5000
 
 # Verificar conexão com banco de dados antes de iniciar
-HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD curl -f http://localhost:${PORT:-5000}/health || exit 1
+HEALTHCHECK --interval=30s --timeout=30s --start-period=30s --retries=3 \
+  CMD curl -f http://localhost:${PORT:-5000}/health || echo "Healthcheck falhou!" && exit 1
 
 # Iniciar aplicação
 CMD ["node", "dist/index.js"]
