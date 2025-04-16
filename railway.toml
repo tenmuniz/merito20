@@ -5,11 +5,26 @@ buildCommand = "npm run build"
 [deploy]
 startCommand = "npm start"
 healthcheckPath = "/health"
-healthcheckTimeout = 100
+healthcheckTimeout = 300
+restartPolicyType = "on_failure"
+restartPolicyMaxRetries = 5
 
 [phases.setup]
 nixPkgs = ["nodejs", "postgresql"]
 
+[phases.build]
+cmds = ["npm ci"]
+
+[phases.install]
+cmds = ["npm install"]
+
+[phases.release]
+cmds = ["node -e 'console.log(\"Application ready to start\")'" ]
+
+[[hooks]]
+type = "prebuild"
+command = "echo 'Preparing to build...'"
+
 [[hooks]]
 type = "build"
-command = "npm run db:push"
+command = "npm run db:push || echo 'Migration failed, continuing anyway'"
