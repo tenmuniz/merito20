@@ -9,8 +9,7 @@ npm-debug.log*
 .DS_Store
 .env
 .env.local
-.env.*
+.env.development
 coverage
 *.md
-scripts
 !README.md

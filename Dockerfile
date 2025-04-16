@@ -13,8 +13,18 @@ RUN npm ci
 COPY . .
 
 # Construir aplicação
-RUN chmod +x ./scripts/docker-build.sh
-RUN ./scripts/docker-build.sh
+RUN mkdir -p dist
+# Compilar frontend com vite
+RUN echo "Building frontend..."
+RUN npx vite build
+# Compilar backend com esbuild
+RUN echo "Building backend..."
+RUN npx esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+# Compilar healthcheck
+RUN echo "Building healthcheck..."
+RUN npx esbuild server/healthcheck.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/healthcheck.js
+# Listar arquivos gerados para debug
+RUN ls -la dist/
 
 # Imagem de produção
 FROM node:18-alpine AS production
@@ -36,7 +46,9 @@ RUN npm ci --only=production
 
 # Copiar arquivos de build
 COPY --from=builder /app/dist ./dist
+# Copiar arquivos públicos (diretório public e os arquivos gerados no dist/public)
 COPY --from=builder /app/public ./public
+COPY --from=builder /app/dist/public ./dist/public
 
 # Expor porta
 EXPOSE 5000
