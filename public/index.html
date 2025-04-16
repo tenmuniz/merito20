@@ -2375,73 +2375,78 @@
         let isEditing = false;
         
         // Submissão do formulário de edição
-        document.getElementById('editForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            const editForm = document.getElementById('editForm');
+            if (editForm) {
+                editForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Evitar submissões duplicadas
+                    if (isEditing) {
+                        console.log('Edição já em andamento, ignorando clique adicional');
+                        return;
+                    }
+                    
+                    isEditing = true;
+                    
+                    // Botão de submit
+                    const submitBtn = document.querySelector('#editForm button[type="submit"]');
+                    const originalBtnText = submitBtn ? submitBtn.textContent : 'Atualizar';
+                    if (submitBtn) {
+                        submitBtn.textContent = 'Atualizando...';
+                        submitBtn.disabled = true;
+                    }
             
-            // Evitar submissões duplicadas
-            if (isEditing) {
-                console.log('Edição já em andamento, ignorando clique adicional');
-                return;
-            }
-            
-            isEditing = true;
-            
-            // Botão de submit
-            const submitBtn = document.querySelector('#editForm button[type="submit"]');
-            const originalBtnText = submitBtn ? submitBtn.textContent : 'Atualizar';
-            if (submitBtn) {
-                submitBtn.textContent = 'Atualizando...';
-                submitBtn.disabled = true;
-            }
-            
-            try {
-                const eventId = document.getElementById('editEventId').value;
-                const eventDateValue = document.getElementById('editEventDate').value;
-                const teamId = parseInt(document.getElementById('editEventTeam').value);
-                const type = document.getElementById('editEventType').value;
-                const description = document.getElementById('editEventDescription').value;
-                const points = parseInt(document.getElementById('editEventPoints').value);
+                    try {
+                        const eventId = document.getElementById('editEventId').value;
+                        const eventDateValue = document.getElementById('editEventDate').value;
+                        const teamId = parseInt(document.getElementById('editEventTeam').value);
+                        const type = document.getElementById('editEventType').value;
+                        const description = document.getElementById('editEventDescription').value;
+                        const points = parseInt(document.getElementById('editEventPoints').value);
                 
-                console.log('Data do evento editado:', eventDateValue);
-                
-                const response = await fetch(`/api/events/${eventId}`, {
-                    method: 'PUT',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        teamId,
-                        type,
-                        description,
-                        points,
-                        eventDate: eventDateValue
-                    })
+                        console.log('Data do evento editado:', eventDateValue);
+                        
+                        const response = await fetch(`/api/events/${eventId}`, {
+                            method: 'PUT',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                teamId,
+                                type,
+                                description,
+                                points,
+                                eventDate: eventDateValue
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Falha ao atualizar evento');
+                        }
+                        
+                        document.getElementById('editModal').style.display = 'none';
+                        
+                        // Recarregar dados uma única vez
+                        await fetchTeams();
+                        await fetchEvents();
+                        
+                        alert('Evento atualizado com sucesso!');
+                        
+                    } catch (error) {
+                        console.error('Erro ao atualizar evento:', error);
+                        alert('Erro ao atualizar evento: ' + error.message);
+                    } finally {
+                        // Restaurar o botão
+                        if (submitBtn) {
+                            submitBtn.textContent = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
+                        
+                        // Permitir nova edição
+                        isEditing = false;
+                    }
                 });
-                
-                if (!response.ok) {
-                    throw new Error('Falha ao atualizar evento');
-                }
-                
-                document.getElementById('editModal').style.display = 'none';
-                
-                // Recarregar dados uma única vez
-                await fetchTeams();
-                await fetchEvents();
-                
-                alert('Evento atualizado com sucesso!');
-                
-            } catch (error) {
-                console.error('Erro ao atualizar evento:', error);
-                alert('Erro ao atualizar evento: ' + error.message);
-            } finally {
-                // Restaurar o botão
-                if (submitBtn) {
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.disabled = false;
-                }
-                
-                // Permitir nova edição
-                isEditing = false;
             }
         });
         
@@ -2583,19 +2588,26 @@
             
 
             
-            document.getElementById('editTeamsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const mes = document.getElementById('titleMes').value;
-                const alfaName = document.getElementById('teamAlfaName').value;
-                const bravoName = document.getElementById('teamBravoName').value;
-                const charlieName = document.getElementById('teamCharlieName').value;
-                
-                updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
-                
-                document.getElementById('editTeamsModal').style.display = 'none';
-                alert('Configuração das guarnições atualizada com sucesso!');
-            });
+                const editTeamsForm = document.getElementById('editTeamsForm');
+            if (editTeamsForm) {
+                editTeamsForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const mes = document.getElementById('titleMes').value;
+                    const alfaName = document.getElementById('teamAlfaName').value;
+                    const bravoName = document.getElementById('teamBravoName').value;
+                    const charlieName = document.getElementById('teamCharlieName').value;
+                    
+                    updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
+                    
+                    const editTeamsModal = document.getElementById('editTeamsModal');
+                    if (editTeamsModal) {
+                        editTeamsModal.style.display = 'none';
+                    }
+                    
+                    alert('Configuração das guarnições atualizada com sucesso!');
+                });
+            }
             
             // Carregar dados salvos do localStorage
             const loadSavedData = () => {
