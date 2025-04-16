@@ -59,38 +59,7 @@ function checkGlobalAuth() {
 
 // Função renderAniversariantesList removida
 
-function editAniversariante(id) {
-    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
-    const aniversariante = aniversariantes.find(a => a.id === id);
-    
-    const aniversarianteNome = document.getElementById('aniversarianteNome');
-    const aniversarianteData = document.getElementById('aniversarianteData');
-    const aniversarianteCargo = document.getElementById('aniversarianteCargo');
-    const aniversarianteForm = document.getElementById('aniversarianteForm');
-    const addAniversarianteBtn = document.getElementById('addAniversarianteBtn');
-    
-    if (aniversariante && aniversarianteNome && aniversarianteData && aniversarianteCargo) {
-        aniversarianteNome.value = aniversariante.nome;
-        aniversarianteData.value = aniversariante.data;
-        aniversarianteCargo.value = aniversariante.cargo;
-        window.editingAniversarianteId = id;
-        
-        if (aniversarianteForm && addAniversarianteBtn) {
-            aniversarianteForm.style.display = 'block';
-            addAniversarianteBtn.style.display = 'none';
-        }
-    }
-}
-
-function deleteAniversariante(id) {
-    if (confirm('Tem certeza que deseja excluir este aniversariante?')) {
-        let aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
-        aniversariantes = aniversariantes.filter(a => a.id !== id);
-        localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
-        renderAniversariantesList();
-        updateAniversariantesUI();
-    }
-}
+// Funções editAniversariante e deleteAniversariante foram removidas
 
 function openEquipeModal(equipe) {
     console.log("Abrindo modal de equipe", equipe);
@@ -277,43 +246,7 @@ function deleteInfo(index) {
 }
 
 // Funções de atualização UI
-function updateAniversariantesUI() {
-    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
-    const container = document.querySelector('.aniversariantes-lista');
-    if (!container) return;
-    
-    // Ordenar aniversariantes por dia
-    aniversariantes.sort((a, b) => {
-        const dateA = new Date(a.data);
-        const dateB = new Date(b.data);
-        return dateA.getDate() - dateB.getDate();
-    });
-    
-    // Limpar o container
-    container.innerHTML = '';
-    
-    // Adicionar cada card de aniversariante
-    aniversariantes.forEach(aniv => {
-        const data = new Date(aniv.data);
-        const dia = data.getDate().toString().padStart(2, '0');
-        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        const mes = meses[data.getMonth()];
-        const dataFormatada = `${dia} de ${mes}`;
-        
-        const card = document.createElement('div');
-        card.className = 'aniversariante-card aniversariante-destaque';
-        card.innerHTML = `
-            <div class="aniversariante-nome">${aniv.nome}</div>
-            <div class="aniversariante-data">
-                <span>🗓️</span>
-                <span>${dataFormatada}</span>
-            </div>
-            <div class="aniversariante-cargo">${aniv.cargo}</div>
-        `;
-        
-        container.appendChild(card);
-    });
-}
+// Função updateAniversariantesUI removida
 
 function updateEquipesUI() {
     const equipes = ['alfa', 'bravo', 'charlie'];
@@ -413,17 +346,7 @@ function initEditButtons() {
 }
     
     // Configurar botões de gerenciamento de formulários
-    const closeAniversariantesModal = document.getElementById('closeAniversariantesModal');
-    if (closeAniversariantesModal) {
-        closeAniversariantesModal.onclick = function() {
-            const modal = document.getElementById('aniversariantesModal');
-            if (modal) modal.classList.remove('active');
-            const form = document.getElementById('aniversarianteForm');
-            if (form) form.style.display = 'none';
-            const addBtn = document.getElementById('addAniversarianteBtn');
-            if (addBtn) addBtn.style.display = 'block';
-        };
-    }
+    // Remoção do código do botão closeAniversariantesModal
     
     const closeEquipeModalBtn = document.getElementById('closeEquipeModal');
     if (closeEquipeModalBtn) {
@@ -459,14 +382,7 @@ function initEditButtons() {
     }
     
     // Configurar botões de adição e salvamento
-    const addAniversarianteBtn = document.getElementById('addAniversarianteBtn');
-    if (addAniversarianteBtn) {
-        addAniversarianteBtn.onclick = function() {
-            const form = document.getElementById('aniversarianteForm');
-            if (form) form.style.display = 'block';
-            addAniversarianteBtn.style.display = 'none';
-        };
-    }
+    // Remoção do código do botão addAniversarianteBtn
     
     const addMembroBtn = document.getElementById('addMembroBtn');
     if (addMembroBtn) {
@@ -487,54 +403,7 @@ function initEditButtons() {
     }
     
     // Botões de salvamento
-    const saveAniversarianteForm = document.getElementById('saveAniversarianteForm');
-    if (saveAniversarianteForm) {
-        saveAniversarianteForm.onclick = function() {
-            const nome = document.getElementById('aniversarianteNome').value;
-            const data = document.getElementById('aniversarianteData').value;
-            const cargo = document.getElementById('aniversarianteCargo').value;
-            
-            if (!nome || !data || !cargo) {
-                alert('Preencha todos os campos!');
-                return;
-            }
-            
-            const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
-            
-            if (window.editingAniversarianteId) {
-                // Editar existente
-                const index = aniversariantes.findIndex(a => a.id === window.editingAniversarianteId);
-                if (index !== -1) {
-                    aniversariantes[index] = {
-                        id: window.editingAniversarianteId,
-                        nome,
-                        data,
-                        cargo
-                    };
-                }
-            } else {
-                // Adicionar novo
-                const newId = aniversariantes.length > 0 ? Math.max(...aniversariantes.map(a => a.id)) + 1 : 1;
-                aniversariantes.push({
-                    id: newId,
-                    nome,
-                    data,
-                    cargo
-                });
-            }
-            
-            localStorage.setItem('aniversariantes', JSON.stringify(aniversariantes));
-            
-            // Ocultar formulário
-            const form = document.getElementById('aniversarianteForm');
-            if (form) form.style.display = 'none';
-            if (addAniversarianteBtn) addAniversarianteBtn.style.display = 'block';
-            
-            // Atualizar interface
-            renderAniversariantesList();
-            updateAniversariantesUI();
-        };
-    }
+    // Remoção do código do botão saveAniversarianteForm
     
     const saveMembroForm = document.getElementById('saveMembroForm');
     if (saveMembroForm) {
@@ -613,14 +482,7 @@ function initEditButtons() {
     }
     
     // Botões de cancelamento
-    const cancelAniversarianteForm = document.getElementById('cancelAniversarianteForm');
-    if (cancelAniversarianteForm) {
-        cancelAniversarianteForm.onclick = function() {
-            const form = document.getElementById('aniversarianteForm');
-            if (form) form.style.display = 'none';
-            if (addAniversarianteBtn) addAniversarianteBtn.style.display = 'block';
-        };
-    }
+    // Remoção do código do botão cancelAniversarianteForm
     
     const cancelMembroForm = document.getElementById('cancelMembroForm');
     if (cancelMembroForm) {
