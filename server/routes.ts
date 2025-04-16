@@ -7,57 +7,6 @@ import { teams, events } from '@shared/schema';
 import { eq } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Rota raiz para verificação básica
-  app.get("/", (req, res) => {
-    res.status(200).send(`
-      <html>
-        <head>
-          <title>Sistema de Meritocracia 20ª CIPM - API</title>
-          <style>
-            body { font-family: Arial, sans-serif; max-width: 800px; margin: 0 auto; padding: 20px; }
-            h1 { color: #3b82f6; }
-            .message { background-color: #f0f9ff; padding: 15px; border-radius: 5px; }
-            .nav { margin-top: 20px; }
-            .nav a { display: inline-block; margin-right: 10px; background-color: #3b82f6; color: white; 
-                    padding: 8px 16px; text-decoration: none; border-radius: 4px; }
-          </style>
-        </head>
-        <body>
-          <h1>Sistema de Meritocracia 20ª CIPM</h1>
-          <div class="message">
-            <p>👋 A API está funcionando corretamente.</p>
-            <p>Versão: 1.0.0</p>
-            <p>Data: ${new Date().toLocaleDateString('pt-BR')}</p>
-          </div>
-          <div class="nav">
-            <a href="/health">Verificar Status</a>
-            <a href="/api/teams">Ver Equipes</a>
-          </div>
-        </body>
-      </html>
-    `);
-  });
-
-  // Rota de healthcheck para o Railway
-  app.get("/health", async (req, res) => {
-    try {
-      // Fazer uma consulta simples para verificar a conexão com o banco de dados
-      const result = await db.select().from(teams).limit(1);
-      res.status(200).json({ 
-        status: "ok",
-        timestamp: new Date().toISOString(),
-        database: "connected",
-        environment: process.env.NODE_ENV || "development"
-      });
-    } catch (error) {
-      console.error("Erro na verificação de saúde:", error);
-      res.status(500).json({ 
-        status: "error",
-        message: "Não foi possível estabelecer conexão com o banco de dados"
-      });
-    }
-  });
-
   // API Routes
   // Teams
   app.get("/api/teams", async (req, res) => {

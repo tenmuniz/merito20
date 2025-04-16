@@ -1,56 +1,12 @@
-import 'dotenv/config'; // Carregar variáveis de ambiente no início
 import express, { type Request, Response, NextFunction } from "express";
 import { registerRoutes } from "./routes";
+import { setupVite, serveStatic, log } from "./vite";
 import { checkDatabaseConnection } from "./db";
 import { initializeDatabase } from "./init-db";
-import { configureStaticServer } from "./serve-static";
-
-// Definir variável de ambiente
-const isDevelopment = process.env.NODE_ENV !== 'production';
-
-// Função utilitária para log
-function log(message: string, source = "express") {
-  const formattedTime = new Date().toLocaleTimeString("en-US", {
-    hour: "numeric",
-    minute: "2-digit",
-    second: "2-digit",
-    hour12: true,
-  });
-
-  console.log(`${formattedTime} [${source}] ${message}`);
-}
 
 const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-// Rota de healthcheck para o Railway
-app.get('/health', async (req, res) => {
-  try {
-    const dbConnected = await checkDatabaseConnection();
-    if (dbConnected) {
-      return res.status(200).json({ 
-        status: 'ok', 
-        timestamp: new Date().toISOString(),
-        database: 'connected',
-        environment: process.env.NODE_ENV || 'development'
-      });
-    } else {
-      return res.status(500).json({ 
-        status: 'error', 
-        timestamp: new Date().toISOString(),
-        database: 'disconnected',
-        message: 'Problema na conexão com banco de dados' 
-      });
-    }
-  } catch (error: any) {
-    return res.status(500).json({ 
-      status: 'error', 
-      timestamp: new Date().toISOString(),
-      message: error.message 
-    });
-  }
-});
 
 app.use((req, res, next) => {
   const start = Date.now();
@@ -103,15 +59,16 @@ app.use((req, res, next) => {
     throw err;
   });
 
-  // Configurar servidor estático
-  // Em produção, usamos apenas a configuração estática simples
+  // Importar e usar o servidor estático
+  const { configureStaticServer } = await import("./serve-static");
   configureStaticServer(app);
 
-  // Usar a porta definida no ambiente ou 5000 como fallback
-  // No Railway, a porta é definida pela variável de ambiente PORT
-  const port = process.env.PORT || 5000;
+  // ALWAYS serve the app on port 5000
+  // this serves both the API and the client.
+  // It is the only port that is not firewalled.
+  const port = 5000;
   server.listen({
-    port: Number(port),
+    port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
