@@ -12,7 +12,7 @@ if (!process.env.DATABASE_URL) {
 const connectionString = process.env.DATABASE_URL;
 const client = postgres(connectionString, { 
   max: 10, // número máximo de conexões no pool
-  ssl: process.env.NODE_ENV === 'production', // habilitar SSL em produção (Railway)
+  ssl: { rejectUnauthorized: false }, // habilitar SSL para todas as conexões com verificação de certificado desabilitada
 });
 
 export const db = drizzle(client, { schema });
