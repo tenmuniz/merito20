@@ -2586,6 +2586,10 @@
                     resetBtn.style.display = 'none';
                 }
                 
+                if (alterarMesBtn) {
+                    alterarMesBtn.style.display = 'none';
+                }
+                
                 return false;
             }
             
@@ -2642,6 +2646,12 @@
                         if (resetBtn) {
                             resetBtn.style.display = 'inline-flex';
                             console.log("✅ Botão Zerar Pontos exibido");
+                        }
+                        
+                        const alterarMesBtn = document.getElementById('alterarMesBtn');
+                        if (alterarMesBtn) {
+                            alterarMesBtn.style.display = 'flex';
+                            console.log("✅ Botão Alterar Mês exibido");
                         }
                         
                         // Atualizar botão de login para "Sair"
@@ -2746,8 +2756,73 @@
                 });
             }
             
+            // Configurar seletor de mês
+            function configurarSeletorMes() {
+                // Definir o ano atual automaticamente
+                const anoAtualEl = document.getElementById('anoAtual');
+                if (anoAtualEl) {
+                    anoAtualEl.textContent = new Date().getFullYear();
+                }
+                
+                // Configurar o botão de alterar mês
+                const alterarMesBtn = document.getElementById('alterarMesBtn');
+                const monthSelectorModal = document.getElementById('monthSelectorModal');
+                
+                if (alterarMesBtn) {
+                    alterarMesBtn.addEventListener('click', function() {
+                        if (monthSelectorModal) {
+                            monthSelectorModal.style.display = 'flex';
+                        }
+                    });
+                }
+                
+                // Configurar os botões de mês no seletor
+                const monthButtons = document.querySelectorAll('.month-btn');
+                monthButtons.forEach(btn => {
+                    btn.addEventListener('click', function() {
+                        const mes = this.getAttribute('data-month');
+                        const mesAtualEl = document.getElementById('mesAtual');
+                        
+                        if (mesAtualEl) {
+                            mesAtualEl.textContent = mes;
+                            
+                            // Salvar a seleção no localStorage para persistência
+                            localStorage.setItem('mesAtualRanking', mes);
+                            
+                            // Fechar o modal após a seleção
+                            monthSelectorModal.style.display = 'none';
+                            
+                            // Destacar o botão selecionado
+                            monthButtons.forEach(b => b.classList.remove('active'));
+                            this.classList.add('active');
+                            
+                            // Você pode adicionar aqui uma chamada para atualizar os dados do ranking
+                            // conforme o mês selecionado, se necessário
+                            console.log(`Mês alterado para: ${mes}`);
+                        }
+                    });
+                });
+                
+                // Verificar se há um mês salvo no localStorage
+                const mesSalvo = localStorage.getItem('mesAtualRanking');
+                if (mesSalvo) {
+                    const mesAtualEl = document.getElementById('mesAtual');
+                    if (mesAtualEl) {
+                        mesAtualEl.textContent = mesSalvo;
+                    }
+                    
+                    // Destacar o botão correspondente
+                    monthButtons.forEach(btn => {
+                        if (btn.getAttribute('data-month') === mesSalvo) {
+                            btn.classList.add('active');
+                        }
+                    });
+                }
+            }
+            
             // Chamar a configuração dos modais
             configurarModals();
+            configurarSeletorMes();
             
             // Inicializar verificação de autenticação
             verificarAutenticacao();
