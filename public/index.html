@@ -2030,7 +2030,7 @@
                 if (user.isAdmin) {
                     // Mostrar botões de administração
                     document.querySelector('.admin-buttons').style.display = 'flex';
-                    document.getElementById('editAniversariantesBtn').style.display = 'flex';
+
                     
                     // Mostrar ações de edição nos detalhes de eventos
                     const detailActions = document.getElementById('detailActions');
@@ -2040,7 +2040,7 @@
                 } else {
                     // Esconder botões de administração
                     document.querySelector('.admin-buttons').style.display = 'none';
-                    document.getElementById('editAniversariantesBtn').style.display = 'none';
+
                     
                     // Esconder ações de edição
                     const detailActions = document.getElementById('detailActions');
@@ -2225,7 +2225,7 @@
             
             // Por padrão, esconder os controles de administração até login
             document.querySelector('.admin-buttons').style.display = 'none';
-            document.getElementById('editAniversariantesBtn').style.display = 'none';
+
             
             // Configurar o botão de editar no modal de detalhes
             document.getElementById('editEventBtn').addEventListener('click', openEditModal);
