@@ -2451,7 +2451,7 @@
             }
             
             const mesAtual = document.getElementById('mesAtual').textContent;
-            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes para este mês. Esta ação não pode ser desfeita. Deseja continuar?`)) {
+            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes APENAS para este mês. Os dados dos outros meses permanecerão intactos. Esta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
             }
             
@@ -2486,11 +2486,11 @@
                     savedMonthData[mesAtual] = null;
                 }
                 
-                // Recarregar dados
-                await fetchTeams();
-                await fetchEvents();
+                // Recarregar apenas os dados do mês atual
+                console.log(`Recarregando apenas os dados do mês atual (${mesAtual})`);
+                await carregarDadosDoMes(mesAtual);
                 
-                alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso!`);
+                alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso! Os dados dos outros meses permanecem intactos.`);
             } catch (error) {
                 console.error('Erro ao resetar dados:', error);
                 alert('Erro ao resetar dados: ' + error.message);
