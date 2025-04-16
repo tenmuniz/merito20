@@ -13,7 +13,8 @@ RUN npm ci
 COPY . .
 
 # Construir aplicação
-RUN npm run build
+RUN chmod +x ./scripts/docker-build.sh
+RUN ./scripts/docker-build.sh
 
 # Imagem de produção
 FROM node:18-alpine AS production
