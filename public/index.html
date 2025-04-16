@@ -2796,9 +2796,11 @@
                             monthButtons.forEach(b => b.classList.remove('active'));
                             this.classList.add('active');
                             
-                            // Você pode adicionar aqui uma chamada para atualizar os dados do ranking
-                            // conforme o mês selecionado, se necessário
+                            // Carregar os dados do mês selecionado
                             console.log(`Mês alterado para: ${mes}`);
+                            
+                            // Chamar API para buscar dados do mês específico
+                            carregarDadosDoMes(mes);
                         }
                     });
                 });
@@ -2820,12 +2822,163 @@
                 }
             }
             
+            // Função para carregar dados específicos do mês
+            function carregarDadosDoMes(mes) {
+                // Simulação de dados diferentes para cada mês
+                // Em uma implementação real, você faria uma chamada à API com o mês como parâmetro
+                
+                // Objeto com dados simulados para cada mês
+                const dadosPorMes = {
+                    "JANEIRO": {
+                        "alfa": { pontos: 120, posicao: 2 },
+                        "bravo": { pontos: 90, posicao: 3 },
+                        "charlie": { pontos: 160, posicao: 1 }
+                    },
+                    "FEVEREIRO": {
+                        "alfa": { pontos: 80, posicao: 3 },
+                        "bravo": { pontos: 150, posicao: 1 },
+                        "charlie": { pontos: 110, posicao: 2 }
+                    },
+                    "MARÇO": {
+                        "alfa": { pontos: 130, posicao: 2 },
+                        "bravo": { pontos: 180, posicao: 1 },
+                        "charlie": { pontos: 100, posicao: 3 }
+                    },
+                    "ABRIL": {
+                        "alfa": { pontos: 95, posicao: 3 },
+                        "bravo": { pontos: 180, posicao: 1 },
+                        "charlie": { pontos: 150, posicao: 2 }
+                    },
+                    "MAIO": {
+                        "alfa": { pontos: 210, posicao: 1 },
+                        "bravo": { pontos: 160, posicao: 2 },
+                        "charlie": { pontos: 95, posicao: 3 }
+                    },
+                    "JUNHO": {
+                        "alfa": { pontos: 140, posicao: 2 },
+                        "bravo": { pontos: 130, posicao: 3 },
+                        "charlie": { pontos: 180, posicao: 1 }
+                    },
+                    "JULHO": {
+                        "alfa": { pontos: 200, posicao: 1 },
+                        "bravo": { pontos: 170, posicao: 2 },
+                        "charlie": { pontos: 130, posicao: 3 }
+                    },
+                    "AGOSTO": {
+                        "alfa": { pontos: 110, posicao: 3 },
+                        "bravo": { pontos: 190, posicao: 1 },
+                        "charlie": { pontos: 140, posicao: 2 }
+                    },
+                    "SETEMBRO": {
+                        "alfa": { pontos: 150, posicao: 2 },
+                        "bravo": { pontos: 130, posicao: 3 },
+                        "charlie": { pontos: 200, posicao: 1 }
+                    },
+                    "OUTUBRO": {
+                        "alfa": { pontos: 120, posicao: 3 },
+                        "bravo": { pontos: 190, posicao: 1 },
+                        "charlie": { pontos: 180, posicao: 2 }
+                    },
+                    "NOVEMBRO": {
+                        "alfa": { pontos: 200, posicao: 1 },
+                        "bravo": { pontos: 170, posicao: 2 },
+                        "charlie": { pontos: 120, posicao: 3 }
+                    },
+                    "DEZEMBRO": {
+                        "alfa": { pontos: 180, posicao: 2 },
+                        "bravo": { pontos: 210, posicao: 1 },
+                        "charlie": { pontos: 150, posicao: 3 }
+                    }
+                };
+                
+                // Verificar se temos dados para este mês
+                if (!dadosPorMes[mes]) {
+                    console.log(`Não há dados disponíveis para o mês de ${mes}`);
+                    return;
+                }
+                
+                const dados = dadosPorMes[mes];
+                
+                // Atualizar pontos nos cards
+                document.getElementById('alfa-points').textContent = dados.alfa.pontos;
+                document.getElementById('bravo-points').textContent = dados.bravo.pontos;
+                document.getElementById('charlie-points').textContent = dados.charlie.pontos;
+                
+                // Atualizar posições no pódio (que já tem a ordem visual fixa)
+                document.querySelector('.first-place .podium-team').textContent = obterEquipePorPosicao(dados, 1).toUpperCase();
+                document.querySelector('.first-place .podium-points').textContent = obterPontosPorPosicao(dados, 1);
+                
+                document.querySelector('.second-place .podium-team').textContent = obterEquipePorPosicao(dados, 2).toUpperCase();
+                document.querySelector('.second-place .podium-points').textContent = obterPontosPorPosicao(dados, 2);
+                
+                document.querySelector('.third-place .podium-team').textContent = obterEquipePorPosicao(dados, 3).toUpperCase();
+                document.querySelector('.third-place .podium-points').textContent = obterPontosPorPosicao(dados, 3);
+                
+                // Atualizar as classes de classificação nos cards
+                atualizarPosicoesCards(dados);
+            }
+            
+            // Função auxiliar para obter o nome da equipe por posição
+            function obterEquipePorPosicao(dados, posicao) {
+                for (const equipe in dados) {
+                    if (dados[equipe].posicao === posicao) {
+                        return equipe;
+                    }
+                }
+                return "";
+            }
+            
+            // Função auxiliar para obter os pontos por posição
+            function obterPontosPorPosicao(dados, posicao) {
+                for (const equipe in dados) {
+                    if (dados[equipe].posicao === posicao) {
+                        return dados[equipe].pontos;
+                    }
+                }
+                return 0;
+            }
+            
+            // Função para atualizar as classes de posição nos cards
+            function atualizarPosicoesCards(dados) {
+                // Atualizar a posição no card da Alfa
+                const alfaRanking = document.querySelector('.card:nth-child(1) .ranking');
+                alfaRanking.className = 'ranking';
+                alfaRanking.classList.add(obterClassePosicao(dados.alfa.posicao));
+                alfaRanking.querySelector('span').textContent = `${dados.alfa.posicao}º`;
+                
+                // Atualizar a posição no card da Bravo
+                const bravoRanking = document.querySelector('.card:nth-child(2) .ranking');
+                bravoRanking.className = 'ranking';
+                bravoRanking.classList.add(obterClassePosicao(dados.bravo.posicao));
+                bravoRanking.querySelector('span').textContent = `${dados.bravo.posicao}º`;
+                
+                // Atualizar a posição no card da Charlie
+                const charlieRanking = document.querySelector('.card:nth-child(3) .ranking');
+                charlieRanking.className = 'ranking';
+                charlieRanking.classList.add(obterClassePosicao(dados.charlie.posicao));
+                charlieRanking.querySelector('span').textContent = `${dados.charlie.posicao}º`;
+            }
+            
+            // Função para obter a classe CSS baseada na posição
+            function obterClassePosicao(posicao) {
+                switch (posicao) {
+                    case 1: return 'primeiro-lugar';
+                    case 2: return 'segundo-lugar';
+                    case 3: return 'terceiro-lugar';
+                    default: return '';
+                }
+            }
+            
             // Chamar a configuração dos modais
             configurarModals();
             configurarSeletorMes();
             
             // Inicializar verificação de autenticação
             verificarAutenticacao();
+            
+            // Carregar os dados iniciais (do mês atual ou do mês salvo)
+            const mesInicial = localStorage.getItem('mesAtualRanking') || 'ABRIL';
+            carregarDadosDoMes(mesInicial);
         });
     </script>
 </body>
