@@ -2233,8 +2233,7 @@
             // Configurar o botão de reset
             document.getElementById('resetBtn').addEventListener('click', resetAllData);
             
-            // Configurar botões de edição de aniversariantes e guarnições
-            document.getElementById('editAniversariantesBtn').addEventListener('click', openAniversariantesModal);
+            // Configurar botão de edição de guarnições
             document.getElementById('editTeamsBtn').addEventListener('click', openTeamsModal);
             
             // Configurar o evento para atualizar pontos automaticamente no modal de edição
@@ -2246,27 +2245,9 @@
                 }
             });
             
-            // Configurar evento do banner de aniversariantes
-            const aniversarioBanner = document.getElementById('aniversarioBanner');
-            if (aniversarioBanner && aniversarioBanner.querySelector('.aniversario-link')) {
-                aniversarioBanner.querySelector('.aniversario-link').addEventListener('click', () => {
-                    // Removida a navegação para a página de escalas
-                    alert('Informações sobre aniversariantes disponíveis na página principal.');
-                });
-            }
+
             
-            // Configurar handlers para os formulários de edição
-            document.getElementById('aniversariantesForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const mes = document.getElementById('aniversariantesMes').value;
-                const nomes = document.getElementById('aniversariantesNomes').value;
-                
-                updateAniversariantes(mes, nomes);
-                
-                document.getElementById('aniversariantesModal').style.display = 'none';
-                alert('Aniversariantes atualizados com sucesso!');
-            });
+
             
             document.getElementById('editTeamsForm').addEventListener('submit', function(e) {
                 e.preventDefault();
@@ -2284,17 +2265,6 @@
             
             // Carregar dados salvos do localStorage
             const loadSavedData = () => {
-                // Carregar aniversariantes
-                const savedAniversariantes = localStorage.getItem('aniversariantes');
-                if (savedAniversariantes) {
-                    try {
-                        const { mes, nomes } = JSON.parse(savedAniversariantes);
-                        updateAniversariantes(mes, nomes);
-                    } catch (e) {
-                        console.error('Erro ao carregar aniversariantes:', e);
-                    }
-                }
-                
                 // Carregar configuração de guarnições
                 const savedTeams = localStorage.getItem('teams_display');
                 if (savedTeams) {
