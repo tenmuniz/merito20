@@ -2999,7 +2999,6 @@
             // Função para carregar dados específicos do mês
             async function carregarDadosDoMes(mes) {
                 console.log(`Carregando dados do mês: ${mes}`);
-                currentMonth = mes;
                 
                 // Salvar o mês atual no localStorage
                 localStorage.setItem('mesAtualRanking', mes);
@@ -3012,6 +3011,9 @@
                     // Persistir os dados no localStorage sempre que mudar de mês
                     persistirDadosMeses();
                 }
+                
+                // Só atualize a variável de mês atual após a verificação acima
+                currentMonth = mes;
                 
                 // Se já temos dados salvos para este mês, use-os
                 if (savedMonthData[mes]) {
