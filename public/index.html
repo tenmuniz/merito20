@@ -2316,41 +2316,60 @@
                 }
             });
             
-            // Configurar evento do banner de aniversariantes
-            const aniversarioBanner = document.getElementById('aniversarioBanner');
-            if (aniversarioBanner && aniversarioBanner.querySelector('.aniversario-link')) {
-                aniversarioBanner.querySelector('.aniversario-link').addEventListener('click', () => {
-                    // Removida a navegação para a página de escalas
-                    alert('Informações sobre aniversariantes disponíveis na página principal.');
-                });
+            // Configurar evento do banner de aniversariantes de forma segura
+            try {
+                const aniversarioBanner = document.getElementById('aniversarioBanner');
+                if (aniversarioBanner && aniversarioBanner.querySelector('.aniversario-link')) {
+                    aniversarioBanner.querySelector('.aniversario-link').addEventListener('click', () => {
+                        // Informações sobre aniversariantes disponíveis na página principal
+                        alert('Informações sobre aniversariantes disponíveis na página principal.');
+                    });
+                }
+            } catch (e) {
+                console.warn('Banner de aniversariantes não encontrado ou não está disponível', e);
             }
             
-            // Configurar handlers para os formulários de edição
-            document.getElementById('aniversariantesForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const mes = document.getElementById('aniversariantesMes').value;
-                const nomes = document.getElementById('aniversariantesNomes').value;
-                
-                updateAniversariantes(mes, nomes);
-                
-                document.getElementById('aniversariantesModal').style.display = 'none';
-                alert('Aniversariantes atualizados com sucesso!');
-            });
+            // Configurar handlers para os formulários de edição de forma segura
+            try {
+                const aniversariantesForm = document.getElementById('aniversariantesForm');
+                if (aniversariantesForm) {
+                    aniversariantesForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const mes = document.getElementById('aniversariantesMes').value;
+                        const nomes = document.getElementById('aniversariantesNomes').value;
+                        
+                        updateAniversariantes(mes, nomes);
+                        
+                        document.getElementById('aniversariantesModal').style.display = 'none';
+                        alert('Aniversariantes atualizados com sucesso!');
+                    });
+                }
+            } catch (e) {
+                console.warn('Formulário de aniversariantes não encontrado', e);
+            }
             
-            document.getElementById('editTeamsForm').addEventListener('submit', function(e) {
-                e.preventDefault();
-                
-                const mes = document.getElementById('titleMes').value;
-                const alfaName = document.getElementById('teamAlfaName').value;
-                const bravoName = document.getElementById('teamBravoName').value;
-                const charlieName = document.getElementById('teamCharlieName').value;
-                
-                updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
-                
-                document.getElementById('editTeamsModal').style.display = 'none';
-                alert('Configuração das guarnições atualizada com sucesso!');
-            });
+            // Configurar formulário de edição de equipes de forma segura
+            try {
+                const editTeamsForm = document.getElementById('editTeamsForm');
+                if (editTeamsForm) {
+                    editTeamsForm.addEventListener('submit', function(e) {
+                        e.preventDefault();
+                        
+                        const mes = document.getElementById('titleMes').value;
+                        const alfaName = document.getElementById('teamAlfaName').value;
+                        const bravoName = document.getElementById('teamBravoName').value;
+                        const charlieName = document.getElementById('teamCharlieName').value;
+                        
+                        updateTeamsDisplay(mes, alfaName, bravoName, charlieName);
+                        
+                        document.getElementById('editTeamsModal').style.display = 'none';
+                        alert('Configuração das guarnições atualizada com sucesso!');
+                    });
+                }
+            } catch (e) {
+                console.warn('Formulário de edição de equipes não encontrado', e);
+            }
             
             // Carregar dados salvos do localStorage
             const loadSavedData = () => {
