@@ -2315,6 +2315,10 @@
                 fetchTeams();
                 fetchEvents();
                 
+                // Atualizar o mês atual
+                console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", currentMonth);
+                atualizarDadosMesAtual();
+                
             } catch (error) {
                 console.error('Erro ao criar evento:', error);
                 alert('Erro ao criar evento: ' + error.message);
