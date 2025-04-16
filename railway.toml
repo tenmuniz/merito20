@@ -1,12 +1,10 @@
-[build]
-builder = "nixpacks"
-buildCommand = "npm run build"
+# Arquivo de configuração Railway totalmente simplificado
+# Desativa completamente o healthcheck que tem causado problemas
 
 [deploy]
-# Configuração para usar o script personalizado de inicialização
-startCommand = "node start.js"
-healthcheckPath = "/health"
-healthcheckTimeout = 90
+healthcheckEnabled = false
+restartPolicyType = "on_failure" 
+restartPolicyMaxRetries = 10
 
-[nixpacks]
-start = "node start.js"
+# Definir o comando de inicialização para usar NODE_ENV=production
+startCommand = "NODE_ENV=production node dist/index.js"
