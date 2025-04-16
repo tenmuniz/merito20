@@ -1551,40 +1551,7 @@
         </div>
     </div>
     
-    <!-- Modal de Editar Aniversariantes -->
-    <div id="aniversariantesModal" class="event-modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h2 class="modal-title">Editar Aniversariantes</h2>
-                <button class="close-btn">&times;</button>
-            </div>
-            <form id="aniversariantesForm" class="eventForm">
-                <div class="form-group">
-                    <label for="aniversariantesMes">Mês:</label>
-                    <select id="aniversariantesMes" required>
-                        <option value="Janeiro">Janeiro</option>
-                        <option value="Fevereiro">Fevereiro</option>
-                        <option value="Março">Março</option>
-                        <option value="Abril" selected>Abril</option>
-                        <option value="Maio">Maio</option>
-                        <option value="Junho">Junho</option>
-                        <option value="Julho">Julho</option>
-                        <option value="Agosto">Agosto</option>
-                        <option value="Setembro">Setembro</option>
-                        <option value="Outubro">Outubro</option>
-                        <option value="Novembro">Novembro</option>
-                        <option value="Dezembro">Dezembro</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="aniversariantesNomes">Nomes dos Aniversariantes:</label>
-                    <textarea id="aniversariantesNomes" rows="3" placeholder="Ex: 2º Ten Vanilson e SD Da Silva" required></textarea>
-                </div>
-                <button type="submit" class="submit-btn">Salvar Aniversariantes</button>
-            </form>
-        </div>
-    </div>
-    
+
     <!-- Modal de Editar Guarnições -->
     <div id="editTeamsModal" class="event-modal">
         <div class="modal-content">
@@ -1696,23 +1663,7 @@
         </div>
     </div>
     
-    <!-- Banner de aniversariantes -->
-    <div class="aniversario-banner" id="aniversarioBanner">
-        <div class="aniversario-banner-content">
-            <div class="aniversario-icone">🎂</div>
-            <div>
-                <div class="aniversario-texto">Aniversariantes do mês de Abril</div>
-                <div class="aniversario-nomes" id="aniversariantes-texto">2º Ten Vanilson e SD Da Silva</div>
-            </div>
-        </div>
-        <div class="admin-controls">
-            <div class="aniversario-link">Ver mais detalhes</div>
-            <button id="editAniversariantesBtn" class="edit-aniversario-btn admin-only" style="display: none;">
-                <span>✏️</span>
-            </button>
-        </div>
-    </div>
-    
+
     <footer>
         &copy; 2025 - 20ª CIPM - Sistema de Meritocracia
     </footer>
@@ -2227,28 +2178,7 @@
             }
         }
         
-        // Função para abrir o modal de edição de aniversariantes
-        function openAniversariantesModal(e) {
-            e.stopPropagation(); // Impedir que o clique seja passado para o banner inteiro
-            
-            // Preencher o formulário com dados atuais
-            const textoMes = document.querySelector('.aniversario-texto').textContent.replace('Aniversariantes do mês de ', '');
-            const nomes = document.getElementById('aniversariantes-texto').textContent;
-            
-            document.getElementById('aniversariantesMes').value = textoMes;
-            document.getElementById('aniversariantesNomes').value = nomes;
-            
-            document.getElementById('aniversariantesModal').style.display = 'flex';
-        }
-        
-        // Função para atualizar os aniversariantes na interface
-        function updateAniversariantes(mes, nomes) {
-            document.querySelector('.aniversario-texto').textContent = `Aniversariantes do mês de ${mes}`;
-            document.getElementById('aniversariantes-texto').textContent = nomes;
-            
-            // Salvar no localStorage para persistência
-            localStorage.setItem('aniversariantes', JSON.stringify({ mes, nomes }));
-        }
+
         
         // Função para abrir o modal de edição de guarnições
         function openTeamsModal() {
