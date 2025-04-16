@@ -1,0 +1,118 @@
+You reached the start of the range → Apr 16, 2025 3:43 PM
+
+60 packages are looking for funding
+  run `npm fund` for details
+
+
+8 moderate severity vulnerabilities
+
+To address issues that do not require attention, run:
+  npm audit fix
+
+To address all issues (including breaking changes), run:
+  npm audit fix --force
+
+Run `npm audit` for details.
+
+[stage-0 11/15] RUN --mount=type=cache,id=s/bc62ab43-507c-45c4-8462-ebf08ef82d8b-/root/npm,target=/root/.npm npm ci  ✔ 12s
+
+[stage-0 12/15] COPY . /app/.
+
+[stage-0 12/15] COPY . /app/.  ✔ 261ms
+
+[stage-0 13/15] RUN --mount=type=cache,id=s/bc62ab43-507c-45c4-8462-ebf08ef82d8b-node_modules/cache,target=/app/node_modules/.cache npm run build
+
+npm warn config production Use `--omit=dev` instead.
+
+
+> rest-express@1.0.0 build
+> vite build && esbuild server/index.ts --platform=node --packages=external --bundle --format=esm --outdir=dist
+
+
+vite v5.4.14 building for production...
+
+transforming...
+
+Browserslist: browsers data (caniuse-lite) is 6 months old. Please run:
+  npx update-browserslist-db@latest
+  Why you should do it regularly: https://github.com/browserslist/update-db#readme
+
+✓ 31 modules transformed.
+
+rendering chunks...
+
+computing gzip size...
+
+../dist/public/index.html                   1.84 kB │ gzip:  0.75 kB
+
+../dist/public/assets/index-CBfMvzzx.css   65.57 kB │ gzip: 11.28 kB
+
+../dist/public/assets/index-Bkp7xQwp.js   144.78 kB │ gzip: 46.47 kB
+
+✓ built in 1.58s
+
+
+  dist/index.js  24.8kb
+
+⚡ Done in 4ms
+
+[stage-0 13/15] RUN --mount=type=cache,id=s/bc62ab43-507c-45c4-8462-ebf08ef82d8b-node_modules/cache,target=/app/node_modules/.cache npm run build  ✔ 2s
+
+[stage-0 14/15] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile
+
+[stage-0 14/15] RUN printf '\nPATH=/app/node_modules/.bin:$PATH' >> /root/.profile  ✔ 98ms
+
+[stage-0 15/15] COPY . /app
+
+[stage-0 15/15] COPY . /app  ✔ 28ms
+
+[auth] sharing credentials for us-east4.registry.rlwy.net
+
+[auth] sharing credentials for us-east4.registry.rlwy.net  ✔ 0ms
+
+[stage-0  2/15] WORKDIR /app/ – CACHED
+
+[stage-0  2/15] WORKDIR /app/  ✔ 0ms – CACHED
+
+=== Successfully Built! ===
+
+Run:
+
+docker run -it us-east4.registry.rlwy.net/bc62ab43-507c-45c4-8462-ebf08ef82d8b:455be17c-67a5-4319-a4f2-67f6666b2f47
+
+Build time: 55.12 seconds
+
+ 
+
+====================
+
+Starting Healthcheck
+
+====================
+
+
+Path: /
+
+Retry window: 1m40s
+
+ 
+
+Attempt #1 failed with service unavailable. Continuing to retry for 1m29s
+
+Attempt #2 failed with service unavailable. Continuing to retry for 1m18s
+
+Attempt #3 failed with service unavailable. Continuing to retry for 1m6s
+
+Attempt #4 failed with service unavailable. Continuing to retry for 1m2s
+
+Attempt #5 failed with service unavailable. Continuing to retry for 53s
+
+Attempt #6 failed with service unavailable. Continuing to retry for 37s
+
+Attempt #7 failed with service unavailable. Continuing to retry for 7s
+
+ 
+
+1/1 replicas never became healthy!
+
+Healthcheck failed!

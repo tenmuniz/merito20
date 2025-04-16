@@ -10,24 +10,32 @@ export async function initializeDatabase() {
   try {
     console.log('🔄 Inicializando banco de dados...');
     
-    // Verificar se as equipes já existem e criar as padrão se não existirem
-    const existingTeams = await db.select().from(teams);
-    
-    if (existingTeams.length === 0) {
-      console.log('🛠️ Criando equipes padrão...');
-      // Criar as equipes padrão: Alfa, Bravo, Charlie
-      const defaultTeams: InsertTeam[] = [
-        { name: "Alfa", colorCode: "#3b82f6", points: 0 },
-        { name: "Bravo", colorCode: "#10b981", points: 0 },
-        { name: "Charlie", colorCode: "#ef4444", points: 0 }
-      ];
+    try {
+      // Verificar se as equipes já existem e criar as padrão se não existirem
+      const existingTeams = await db.select().from(teams);
       
-      for (const team of defaultTeams) {
-        await db.insert(teams).values(team);
+      if (existingTeams.length === 0) {
+        console.log('🛠️ Criando equipes padrão...');
+        // Criar as equipes padrão: Alfa, Bravo, Charlie
+        const defaultTeams: InsertTeam[] = [
+          { name: "Alfa", colorCode: "#3b82f6", points: 0 },
+          { name: "Bravo", colorCode: "#10b981", points: 0 },
+          { name: "Charlie", colorCode: "#ef4444", points: 0 }
+        ];
+        
+        for (const team of defaultTeams) {
+          await db.insert(teams).values(team);
+        }
+        console.log('✅ Equipes padrão criadas com sucesso!');
+      } else {
+        console.log('ℹ️ Equipes já existem no banco de dados');
       }
-      console.log('✅ Equipes padrão criadas com sucesso!');
-    } else {
-      console.log('ℹ️ Equipes já existem no banco de dados');
+    } catch (error) {
+      console.warn('⚠️ Erro ao verificar/criar equipes:', error);
+      // Em ambiente de produção, não queremos que isso pare o aplicativo
+      if (process.env.NODE_ENV !== 'production') {
+        throw error;
+      }
     }
     
     // Verificar se o usuário administrador já existe e criar um se não existir
