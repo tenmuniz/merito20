@@ -63,15 +63,13 @@ app.use((req, res, next) => {
   const { configureStaticServer } = await import("./serve-static");
   configureStaticServer(app);
 
-  // ALWAYS serve the app on port 5000
-  // this serves both the API and the client.
-  // It is the only port that is not firewalled.
-  const port = 5000;
+  // Use a porta fornecida pelo ambiente (por exemplo, Railway) ou 5000 como padrão
+  const port = process.env.PORT ? parseInt(process.env.PORT) : 5000;
   server.listen({
     port,
     host: "0.0.0.0",
     reusePort: true,
   }, () => {
-    log(`serving on port ${port}`);
+    log(`Servidor rodando na porta ${port} no ambiente ${process.env.NODE_ENV || 'development'}`);
   });
 })();
