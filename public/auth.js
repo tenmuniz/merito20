@@ -86,38 +86,52 @@ function criarModalLogin() {
     });
 }
 
-function fazerLogin() {
+async function fazerLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     
-    if (validarCredenciais(username, password)) {
-        const userData = {
-            id: 1,
-            username: username,
-            fullName: 'Administrador',
-            isAdmin: true
-        };
+    try {
+        const response = await fetch('/api/auth/login', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({ username, password })
+        });
         
-        // Salvar no localStorage
-        localStorage.setItem('escalasUserData', JSON.stringify(userData));
-        
-        // Fechar o modal
-        document.getElementById('loginModal').classList.remove('active');
-        
-        // Atualizar a UI para o estado autenticado
-        atualizarInterfaceAutenticada();
-        
-        // Exibir mensagem de sucesso
-        alert('Login realizado com sucesso!');
-    } else {
-        // Mostrar erro
+        if (response.ok) {
+            const userData = await response.json();
+            
+            // Salvar no localStorage
+            localStorage.setItem('escalasUserData', JSON.stringify(userData));
+            
+            // Fechar o modal
+            document.getElementById('loginModal').classList.remove('active');
+            
+            // Atualizar a UI para o estado autenticado
+            atualizarInterfaceAutenticada();
+            
+            // Exibir mensagem de sucesso
+            alert('Login realizado com sucesso!');
+            
+            // Recarregar a página para aplicar as permissões
+            window.location.reload();
+        } else {
+            // Mostrar erro
+            document.getElementById('loginError').textContent = 'Usuário ou senha incorretos';
+            document.getElementById('loginError').style.display = 'block';
+            setTimeout(() => {
+                document.getElementById('loginError').style.display = 'none';
+            }, 3000);
+        }
+    } catch (error) {
+        console.error('Erro ao fazer login:', error);
+        document.getElementById('loginError').textContent = 'Erro ao conectar com o servidor';
         document.getElementById('loginError').style.display = 'block';
-        setTimeout(() => {
-            document.getElementById('loginError').style.display = 'none';
-        }, 3000);
     }
 }
 
+// Função mantida para compatibilidade com código existente, mas não é mais usada diretamente
 function validarCredenciais(username, password) {
     // Credenciais fixas para o administrador
     return (username === 'admin' && password === 'admin123');
