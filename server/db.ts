@@ -38,9 +38,13 @@ const clientOptions: ConnectionOptions = {
   max: 10, // número máximo de conexões no pool
 };
 
-// Adicionar SSL apenas se não for localhost
+// Configuração SSL para ambientes de produção e Railway
+// No Railway, a DATABASE_URL já contém sslmode=require
 if (!connectionString.includes('localhost')) {
-  clientOptions.ssl = { rejectUnauthorized: false };
+  // Se já estiver usando sslmode=require na string de conexão, não precisamos adicionar SSL
+  if (!connectionString.includes('sslmode=require')) {
+    clientOptions.ssl = { rejectUnauthorized: false };
+  }
   console.log('Habilitando SSL para conexão com o banco de dados remoto');
 }
 
