@@ -2279,89 +2279,95 @@
         let isSubmitting = false;
         
         // Submissão do formulário de evento
-        document.getElementById('eventForm').addEventListener('submit', async function(e) {
-            e.preventDefault();
+        document.addEventListener('DOMContentLoaded', function() {
+            // Configurar formulário de criar evento
+            const eventForm = document.getElementById('eventForm');
+            if (eventForm) {
+                eventForm.addEventListener('submit', async function(e) {
+                    e.preventDefault();
+                    
+                    // Evitar submissões duplicadas
+                    if (isSubmitting) {
+                        console.log('Submissão já em andamento, ignorando clique adicional');
+                        return;
+                    }
+                    
+                    isSubmitting = true;
             
-            // Evitar submissões duplicadas
-            if (isSubmitting) {
-                console.log('Submissão já em andamento, ignorando clique adicional');
-                return;
-            }
-            
-            isSubmitting = true;
-            
-            try {
-                const eventDateValue = document.getElementById('eventDate').value;
-                const teamId = parseInt(document.getElementById('eventTeam').value);
-                const type = document.getElementById('eventType').value;
-                const description = document.getElementById('eventDescription').value;
-                const points = parseInt(document.getElementById('eventPoints').value);
+                    try {
+                        const eventDateValue = document.getElementById('eventDate').value;
+                        const teamId = parseInt(document.getElementById('eventTeam').value);
+                        const type = document.getElementById('eventType').value;
+                        const description = document.getElementById('eventDescription').value;
+                        const points = parseInt(document.getElementById('eventPoints').value);
                 
-                console.log('Data do evento selecionada:', eventDateValue);
+                        console.log('Data do evento selecionada:', eventDateValue);
+                        
+                        // Botão de submit
+                        const submitBtn = document.querySelector('#eventForm button[type="submit"]');
+                        const originalBtnText = submitBtn.textContent;
+                        submitBtn.textContent = 'Salvando...';
+                        submitBtn.disabled = true;
+                        
+                        const response = await fetch('/api/events', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                teamId,
+                                type,
+                                description,
+                                points,
+                                eventDate: eventDateValue, // Usar a data exata selecionada pelo usuário
+                                createdBy: 'Admin', // Temporário, deve ser o usuário logado
+                                monthYear: document.getElementById('mesAtual').textContent + '_' + new Date().getFullYear() // Usar o mês atual do título
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            throw new Error('Falha ao criar evento');
+                        }
+                        
+                        document.getElementById('eventModal').style.display = 'none';
+                        document.getElementById('eventForm').reset();
+                        
+                        // Atualizar o mês atual
+                        const mesAtual = document.getElementById('mesAtual').textContent;
+                        console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", mesAtual);
+                        
+                        // Invalidar o cache do mês atual (se existir)
+                        if (typeof savedMonthData !== 'undefined') {
+                            savedMonthData[mesAtual] = null;
+                        }
+                        
+                        // Recarregar dados uma única vez
+                        await fetchTeams();
+                        await fetchEvents();
+                        
+                        // Restaurar o botão
+                        if (submitBtn) {
+                            submitBtn.textContent = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
+                        
+                        // Permitir nova submissão
+                        isSubmitting = false;
                 
-                // Botão de submit
-                const submitBtn = document.querySelector('#eventForm button[type="submit"]');
-                const originalBtnText = submitBtn.textContent;
-                submitBtn.textContent = 'Salvando...';
-                submitBtn.disabled = true;
-                
-                const response = await fetch('/api/events', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json'
-                    },
-                    body: JSON.stringify({
-                        teamId,
-                        type,
-                        description,
-                        points,
-                        eventDate: eventDateValue, // Usar a data exata selecionada pelo usuário
-                        createdBy: 'Admin', // Temporário, deve ser o usuário logado
-                        monthYear: document.getElementById('mesAtual').textContent + '_' + new Date().getFullYear() // Usar o mês atual do título
-                    })
+                    } catch (error) {
+                        console.error('Erro ao criar evento:', error);
+                        alert('Erro ao criar evento: ' + error.message);
+                        
+                        // Restaurar o botão
+                        if (submitBtn) {
+                            submitBtn.textContent = originalBtnText;
+                            submitBtn.disabled = false;
+                        }
+                        
+                        // Permitir nova submissão mesmo em caso de erro
+                        isSubmitting = false;
+                    }
                 });
-                
-                if (!response.ok) {
-                    throw new Error('Falha ao criar evento');
-                }
-                
-                document.getElementById('eventModal').style.display = 'none';
-                document.getElementById('eventForm').reset();
-                
-                // Atualizar o mês atual
-                const mesAtual = document.getElementById('mesAtual').textContent;
-                console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", mesAtual);
-                
-                // Invalidar o cache do mês atual (se existir)
-                if (typeof savedMonthData !== 'undefined') {
-                    savedMonthData[mesAtual] = null;
-                }
-                
-                // Recarregar dados uma única vez
-                await fetchTeams();
-                await fetchEvents();
-                
-                // Restaurar o botão
-                if (submitBtn) {
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.disabled = false;
-                }
-                
-                // Permitir nova submissão
-                isSubmitting = false;
-                
-            } catch (error) {
-                console.error('Erro ao criar evento:', error);
-                alert('Erro ao criar evento: ' + error.message);
-                
-                // Restaurar o botão
-                if (submitBtn) {
-                    submitBtn.textContent = originalBtnText;
-                    submitBtn.disabled = false;
-                }
-                
-                // Permitir nova submissão mesmo em caso de erro
-                isSubmitting = false;
             }
         });
         
