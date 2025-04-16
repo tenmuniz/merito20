@@ -145,32 +145,21 @@ async function logout() {
         // Remover atributo de autenticação do body
         document.body.removeAttribute('data-auth');
         
-        // Ocultar contêiner de botões administrativos
-        const adminButtonsContainer = document.getElementById('adminButtonsContainer');
-        if (adminButtonsContainer) {
-            adminButtonsContainer.style.display = 'none';
-            console.log("✅ Contentor de botões administrativos ocultado com sucesso");
-        }
-        
-        // Ocultar também os botões administrativos individualmente
-        const addEventBtn = document.getElementById('addEventBtn');
-        if (addEventBtn) {
-            addEventBtn.style.display = 'none';
-            console.log("✅ Botão Adicionar Evento ocultado");
-        }
-        
-        const resetBtn = document.getElementById('resetBtn');
-        if (resetBtn) {
-            resetBtn.style.display = 'none';
-            console.log("✅ Botão Zerar Pontos ocultado");
-        }
+        // SOLUÇÃO DIRETA: Ocultar explicitamente os botões administrativos
+        document.getElementById('adminButtonsContainer').style.display = 'none';
+        document.getElementById('addEventBtn').style.display = 'none';
+        document.getElementById('resetBtn').style.display = 'none';
+        console.log("✅ Botões administrativos ocultados com sucesso");
         
         // Atualizar botão de login imediatamente 
         const loginBtn = document.getElementById('loginBtn');
         if (loginBtn) {
             loginBtn.innerHTML = '<span class="login-icon">🔒</span><span>Área Administrativa</span>';
             loginBtn.onclick = function() {
-                document.getElementById('loginModal').classList.add('active');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                }
             };
             console.log("✅ Botão de login atualizado para 'Área Administrativa'");
         }
@@ -336,7 +325,10 @@ function setupAdminButton() {
             // Configurar para abrir o modal de login
             newLoginBtn.addEventListener('click', function() {
                 console.log("Clique no botão de login");
-                document.getElementById('loginModal').classList.add('active');
+                const loginModal = document.getElementById('loginModal');
+                if (loginModal) {
+                    loginModal.style.display = 'flex';
+                }
             });
         }
     } else {

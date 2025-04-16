@@ -1087,11 +1087,11 @@
             <div class="section-header">
                 <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
                 <div class="admin-buttons" id="adminButtonsContainer" style="display: none;">
-                    <button id="addEventBtn" class="admin-btn">
+                    <button id="addEventBtn" class="admin-btn" style="display: none;">
                         <span>➕</span>
                         <span>Adicionar Evento</span>
                     </button>
-                    <button id="resetBtn" class="admin-btn warning-btn">
+                    <button id="resetBtn" class="admin-btn warning-btn" style="display: none;">
                         <span>🔄</span>
                         <span>Zerar Pontos</span>
                     </button>
@@ -2257,6 +2257,11 @@
                         
                         // Fechar o modal
                         loginModal.style.display = 'none';
+                        
+                        // SOLUÇÃO DIRETA: Mostrar explicitamente botões de admin
+                        document.getElementById('adminButtonsContainer').style.display = 'flex';
+                        document.getElementById('addEventBtn').style.display = 'inline-flex';
+                        document.getElementById('resetBtn').style.display = 'inline-flex';
                         
                         // Chamar diretamente a função de atualização de interface
                         console.log("Login bem-sucedido!");
