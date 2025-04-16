@@ -152,6 +152,19 @@ async function logout() {
             console.log("✅ Contentor de botões administrativos ocultado com sucesso");
         }
         
+        // Ocultar também os botões administrativos individualmente
+        const addEventBtn = document.getElementById('addEventBtn');
+        if (addEventBtn) {
+            addEventBtn.style.display = 'none';
+            console.log("✅ Botão Adicionar Evento ocultado");
+        }
+        
+        const resetBtn = document.getElementById('resetBtn');
+        if (resetBtn) {
+            resetBtn.style.display = 'none';
+            console.log("✅ Botão Zerar Pontos ocultado");
+        }
+        
         // Atualizar botão de login imediatamente 
         const loginBtn = document.getElementById('loginBtn');
         if (loginBtn) {
@@ -227,6 +240,19 @@ function atualizarInterfaceAutenticada() {
         console.error("⚠️ Contentor de botões administrativos não encontrado");
     }
     
+    // Mostrar também os botões administrativos individualmente
+    const addEventBtn = document.getElementById('addEventBtn');
+    if (addEventBtn) {
+        addEventBtn.style.display = 'inline-flex';
+        console.log("✅ Botão Adicionar Evento exibido");
+    }
+    
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.style.display = 'inline-flex';
+        console.log("✅ Botão Zerar Pontos exibido");
+    }
+    
     // Atualizar botão de login para "Sair"
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
@@ -257,6 +283,19 @@ function atualizarInterfaceNaoAutenticada() {
         adminButtons.style.display = 'none';
     }
     
+    // Ocultar também os botões administrativos individualmente
+    const addEventBtn = document.getElementById('addEventBtn');
+    if (addEventBtn) {
+        addEventBtn.style.display = 'none';
+        console.log("✅ Botão Adicionar Evento ocultado");
+    }
+    
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.style.display = 'none';
+        console.log("✅ Botão Zerar Pontos ocultado");
+    }
+    
     // Atualizar botão para "Área Administrativa"
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
@@ -268,7 +307,11 @@ function atualizarInterfaceNaoAutenticada() {
         
         // Adicionar novo event listener para mostrar o modal de login
         newLoginBtn.addEventListener('click', function() {
-            document.getElementById('loginModal').classList.add('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal) {
+                loginModal.style.display = 'flex';
+                console.log("✅ Modal de login exibido (modo não autenticado)");
+            }
         });
     }
 }

@@ -2148,7 +2148,7 @@
         });
     </script>
     <!-- Scripts de autenticação -->
-    <script src="/auth-fixed.js"></script>
+    <script src="/auth.js"></script>
     <!-- Scripts originais substituídos por uma solução mais simples -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -2266,6 +2266,19 @@
                         if (adminButtonsContainer) {
                             adminButtonsContainer.style.display = 'flex';
                             console.log("✅ Contentor de botões administrativos exibido imediatamente após login");
+                        }
+                        
+                        // Mostrar todos os botões administrativos individualmente também
+                        const addEventBtn = document.getElementById('addEventBtn');
+                        if (addEventBtn) {
+                            addEventBtn.style.display = 'inline-flex';
+                            console.log("✅ Botão Adicionar Evento exibido");
+                        }
+                        
+                        const resetBtn = document.getElementById('resetBtn');
+                        if (resetBtn) {
+                            resetBtn.style.display = 'inline-flex';
+                            console.log("✅ Botão Zerar Pontos exibido");
                         }
                         
                         // Atualizar botão de login para "Sair"
