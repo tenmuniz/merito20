@@ -629,7 +629,7 @@
             backdrop-filter: blur(5px);
         }
         
-        .login-modal-content, .detail-modal-content {
+        .detail-modal-content {
             background-color: white;
             padding: 2.5rem;
             border-radius: 12px;
@@ -637,6 +637,168 @@
             max-width: 520px;
             box-shadow: 0 15px 30px rgba(0, 0, 0, 0.2);
             animation: modal-appear 0.3s ease;
+        }
+        
+        /* Estilos específicos para o modal de login redesenhado */
+        .login-modal-content {
+            background-color: white;
+            margin: 0 auto;
+            padding: 0;
+            border-radius: 12px;
+            max-width: 400px;
+            width: 95%;
+            animation: modalFadeIn 0.3s;
+            overflow: hidden;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+        
+        .login-logo {
+            width: 100%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 5px;
+        }
+        
+        .logo-badge {
+            background: linear-gradient(135deg, #1e40af, #3b82f6);
+            color: white;
+            font-weight: bold;
+            padding: 6px 16px;
+            border-radius: 20px;
+            display: inline-block;
+            font-size: 16px;
+            box-shadow: 0 2px 10px rgba(59, 130, 246, 0.3);
+            margin-right: 10px;
+        }
+        
+        .login-form-container {
+            padding: 10px 30px 20px;
+        }
+        
+        .login-modal-content .modal-header {
+            background: linear-gradient(to right, #1e293b, #334155);
+            color: white;
+            padding: 20px 25px;
+            text-align: center;
+            position: relative;
+            border-bottom: none;
+        }
+        
+        .login-modal-content .modal-title {
+            margin: 0;
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: white;
+        }
+        
+        .login-modal-content .close-btn {
+            position: absolute;
+            right: 15px;
+            top: 15px;
+            background: rgba(255, 255, 255, 0.2);
+            border: none;
+            color: white;
+            width: 28px;
+            height: 28px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+        
+        .login-modal-content .close-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+        
+        .login-modal-content .form-group {
+            margin-bottom: 18px;
+        }
+        
+        .login-modal-content label {
+            display: flex;
+            align-items: center;
+            margin-bottom: 6px;
+            color: #475569;
+            font-weight: 500;
+        }
+        
+        .input-icon {
+            display: inline-block;
+            margin-right: 8px;
+            font-size: 16px;
+        }
+        
+        .login-modal-content input[type="text"],
+        .login-modal-content input[type="password"] {
+            width: 100%;
+            padding: 12px 16px;
+            border: 1px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.2s, box-shadow 0.2s;
+        }
+        
+        .login-modal-content input[type="text"]:focus,
+        .login-modal-content input[type="password"]:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+            outline: none;
+        }
+        
+        .login-modal-content .submit-btn {
+            width: 100%;
+            padding: 12px;
+            background: linear-gradient(135deg, #3b82f6, #1e40af);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 24px;
+            box-shadow: 0 4px 12px rgba(59, 130, 246, 0.3);
+        }
+        
+        .login-modal-content .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(59, 130, 246, 0.4);
+        }
+        
+        .login-modal-content .submit-btn:active {
+            transform: translateY(0);
+        }
+        
+        .btn-text {
+            margin-right: 10px;
+        }
+        
+        .btn-icon {
+            font-size: 18px;
+        }
+        
+        .login-footer {
+            background-color: #f8fafc;
+            border-top: 1px solid #e2e8f0;
+            padding: 15px;
+            text-align: center;
+            font-size: 14px;
+            color: #64748b;
+        }
+        
+        .login-footer p {
+            margin: 5px 0;
+        }
+        
+        .copyright {
+            font-size: 12px;
+            opacity: 0.7;
         }
         
         /* Estilo especial para o modal de adicionar evento */
@@ -1195,27 +1357,50 @@
         </div>
     </div>
     
-    <!-- Modal de Login -->
+    <!-- Modal de Login (Redesenhado) -->
     <div id="loginModal" class="login-modal">
         <div class="login-modal-content">
             <div class="modal-header">
-                <h2 class="modal-title">Login</h2>
+                <div class="login-logo">
+                    <div class="logo-badge">20ª CIPM</div>
+                </div>
+                <h2 class="modal-title">Acesso Seguro</h2>
                 <button class="close-btn">&times;</button>
             </div>
-            <div id="loginError" style="display: none; color: #e53935; text-align: center; margin-bottom: 15px; padding: 8px; background-color: #ffebee; border-radius: 4px;">
-                Usuário ou senha incorretos.
+            
+            <div id="loginError" style="display: none; color: #e53935; text-align: center; margin: 0 auto 15px; padding: 8px; background-color: #ffebee; border-radius: 4px; max-width: 280px; font-size: 14px;">
+                <i class="error-icon">⚠️</i> Credenciais inválidas
             </div>
-            <form id="loginForm" onsubmit="return false;">
-                <div class="form-group">
-                    <label for="username">Usuário:</label>
-                    <input type="text" id="username" value="admin" required placeholder="Digite seu usuário">
-                </div>
-                <div class="form-group">
-                    <label for="password">Senha:</label>
-                    <input type="password" id="password" value="admin123" required placeholder="Digite sua senha">
-                </div>
-                <button type="button" id="loginSubmitBtn" class="submit-btn">Entrar</button>
-            </form>
+            
+            <div class="login-form-container">
+                <form id="loginForm" onsubmit="return false;">
+                    <div class="form-group">
+                        <label for="username">
+                            <span class="input-icon">👤</span>
+                            <span class="label-text">Usuário</span>
+                        </label>
+                        <input type="text" id="username" value="admin" required placeholder="Nome de usuário" autocomplete="username">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label for="password">
+                            <span class="input-icon">🔑</span>
+                            <span class="label-text">Senha</span>
+                        </label>
+                        <input type="password" id="password" value="admin123" required placeholder="Sua senha" autocomplete="current-password">
+                    </div>
+                    
+                    <button type="button" id="loginSubmitBtn" class="submit-btn">
+                        <span class="btn-text">Entrar</span>
+                        <span class="btn-icon">→</span>
+                    </button>
+                </form>
+            </div>
+            
+            <div class="login-footer">
+                <p>Sistema de Meritocracia • 20ª CIPM</p>
+                <p class="copyright">© 2025 PMBA - Polícia Militar da Bahia</p>
+            </div>
         </div>
     </div>
     
