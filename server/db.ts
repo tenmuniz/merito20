@@ -2,8 +2,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { neon } from '@neondatabase/serverless';
 import * as schema from '../shared/schema';
 
-// Inicializa a conexão com o banco de dados PostgreSQL
-// Esta configuração é compatível tanto com Neon quanto com Railway
+// Inicializa a conexão com o banco de dados Neon
 const sql = neon(process.env.DATABASE_URL!);
 export const db = drizzle(sql, { schema });
 

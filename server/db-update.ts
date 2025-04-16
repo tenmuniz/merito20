@@ -4,39 +4,28 @@ import { log } from "./vite";
 
 export async function updateDatabase() {
   try {
-    log("Iniciando atualização do esquema do banco de dados...", "db-update");
+    // Alterar o tipo da coluna created_by de integer para text
+    await db.execute(sql`
+      ALTER TABLE IF EXISTS events
+      ALTER COLUMN created_by TYPE TEXT USING created_by::TEXT;
+    `);
     
-    // Utilizando try-catch para cada operação e ignorando erros
-    try {
-      // Alterar created_by para tipo TEXT se necessário
-      await db.execute(sql`
-        ALTER TABLE IF EXISTS events
-        ALTER COLUMN created_by TYPE TEXT USING created_by::TEXT;
-      `);
-      log("Coluna created_by alterada com sucesso para o tipo TEXT", "db-update");
-    } catch (error) {
-      // Ignoramos erros específicos que não impedem a aplicação de funcionar
-      log("Não foi possível alterar a coluna created_by, mas a aplicação continuará", "db-update");
-    }
+    log("Coluna created_by alterada com sucesso para o tipo TEXT", "db-update");
     
+    // Adicionar a coluna event_date à tabela events se ela não existir
     try {
-      // Adicionar coluna event_date se não existir
       await db.execute(sql`
         ALTER TABLE IF EXISTS events
         ADD COLUMN IF NOT EXISTS event_date TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW();
       `);
       log("Coluna event_date adicionada com sucesso à tabela events", "db-update");
     } catch (error) {
-      // Ignoramos erros específicos que não impedem a aplicação de funcionar
-      log("Não foi possível adicionar a coluna event_date, mas a aplicação continuará", "db-update");
+      console.error("Erro ao adicionar coluna event_date:", error);
     }
     
-    log("Atualização do esquema concluída com sucesso", "db-update");
     return true;
   } catch (error) {
     console.error("Erro ao atualizar o banco de dados:", error);
-    log("Ocorreram erros na atualização do banco de dados, mas o aplicativo tentará continuar.", "db-update");
-    // Mesmo com erro, tentamos continuar a aplicação
     return false;
   }
 }
