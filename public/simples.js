@@ -19,7 +19,7 @@ document.addEventListener('DOMContentLoaded', function() {
         } else {
             // Configure cada botão de login existente
             loginBtns.forEach(btn => {
-                if (btn.id === 'loginBtn') {
+                if (btn && btn.id === 'loginBtn') {
                     console.log('Botão de login encontrado:', btn);
                     configurarBotaoLogin(btn);
                 }
@@ -52,6 +52,9 @@ document.addEventListener('DOMContentLoaded', function() {
                 const loginModal = document.getElementById('loginModal');
                 if (loginModal) {
                     loginModal.style.display = 'flex';
+                } else {
+                    // Se o modal não existir, criamos e abrimos
+                    abrirModalLogin();
                 }
             });
         }
