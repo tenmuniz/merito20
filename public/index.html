@@ -2789,7 +2789,9 @@
                         const mesAtualEl = document.getElementById('mesAtual');
                         
                         if (mesAtualEl) {
-                            mesAtualEl.textContent = mes;
+                            // Carregar os dados do mês selecionado do servidor
+                            console.log(`Alterando para o mês: ${mes}`);
+                            carregarDadosDoMes(mes);
                             
                             // Salvar a seleção no localStorage para persistência
                             localStorage.setItem('mesAtualRanking', mes);
@@ -2801,11 +2803,8 @@
                             monthButtons.forEach(b => b.classList.remove('active'));
                             this.classList.add('active');
                             
-                            // Carregar os dados do mês selecionado
+                            // Mês alterado com sucesso
                             console.log(`Mês alterado para: ${mes}`);
-                            
-                            // Chamar API para buscar dados do mês específico
-                            carregarDadosDoMes(mes);
                         }
                     });
                 });
