@@ -58,29 +58,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       let events;
       if (month) {
-        // Se o mês foi especificado, filtre eventos pelo mês
         try {
-          // Converter nome do mês para número (1-12)
-          const monthMap: {[key: string]: number} = {
-            'JANEIRO': 1, 'FEVEREIRO': 2, 'MARÇO': 3, 'ABRIL': 4,
-            'MAIO': 5, 'JUNHO': 6, 'JULHO': 7, 'AGOSTO': 8,
-            'SETEMBRO': 9, 'OUTUBRO': 10, 'NOVEMBRO': 11, 'DEZEMBRO': 12
-          };
+          // Obter o ano atual
+          const year = new Date().getFullYear();
+          // Montar o formato month_year esperado
+          const monthYearFilter = `${month.toUpperCase()}_${year}`;
           
-          const monthNumber = monthMap[month.toUpperCase()];
-          if (monthNumber) {
-            const year = new Date().getFullYear(); // Usar o ano atual
-            
-            // Buscar eventos do banco e filtrar manualmente pelo mês
-            const allEvents = await storage.getEvents();
-            events = allEvents.filter(event => {
-              const eventDate = new Date(event.eventDate);
-              return eventDate.getMonth() + 1 === monthNumber && eventDate.getFullYear() === year;
-            });
-          } else {
-            // Se o mês não for reconhecido, retorne todos os eventos
-            events = await storage.getEvents();
-          }
+          console.log(`Filtrando eventos por mês/ano: ${monthYearFilter}`);
+          
+          // Buscar todos os eventos e filtrar pelo monthYear
+          const allEvents = await storage.getEvents();
+          events = allEvents.filter(event => event.monthYear === monthYearFilter);
+          
+          console.log(`Encontrados ${events.length} eventos para ${monthYearFilter}`);
         } catch (error) {
           console.error('Erro ao filtrar eventos por mês:', error);
           // Em caso de erro na filtragem, retorne todos os eventos
@@ -100,6 +90,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         officersInvolved: event.officersInvolved,
         createdBy: event.createdBy,
         eventDate: event.eventDate,
+        monthYear: event.monthYear,
         createdAt: event.createdAt
       }));
       
@@ -141,7 +132,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/events", async (req, res) => {
     try {
-      const { teamId, type, description, points, createdBy, eventDate } = req.body;
+      const { teamId, type, description, points, createdBy, eventDate, monthYear } = req.body;
       
       // Validações básicas
       if (!teamId || !type || !description || !points) {
@@ -159,6 +150,19 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const eventDateObj = eventDate ? new Date(eventDate) : new Date();
       console.log('Data convertida para objeto:', eventDateObj);
       
+      // Determinar o mês e ano do evento
+      let monthYearValue = monthYear;
+      if (!monthYearValue) {
+        // Se não foi fornecido, calcular com base na data do evento
+        const months = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 
+                        'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+        const month = months[eventDateObj.getMonth()];
+        const year = eventDateObj.getFullYear();
+        monthYearValue = `${month}_${year}`;
+      }
+      
+      console.log('Mês/ano do evento:', monthYearValue);
+      
       const newEvent = await storage.createEvent({
         teamId,
         type,
@@ -166,7 +170,8 @@ export async function registerRoutes(app: Express): Promise<Server> {
         points,
         officersInvolved: "Guarnição", // Valor padrão para manter compatibilidade com o banco de dados
         createdBy: createdBy || "Admin",
-        eventDate: eventDateObj
+        eventDate: eventDateObj,
+        monthYear: monthYearValue
       });
       
       // Removido: não atualizar os pontos da equipe aqui

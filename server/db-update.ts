@@ -23,6 +23,38 @@ export async function updateDatabase() {
       console.error("Erro ao adicionar coluna event_date:", error);
     }
     
+    // Adicionar a coluna month_year à tabela events se ela não existir
+    try {
+      await db.execute(sql`
+        ALTER TABLE IF EXISTS events
+        ADD COLUMN IF NOT EXISTS month_year TEXT NOT NULL DEFAULT 'ABRIL_2025';
+      `);
+      log("Coluna month_year adicionada com sucesso à tabela events", "db-update");
+      
+      // Atualizar os eventos existentes para ter o month_year baseado na data do evento
+      await db.execute(sql`
+        UPDATE events SET month_year = 
+        CASE 
+          WHEN EXTRACT(MONTH FROM event_date) = 1 THEN 'JANEIRO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 2 THEN 'FEVEREIRO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 3 THEN 'MARÇO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 4 THEN 'ABRIL_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 5 THEN 'MAIO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 6 THEN 'JUNHO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 7 THEN 'JULHO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 8 THEN 'AGOSTO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 9 THEN 'SETEMBRO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 10 THEN 'OUTUBRO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 11 THEN 'NOVEMBRO_' || EXTRACT(YEAR FROM event_date)
+          WHEN EXTRACT(MONTH FROM event_date) = 12 THEN 'DEZEMBRO_' || EXTRACT(YEAR FROM event_date)
+          ELSE 'ABRIL_2025'
+        END;
+      `);
+      log("Eventos existentes atualizados com o mês e ano correspondentes", "db-update");
+    } catch (error) {
+      console.error("Erro ao adicionar ou atualizar coluna month_year:", error);
+    }
+    
     return true;
   } catch (error) {
     console.error("Erro ao atualizar o banco de dados:", error);

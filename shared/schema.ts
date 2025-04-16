@@ -42,6 +42,7 @@ export const events = pgTable("events", {
   officersInvolved: text("officers_involved").notNull(),
   createdBy: text("created_by").notNull(),
   eventDate: timestamp("event_date").notNull(),
+  monthYear: text("month_year").notNull(), // Formato "MES_ANO", por exemplo "ABRIL_2025"
   createdAt: timestamp("created_at").defaultNow().notNull(),
 });
 
@@ -53,6 +54,7 @@ export const insertEventSchema = createInsertSchema(events).pick({
   officersInvolved: true,
   createdBy: true,
   eventDate: true,
+  monthYear: true,
   // createdAt é gerenciado automaticamente pelo banco de dados
 });
 

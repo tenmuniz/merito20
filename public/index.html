@@ -2299,7 +2299,8 @@
                         description,
                         points,
                         eventDate: eventDateValue, // Usar a data exata selecionada pelo usuário
-                        createdBy: 'Admin' // Temporário, deve ser o usuário logado
+                        createdBy: 'Admin', // Temporário, deve ser o usuário logado
+                        monthYear: currentMonth + '_' + new Date().getFullYear() // Usar o mês atual
                     })
                 });
                 
