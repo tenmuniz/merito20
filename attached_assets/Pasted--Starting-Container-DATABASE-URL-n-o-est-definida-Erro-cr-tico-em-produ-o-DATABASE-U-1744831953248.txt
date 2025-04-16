@@ -1,0 +1,121 @@
+
+
+Starting Container
+
+⚠️ DATABASE_URL não está definida!
+
+Erro crítico em produção: DATABASE_URL não definida
+
+node:internal/errors:496
+
+    ErrorCaptureStackTrace(err);
+
+    ^
+
+ 
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+
+    at new NodeError (node:internal/errors:405:5)
+
+    at validateString (node:internal/validators:162:11)
+
+    at Object.resolve (node:path:1097:7)
+
+    at vite.config.ts (file:///app/dist/index.js:165:21)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at server/vite.ts (file:///app/dist/index.js:196:11)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at file:///app/dist/index.js:736:7
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+
+    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24) {
+
+  code: 'ERR_INVALID_ARG_TYPE'
+
+}
+
+ 
+
+Node.js v18.20.5
+
+⚠️ DATABASE_URL não está definida!
+
+Erro crítico em produção: DATABASE_URL não definida
+
+node:internal/errors:496
+
+    ErrorCaptureStackTrace(err);
+
+    ^
+
+ 
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+
+    at new NodeError (node:internal/errors:405:5)
+
+    at validateString (node:internal/validators:162:11)
+
+    at Object.resolve (node:path:1097:7)
+
+    at vite.config.ts (file:///app/dist/index.js:165:21)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at server/vite.ts (file:///app/dist/index.js:196:11)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at file:///app/dist/index.js:736:7
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+
+    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24) {
+
+  code: 'ERR_INVALID_ARG_TYPE'
+
+}
+
+ 
+
+Node.js v18.20.5
+
+⚠️ DATABASE_URL não está definida!
+
+Erro crítico em produção: DATABASE_URL não definida
+
+node:internal/errors:496
+
+    ErrorCaptureStackTrace(err);
+
+    ^
+
+ 
+
+TypeError [ERR_INVALID_ARG_TYPE]: The "paths[0]" argument must be of type string. Received undefined
+
+    at new NodeError (node:internal/errors:405:5)
+
+    at validateString (node:internal/validators:162:11)
+
+    at Object.resolve (node:path:1097:7)
+
+    at vite.config.ts (file:///app/dist/index.js:165:21)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at server/vite.ts (file:///app/dist/index.js:196:11)
+
+    at __init (file:///app/dist/index.js:4:56)
+
+    at file:///app/dist/index.js:736:7
+
+    at ModuleJob.run (node:internal/modules/esm/module_job:195:25)
+
+    at async ModuleLoader.import (node:internal/modules/esm/loader:337:24) {

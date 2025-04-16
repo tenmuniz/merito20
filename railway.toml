@@ -1,10 +1,16 @@
-# Arquivo de configuração Railway totalmente simplificado
-# Desativa completamente o healthcheck que tem causado problemas
+# Arquivo de configuração Railway simplificado para máxima compatibilidade
+
+[build]
+# Usar Nixpacks para construir o projeto Node.js
+builder = "nixpacks"
+# Comando para construir o projeto
+buildCommand = "npm run build"
 
 [deploy]
+# Usar o servidor estático mais simples e robusto
+startCommand = "NODE_ENV=production node static-server.js"
+# Desativar completamente o healthcheck que tem causado problemas
 healthcheckEnabled = false
-restartPolicyType = "on_failure" 
+# Política de reinicialização em caso de falha
+restartPolicyType = "on_failure"
 restartPolicyMaxRetries = 10
-
-# Definir o comando de inicialização para usar NODE_ENV=production
-startCommand = "NODE_ENV=production node dist/index.js"
