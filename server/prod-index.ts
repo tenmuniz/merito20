@@ -8,7 +8,7 @@ import express, { type Request, Response, NextFunction } from "express";
 import path from "path";
 import fs from "fs";
 import { fileURLToPath } from "url";
-import { registerRoutes } from "./routes";
+import { registerProductionRoutes } from "./prod-routes";
 import { checkDatabaseConnection } from "./db";
 import { initializeDatabase } from "./init-db";
 
@@ -172,8 +172,8 @@ function configureStaticServer() {
     const { updateDatabase } = await import("./db-update");
     await updateDatabase();
     
-    // Registrar rotas da API
-    const server = await registerRoutes(app);
+    // Registrar rotas da API (versão de produção)
+    const server = await registerProductionRoutes(app);
     
     // Middleware para tratamento de erros
     app.use((err: any, _req: Request, res: Response, _next: NextFunction) => {

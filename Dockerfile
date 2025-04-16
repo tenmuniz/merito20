@@ -19,7 +19,7 @@ RUN echo "Building frontend..."
 RUN npx vite build
 # Compilar backend com esbuild
 RUN echo "Building backend..."
-RUN npx esbuild server/prod-index.ts --platform=node --packages=external --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-* --bundle --format=esm --outfile=dist/index.js
+RUN npx esbuild server/prod-server.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js
 # Compilar healthcheck
 RUN echo "Building healthcheck..."
 RUN npx esbuild server/healthcheck.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/healthcheck.js
