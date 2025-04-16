@@ -1,0 +1,118 @@
+You reached the start of the range → Apr 16, 2025 12:38 PM
+
+ 
+
+[Region: us-east4]
+
+=========================
+
+Using Detected Dockerfile
+
+=========================
+
+
+context: mm5s-TYQS
+
+[internal] load build definition from Dockerfile
+
+[internal] load build definition from Dockerfile  ✔ 0ms
+
+[internal] load build definition from Dockerfile
+
+[internal] load build definition from Dockerfile  ✔ 21ms
+
+[internal] load metadata for docker.io/library/node:18-alpine
+
+[internal] load metadata for docker.io/library/node:18-alpine  ✔ 86ms
+
+[internal] load .dockerignore
+
+[internal] load .dockerignore  ✔ 0ms
+
+[internal] load .dockerignore
+
+[internal] load .dockerignore  ✔ 25ms
+
+[builder  7/13] RUN echo "Building frontend..."
+
+[builder  6/13] RUN mkdir -p dist
+
+[builder  5/13] COPY . .
+
+[builder  4/13] RUN npm ci
+
+[builder  3/13] COPY package*.json ./
+
+[builder  1/13] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+
+[production 5/8] RUN npm ci --only=production
+
+[production 4/8] COPY package*.json ./
+
+[internal] load build context
+
+[production 3/8] WORKDIR /app
+
+[production 2/8] RUN apk add --no-cache curl
+
+[builder  8/13] RUN npx vite build
+
+[builder  2/13] WORKDIR /app
+
+[production 8/8] RUN echo "Listando diretórios após cópia:" && ls -la &&     echo "Conteúdo de ./dist:" && ls -la ./dist &&     echo "Conteúdo de ./public:" && ls -la ./public
+
+[production 7/8] COPY --from=builder /app/public ./public
+
+[production 6/8] COPY --from=builder /app/dist ./dist
+
+[builder 13/13] RUN ls -la dist/
+
+[builder 12/13] RUN npx esbuild server/healthcheck.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/healthcheck.js
+
+[builder 11/13] RUN echo "Building healthcheck..."
+
+[builder 10/13] RUN npx esbuild server/prod-index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js
+
+[builder  9/13] RUN echo "Building backend..."
+
+[builder  1/13] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e
+
+[internal] load build context  ✔ 0ms
+
+[builder  1/13] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 5ms
+
+[builder  1/13] FROM docker.io/library/node:18-alpine@sha256:8d6421d663b4c28fd3ebc498332f249011d118945588d0a35cb9bc4b8ca09d9e  ✔ 0ms – CACHED
+
+[internal] load build context
+
+[production 2/8] RUN apk add --no-cache curl
+
+[internal] load build context  ✔ 50ms
+
+[builder  2/13] WORKDIR /app  ✔ 0ms – CACHED
+
+[builder  3/13] COPY package*.json ./  ✔ 0ms – CACHED
+
+[builder  4/13] RUN npm ci  ✔ 1ms – CACHED
+
+[builder  5/13] COPY . .
+
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/main/x86_64/APKINDEX.tar.gz
+
+[builder  5/13] COPY . .  ✔ 55ms
+
+[builder  6/13] RUN mkdir -p dist
+
+fetch https://dl-cdn.alpinelinux.org/alpine/v3.21/community/x86_64/APKINDEX.tar.gz
+
+[builder  6/13] RUN mkdir -p dist  ✔ 203ms
+
+[builder  7/13] RUN echo "Building frontend..."
+
+Building frontend...
+
+[builder  7/13] RUN echo "Building frontend..."  ✔ 88ms
+
+[builder  8/13] RUN npx vite build
+
+(1/9) Installing brotli-libs (1.1.0-r2)

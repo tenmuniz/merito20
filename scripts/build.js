@@ -27,7 +27,8 @@ try {
 
   // Construir o servidor com esbuild
   console.log(`${colors.blue}Construindo servidor com esbuild (versão de produção)...${colors.reset}`);
-  execSync('esbuild server/prod-index.ts --platform=node --packages=external --bundle --format=esm --outfile=dist/index.js', 
+  // Usar --external:vite para excluir o pacote vite do bundle
+  execSync('esbuild server/prod-index.ts --platform=node --packages=external --external:vite --external:@vitejs/plugin-react --external:@replit/vite-plugin-* --bundle --format=esm --outfile=dist/index.js', 
     { stdio: 'inherit' });
 
   // Verificar se o diretório dist existe, se não, criá-lo
