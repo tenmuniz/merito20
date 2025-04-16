@@ -55,67 +55,9 @@ function checkGlobalAuth() {
 
 // Funções para modais de edição
 // Estas funções serão disponíveis globalmente para o script escalas.html
-function openAniversariantesModal() {
-    console.log("Abrindo modal de aniversariantes");
-    const aniversariantesModal = document.getElementById('aniversariantesModal');
-    if (aniversariantesModal) {
-        const aniversariantesList = document.getElementById('aniversariantesList');
-        if (aniversariantesList) {
-            renderAniversariantesList();
-        }
-        aniversariantesModal.classList.add('active');
-    }
-}
+// Função openAniversariantesModal removida
 
-function renderAniversariantesList() {
-    const aniversariantesList = document.getElementById('aniversariantesList');
-    if (!aniversariantesList) return;
-    
-    const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
-    aniversariantesList.innerHTML = '';
-    
-    aniversariantes.forEach(aniversariante => {
-        const itemRow = document.createElement('div');
-        itemRow.className = 'item-row';
-        
-        const data = new Date(aniversariante.data);
-        const dia = data.getDate().toString().padStart(2, '0');
-        const meses = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-        const mes = meses[data.getMonth()];
-        const dataFormatada = `${dia} de ${mes}`;
-        
-        itemRow.innerHTML = `
-            <div class="item-text">
-                <strong>${aniversariante.nome}</strong> - ${dataFormatada}<br>
-                <small>${aniversariante.cargo}</small>
-            </div>
-            <div class="item-actions">
-                <button class="item-btn edit" data-id="${aniversariante.id}">✏️</button>
-                <button class="item-btn delete" data-id="${aniversariante.id}">🗑️</button>
-            </div>
-        `;
-        
-        aniversariantesList.appendChild(itemRow);
-    });
-    
-    // Adicionar event listeners
-    const editButtons = aniversariantesList.querySelectorAll('.item-btn.edit');
-    const deleteButtons = aniversariantesList.querySelectorAll('.item-btn.delete');
-    
-    editButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = parseInt(btn.getAttribute('data-id'));
-            editAniversariante(id);
-        });
-    });
-    
-    deleteButtons.forEach(btn => {
-        btn.addEventListener('click', () => {
-            const id = parseInt(btn.getAttribute('data-id'));
-            deleteAniversariante(id);
-        });
-    });
-}
+// Função renderAniversariantesList removida
 
 function editAniversariante(id) {
     const aniversariantes = JSON.parse(localStorage.getItem('aniversariantes') || '[]');
