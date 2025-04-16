@@ -2915,6 +2915,16 @@
                         if (mesAtualEl) {
                             // Carregar os dados do mês selecionado do servidor
                             console.log(`Alterando para o mês: ${mes}`);
+                            
+                            // Certifique-se de salvar os dados do mês atual antes de mudar
+                            const mesAtual = document.getElementById('mesAtual').textContent;
+                            if (mesAtual && currentMonthData) {
+                                console.log(`Salvando dados do mês atual (${mesAtual}) antes de mudar para ${mes}`);
+                                savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData));
+                                persistirDadosMeses();
+                            }
+                            
+                            // Agora carregue os dados do novo mês
                             carregarDadosDoMes(mes);
                             
                             // Salvar a seleção no localStorage para persistência
@@ -2986,8 +2996,14 @@
             
             // Função auxiliar para persistir dados no localStorage
             function persistirDadosMeses() {
+                // Garantir que os dados do mês atual sejam salvos no objeto savedMonthData
+                if (currentMonth && currentMonthData) {
+                    savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData));
+                    console.log(`Salvando explicitamente os dados atuais para o mês: ${currentMonth}`);
+                }
+                
                 localStorage.setItem('savedMonthData', JSON.stringify(savedMonthData));
-                console.log('Dados dos meses persistidos no localStorage');
+                console.log('Dados dos meses persistidos no localStorage:', Object.keys(savedMonthData));
             }
             
             // Flag para controlar se estamos no processo de mudança de mês
