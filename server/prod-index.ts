@@ -34,6 +34,34 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
+// Rota de healthcheck para o Railway
+app.get('/health', async (req, res) => {
+  try {
+    const dbConnected = await checkDatabaseConnection();
+    if (dbConnected) {
+      return res.status(200).json({ 
+        status: 'ok', 
+        timestamp: new Date().toISOString(),
+        database: 'connected',
+        environment: process.env.NODE_ENV || 'production'
+      });
+    } else {
+      return res.status(500).json({ 
+        status: 'error', 
+        timestamp: new Date().toISOString(),
+        database: 'disconnected',
+        message: 'Problema na conexão com banco de dados' 
+      });
+    }
+  } catch (error: any) {
+    return res.status(500).json({ 
+      status: 'error', 
+      timestamp: new Date().toISOString(),
+      message: error.message 
+    });
+  }
+});
+
 // Middleware para logging de API
 app.use((req, res, next) => {
   const start = Date.now();
@@ -100,7 +128,7 @@ function configureStaticServer() {
     try {
       const rootFiles = fs.readdirSync(process.cwd());
       log(rootFiles.join(', '), "debug");
-    } catch (error) {
+    } catch (error: any) {
       log(`Erro ao listar arquivos na raiz: ${error.message}`, "error");
     }
     return;
