@@ -2942,11 +2942,6 @@
             // Um objeto para armazenar os dados salvos para cada mês
             // Objeto para armazenar dados de cada mês em cache, evitando múltiplas consultas ao servidor
             const savedMonthData = {
-                // Formato: "MES": { equipe1: {pontos, posicao}, equipe2: {...} }
-            };
-            
-            // Flag para controlar se estamos no processo de mudança de mês
-            let changingMonth = false;
                 "JANEIRO": null,
                 "FEVEREIRO": null,
                 "MARÇO": null, 
@@ -2960,6 +2955,9 @@
                 "NOVEMBRO": null,
                 "DEZEMBRO": null
             };
+            
+            // Flag para controlar se estamos no processo de mudança de mês
+            let changingMonth = false;
             
             // O mês atual que está sendo visualizado
             let currentMonth = "ABRIL";
