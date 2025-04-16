@@ -2899,6 +2899,15 @@
                     };
                 }
                 
+                // Configurar botão de salvar dados
+                const saveDataBtn = document.getElementById('saveDataBtn');
+                if (saveDataBtn) {
+                    saveDataBtn.onclick = function() {
+                        salvarDados();
+                        alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
+                    };
+                }
+                
                 // Configurar fechamento dos outros modais
                 const modals = document.querySelectorAll('.event-modal, .detail-modal, .login-modal');
                 const closeButtons = document.querySelectorAll('.close-btn');
