@@ -2579,6 +2579,12 @@
             // Configurar botão de edição de guarnições
             document.getElementById('editTeamsBtn').addEventListener('click', openTeamsModal);
             
+            // Configurar botão de salvar dados
+            document.getElementById('saveDataBtn').addEventListener('click', function() {
+                salvarDados();
+                alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
+            });
+            
             // Configurar o evento para atualizar pontos automaticamente no modal de edição
             const editTypeSelect = document.getElementById('editEventType');
             editTypeSelect.addEventListener('change', () => {
@@ -2675,6 +2681,12 @@
                             // Mostrar botão de alterar mês
                             if (alterarMesBtn) {
                                 alterarMesBtn.style.display = 'flex';
+                            }
+                            
+                            // Mostrar botão de salvar dados
+                            const saveDataBtn = document.getElementById('saveDataBtn');
+                            if (saveDataBtn) {
+                                saveDataBtn.style.display = 'inline-flex';
                             }
                             
                             // Atualizar botão de login para "Sair"
@@ -2785,6 +2797,12 @@
                         if (alterarMesBtn) {
                             alterarMesBtn.style.display = 'flex';
                             console.log("✅ Botão Alterar Mês exibido");
+                        }
+                        
+                        const saveDataBtn = document.getElementById('saveDataBtn');
+                        if (saveDataBtn) {
+                            saveDataBtn.style.display = 'inline-flex';
+                            console.log("✅ Botão Salvar Dados exibido");
                         }
                         
                         // Atualizar botão de login para "Sair"
