@@ -1086,12 +1086,12 @@
         <div class="section">
             <div class="section-header">
                 <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
-                <div class="admin-buttons">
-                    <button id="addEventBtn" class="admin-btn admin-only" style="display: none;">
+                <div class="admin-buttons" id="adminButtonsContainer" style="display: none;">
+                    <button id="addEventBtn" class="admin-btn">
                         <span>➕</span>
                         <span>Adicionar Evento</span>
                     </button>
-                    <button id="resetBtn" class="admin-btn warning-btn admin-only" style="display: none;">
+                    <button id="resetBtn" class="admin-btn warning-btn">
                         <span>🔄</span>
                         <span>Zerar Pontos</span>
                     </button>
@@ -2259,39 +2259,33 @@
                         // Fechar o modal
                         loginModal.style.display = 'none';
                         
-                        // Adicionar classe 'admin-authenticated' ao body para permitir CSS condicional
-                        document.body.classList.add('admin-authenticated');
-                        
                         // Chamar diretamente a função de atualização de interface
-                        if (typeof atualizarInterfaceAutenticada === 'function') {
-                            console.log("Chamando atualizarInterfaceAutenticada() diretamente");
-                            atualizarInterfaceAutenticada();
-                        } else {
-                            console.error("Função atualizarInterfaceAutenticada não está disponível!");
-                            
-                            // Código de fallback (caso a função não esteja disponível)
-                            console.log("Usando código de fallback para exibir botões administrativos");
-                            
-                            // Mostrar botões administrativos imediatamente
-                            const addEventBtn = document.getElementById('addEventBtn');
-                            if (addEventBtn) addEventBtn.style.display = 'inline-flex';
-                            
-                            const resetBtn = document.getElementById('resetBtn');
-                            if (resetBtn) resetBtn.style.display = 'inline-flex';
-                            
-                            // Atualizar botão de login para "Sair"
-                            const loginBtn = document.getElementById('loginBtn');
-                            if (loginBtn) {
-                                loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
-                                loginBtn.onclick = function() { 
-                                    if (typeof logout === 'function') {
-                                        logout();
-                                    } else {
-                                        window.location.href = '/api/auth/logout';
-                                    }
-                                };
-                            }
+                        console.log("Login bem-sucedido!");
+                        
+                        // Mostrar imediatamente o contêiner de botões administrativos
+                        const adminButtonsContainer = document.getElementById('adminButtonsContainer');
+                        if (adminButtonsContainer) {
+                            adminButtonsContainer.style.display = 'flex';
+                            console.log("✅ Contentor de botões administrativos exibido imediatamente após login");
                         }
+                        
+                        // Atualizar botão de login para "Sair"
+                        const loginBtn = document.getElementById('loginBtn');
+                        if (loginBtn) {
+                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
+                            loginBtn.onclick = function() {
+                                if (typeof logout === 'function') {
+                                    logout();
+                                } else {
+                                    window.location.href = '/api/auth/logout';
+                                }
+                            };
+                            console.log("✅ Botão de login atualizado para 'Sair'");
+                        }
+                        
+                        // Adicionar atributo ao body para sinalizar autenticação
+                        document.body.setAttribute('data-auth', 'true');
+                        console.log("✅ Atributo data-auth adicionado ao body");
                     } catch (error) {
                         console.error('Erro no login:', error);
                         
