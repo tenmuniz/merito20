@@ -139,6 +139,31 @@ function validarCredenciais(username, password) {
 
 async function logout() {
     try {
+        // Ocultar IMEDIATAMENTE botões administrativos ANTES de fazer a requisição
+        console.log("🔒 Iniciando logout, ocultando botões administrativos IMEDIATAMENTE...");
+        
+        // Remover classe do body
+        document.body.classList.remove('admin-authenticated');
+        
+        // Ocultar botões diretamente
+        document.getElementById('addEventBtn').style.display = 'none';
+        document.getElementById('resetBtn').style.display = 'none';
+        
+        // Ocultar área administrativa
+        const adminButtons = document.querySelector('.admin-buttons');
+        if (adminButtons) {
+            adminButtons.style.display = 'none';
+        }
+        
+        // Atualizar botão de login
+        const loginBtn = document.getElementById('loginBtn');
+        if (loginBtn) {
+            loginBtn.innerHTML = '<span class="login-icon">🔒</span><span>Área Administrativa</span>';
+            loginBtn.onclick = function() {
+                document.getElementById('loginModal').classList.add('active');
+            };
+        }
+        
         // Chamar a API de logout
         const response = await fetch('/api/auth/logout', {
             method: 'POST',
@@ -154,23 +179,6 @@ async function logout() {
         // Remover dados do localStorage
         localStorage.removeItem('escalasUserData');
         
-        // Ocultar imediatamente os botões administrativos
-        console.log("Logout bem-sucedido, ocultando botões administrativos...");
-        
-        // Ocultar botão de adicionar eventos
-        const addEventBtn = document.getElementById('addEventBtn');
-        if (addEventBtn) {
-            addEventBtn.style.display = 'none';
-            console.log("Botão 'Adicionar Evento' ocultado");
-        }
-        
-        // Ocultar botão de resetar pontos
-        const resetBtn = document.getElementById('resetBtn');
-        if (resetBtn) {
-            resetBtn.style.display = 'none';
-            console.log("Botão 'Zerar Pontos' ocultado");
-        }
-        
         // Atualizar a UI para o estado não autenticado
         atualizarInterfaceNaoAutenticada();
         
@@ -178,7 +186,6 @@ async function logout() {
         alert('Logout realizado com sucesso!');
         
         // Não precisamos mais recarregar a página, já que estamos atualizando a UI diretamente
-        // window.location.reload();
     } catch (error) {
         console.error('Erro ao fazer logout:', error);
         
@@ -216,7 +223,24 @@ function verificarAutenticacao() {
 function atualizarInterfaceAutenticada() {
     console.log("Atualizando interface para usuário autenticado");
     
-    // Mostrar elementos administrativos, exceto os relacionados à edição de equipes
+    // Mostrar botões de administração diretamente pelos IDs
+    const addEventBtn = document.getElementById('addEventBtn');
+    if (addEventBtn) {
+        addEventBtn.style.display = 'inline-flex';
+        console.log("✅ Botão 'Adicionar Evento' exibido diretamente pelo ID");
+    } else {
+        console.error("⚠️ Botão 'Adicionar Evento' não encontrado pelo ID");
+    }
+    
+    const resetBtn = document.getElementById('resetBtn');
+    if (resetBtn) {
+        resetBtn.style.display = 'inline-flex';
+        console.log("✅ Botão 'Zerar Pontos' exibido diretamente pelo ID");
+    } else {
+        console.error("⚠️ Botão 'Zerar Pontos' não encontrado pelo ID");
+    }
+    
+    // Mostrar outros elementos administrativos
     const adminElements = document.querySelectorAll('.admin-only');
     adminElements.forEach(el => {
         const id = el.id || '';
@@ -236,19 +260,19 @@ function atualizarInterfaceAutenticada() {
     const adminButtons = document.querySelector('.admin-buttons');
     if (adminButtons) {
         adminButtons.style.display = 'flex';
+        console.log("✅ Área de botões administrativos exibida");
+    } else {
+        console.error("⚠️ Área de botões administrativos não encontrada");
     }
     
     // Atualizar botão de login para "Sair"
     const loginBtn = document.getElementById('loginBtn');
     if (loginBtn) {
         loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
-        
-        // Remover todos os event listeners existentes
-        const newLoginBtn = loginBtn.cloneNode(true);
-        loginBtn.parentNode.replaceChild(newLoginBtn, loginBtn);
-        
-        // Adicionar novo event listener para logout
-        newLoginBtn.addEventListener('click', logout);
+        loginBtn.onclick = logout; // Usar onclick em vez de addEventListener
+        console.log("✅ Botão de login atualizado para 'Sair' com função de logout");
+    } else {
+        console.error("⚠️ Botão de login não encontrado");
     }
 }
 

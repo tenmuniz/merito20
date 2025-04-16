@@ -1087,11 +1087,11 @@
             <div class="section-header">
                 <h2>DESEMPENHO DAS GUARNIÇÕES</h2>
                 <div class="admin-buttons">
-                    <button id="addEventBtn" class="admin-btn" style="display: none;">
+                    <button id="addEventBtn" class="admin-btn admin-only" style="display: none;">
                         <span>➕</span>
                         <span>Adicionar Evento</span>
                     </button>
-                    <button id="resetBtn" class="admin-btn warning-btn" style="display: none;">
+                    <button id="resetBtn" class="admin-btn warning-btn admin-only" style="display: none;">
                         <span>🔄</span>
                         <span>Zerar Pontos</span>
                     </button>
@@ -2235,6 +2235,7 @@
             // Configurar botão de login no modal
             if (loginSubmitBtn) {
                 loginSubmitBtn.addEventListener('click', async function() {
+                    console.log("Login clicado");
                     const username = document.getElementById('username').value;
                     const password = document.getElementById('password').value;
                     
@@ -2258,34 +2259,38 @@
                         // Fechar o modal
                         loginModal.style.display = 'none';
                         
-                        // Atualizar interface - Mostrar imediatamente os botões administrativos
-                        console.log("Login bem-sucedido, atualizando interface imediatamente...");
+                        // Adicionar classe 'admin-authenticated' ao body para permitir CSS condicional
+                        document.body.classList.add('admin-authenticated');
                         
-                        // Atualizar botão de login para "Sair"
-                        const loginBtn = document.getElementById('loginBtn');
-                        if (loginBtn) {
-                            loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
-                            loginBtn.onclick = function() {
-                                // Chamar a função logout do auth.js
-                                logout();
-                            };
-                        }
-                        
-                        // Exibir botões administrativos imediatamente
-                        const addEventBtn = document.getElementById('addEventBtn');
-                        if (addEventBtn) {
-                            addEventBtn.style.display = 'inline-flex';
-                            console.log("Botão 'Adicionar Evento' exibido com sucesso");
+                        // Chamar diretamente a função de atualização de interface
+                        if (typeof atualizarInterfaceAutenticada === 'function') {
+                            console.log("Chamando atualizarInterfaceAutenticada() diretamente");
+                            atualizarInterfaceAutenticada();
                         } else {
-                            console.error("Botão 'Adicionar Evento' não encontrado");
-                        }
-                        
-                        const resetBtn = document.getElementById('resetBtn');
-                        if (resetBtn) {
-                            resetBtn.style.display = 'inline-flex';
-                            console.log("Botão 'Zerar Pontos' exibido com sucesso");
-                        } else {
-                            console.error("Botão 'Zerar Pontos' não encontrado");
+                            console.error("Função atualizarInterfaceAutenticada não está disponível!");
+                            
+                            // Código de fallback (caso a função não esteja disponível)
+                            console.log("Usando código de fallback para exibir botões administrativos");
+                            
+                            // Mostrar botões administrativos imediatamente
+                            const addEventBtn = document.getElementById('addEventBtn');
+                            if (addEventBtn) addEventBtn.style.display = 'inline-flex';
+                            
+                            const resetBtn = document.getElementById('resetBtn');
+                            if (resetBtn) resetBtn.style.display = 'inline-flex';
+                            
+                            // Atualizar botão de login para "Sair"
+                            const loginBtn = document.getElementById('loginBtn');
+                            if (loginBtn) {
+                                loginBtn.innerHTML = '<span class="login-icon">🔓</span><span>Sair</span>';
+                                loginBtn.onclick = function() { 
+                                    if (typeof logout === 'function') {
+                                        logout();
+                                    } else {
+                                        window.location.href = '/api/auth/logout';
+                                    }
+                                };
+                            }
                         }
                     } catch (error) {
                         console.error('Erro no login:', error);
