@@ -1,0 +1,28 @@
+[build]
+builder = "NIXPACKS"
+buildCommand = "npm run build"
+
+[deploy]
+startCommand = "node dist/index.js"
+healthcheckPath = "/"
+healthcheckTimeout = 300
+restartPolicyType = "ON_FAILURE"
+
+[deploy.railway]
+path = "/"
+
+[[services]]
+internalPort = "PORT" # Usa a variável de ambiente PORT
+protocol = "http"
+
+[scaling]
+minRunnerCount = 1
+maxRunnerCount = 1
+
+[[env.variables]]
+name = "NODE_ENV"
+value = "production"
+
+[[env.variables]]
+name = "SESSION_SECRET"
+# value será definido no dashboard do Railway

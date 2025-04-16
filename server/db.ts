@@ -1,19 +1,51 @@
 import { drizzle } from 'drizzle-orm/postgres-js';
 import postgres from 'postgres';
 import * as schema from '../shared/schema';
+import { join } from 'path';
+import { fileURLToPath } from 'url';
+import dotenv from 'dotenv';
+import fs from 'fs';
 
-// Verificar se a URL do banco de dados está definida
-if (!process.env.DATABASE_URL) {
-  throw new Error('DATABASE_URL não definida no ambiente. Configure a variável de ambiente DATABASE_URL.');
+// Obter o diretório atual
+const __dirname = fileURLToPath(new URL('.', import.meta.url));
+
+// Definir o caminho para o arquivo .env
+const envPath = join(__dirname, '..', '.env');
+
+// Verificar e carregar variáveis do arquivo .env se existir
+if (fs.existsSync(envPath)) {
+  console.log('Carregando variáveis de ambiente do arquivo .env');
+  dotenv.config({ path: envPath });
+}
+
+// URL de conexão padrão para desenvolvimento local
+const DEFAULT_DB_URL = 'postgresql://postgres:postgres@localhost:5432/meritocracia';
+
+// Usar a URL do banco de dados do ambiente ou a URL padrão
+const connectionString = process.env.DATABASE_URL || DEFAULT_DB_URL;
+
+console.log(`Conectando ao banco de dados: ${connectionString.split('@')[1] || 'local'}`);
+
+// Opções de conexão com tipos apropriados
+interface ConnectionOptions {
+  max: number;
+  ssl?: {
+    rejectUnauthorized: boolean;
+  };
+}
+
+const clientOptions: ConnectionOptions = { 
+  max: 10, // número máximo de conexões no pool
+};
+
+// Adicionar SSL apenas se não for localhost
+if (!connectionString.includes('localhost')) {
+  clientOptions.ssl = { rejectUnauthorized: false };
+  console.log('Habilitando SSL para conexão com o banco de dados remoto');
 }
 
 // Inicializar a conexão com o PostgreSQL
-// Esta configuração funciona tanto localmente quanto no Railway
-const connectionString = process.env.DATABASE_URL;
-const client = postgres(connectionString, { 
-  max: 10, // número máximo de conexões no pool
-  ssl: { rejectUnauthorized: false }, // habilitar SSL para todas as conexões com verificação de certificado desabilitada
-});
+const client = postgres(connectionString, clientOptions);
 
 export const db = drizzle(client, { schema });
 
