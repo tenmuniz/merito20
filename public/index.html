@@ -2921,7 +2921,7 @@
                             if (mesAtual && currentMonthData) {
                                 console.log(`Salvando dados do mês atual (${mesAtual}) antes de mudar para ${mes}`);
                                 savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData));
-                                persistirDadosMeses();
+                                salvarDados();
                             }
                             
                             // Agora carregue os dados do novo mês
@@ -2971,8 +2971,10 @@
             // Verifica se temos dados guardados no localStorage primeiro
             let savedMonthDataFromStorage;
             try {
-                savedMonthDataFromStorage = JSON.parse(localStorage.getItem('savedMonthData')) || {};
-                console.log('Carregando dados persistidos do localStorage');
+                // Tentar carregar os dados do localStorage usando a chave correta
+                const dadosArmazenados = localStorage.getItem('dadosMeses') || localStorage.getItem('savedMonthData');
+                savedMonthDataFromStorage = JSON.parse(dadosArmazenados) || {};
+                console.log('Carregando dados persistidos do localStorage:', Object.keys(savedMonthDataFromStorage));
             } catch (e) {
                 console.error('Erro ao carregar dados do localStorage:', e);
                 savedMonthDataFromStorage = {};
@@ -2994,16 +2996,16 @@
                 "DEZEMBRO": savedMonthDataFromStorage["DEZEMBRO"] || null
             };
             
-            // Função auxiliar para persistir dados no localStorage
-            function persistirDadosMeses() {
-                // Garantir que os dados do mês atual sejam salvos no objeto savedMonthData
+            // Função simplificada para salvar dados no localStorage
+            function salvarDados() {
+                // Sempre salve os dados do mês atual
                 if (currentMonth && currentMonthData) {
                     savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData));
-                    console.log(`Salvando explicitamente os dados atuais para o mês: ${currentMonth}`);
                 }
                 
-                localStorage.setItem('savedMonthData', JSON.stringify(savedMonthData));
-                console.log('Dados dos meses persistidos no localStorage:', Object.keys(savedMonthData));
+                // Salvar todos os meses no localStorage
+                localStorage.setItem('dadosMeses', JSON.stringify(savedMonthData));
+                console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
             }
             
             // Flag para controlar se estamos no processo de mudança de mês
@@ -3024,8 +3026,8 @@
                     console.log(`Salvando dados do mês anterior ${currentMonth} antes de mudar para ${mes}`);
                     savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
                     
-                    // Persistir os dados no localStorage sempre que mudar de mês
-                    persistirDadosMeses();
+                    // Salvar todos os dados no localStorage
+                    salvarDados();
                 }
                 
                 // Só atualize a variável de mês atual após a verificação acima
@@ -3091,8 +3093,8 @@
                     currentMonthData = novosDados;
                     savedMonthData[mes] = JSON.parse(JSON.stringify(novosDados)); // Deep copy
                     
-                    // Persistir dados no localStorage para evitar perda na atualização da página
-                    persistirDadosMeses();
+                    // Salvar dados no localStorage para evitar perda na atualização da página
+                    salvarDados();
                     
                     // Atualizar a UI com os dados
                     atualizarUIComDadosAtuais();
@@ -3136,6 +3138,10 @@
                 
                 // Atualizar as classes de classificação nos cards
                 atualizarPosicoesCards(dados);
+                
+                // Salvar dados no localStorage toda vez que a UI for atualizada
+                // para garantir persistência total
+                salvarDados();
             }
             
             // Função para ser chamada quando novos eventos são adicionados
@@ -3148,7 +3154,7 @@
                 if (currentMonthData) {
                     console.log(`Salvando dados atuais antes de atualizar para o mês: ${mesAtual}`);
                     savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
-                    persistirDadosMeses();
+                    salvarDados();
                 }
                 
                 // Invalidar o cache do mês atual para forçar nova consulta ao servidor
