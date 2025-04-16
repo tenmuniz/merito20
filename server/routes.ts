@@ -252,11 +252,9 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.deleteEvent(event.id);
         }
         
-        // Zerar os pontos das equipes
-        const teams = await storage.getTeams();
-        for (const team of teams) {
-          await storage.updateTeamPoints(team.id, 0);
-        }
+        // Não vamos zerar os pontos diretamente no banco, mas sim
+        // recalcular os pontos a partir dos eventos restantes
+        // Isso garante que os pontos de outros meses permaneçam intactos
         
         res.json({ 
           success: true, 

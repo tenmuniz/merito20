@@ -2275,19 +2275,36 @@
             }
         });
         
+        // Variável para evitar submissões duplicadas
+        let isSubmitting = false;
+        
         // Submissão do formulário de evento
         document.getElementById('eventForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const eventDateValue = document.getElementById('eventDate').value;
-            const teamId = parseInt(document.getElementById('eventTeam').value);
-            const type = document.getElementById('eventType').value;
-            const description = document.getElementById('eventDescription').value;
-            const points = parseInt(document.getElementById('eventPoints').value);
+            // Evitar submissões duplicadas
+            if (isSubmitting) {
+                console.log('Submissão já em andamento, ignorando clique adicional');
+                return;
+            }
             
-            console.log('Data do evento selecionada:', eventDateValue);
+            isSubmitting = true;
             
             try {
+                const eventDateValue = document.getElementById('eventDate').value;
+                const teamId = parseInt(document.getElementById('eventTeam').value);
+                const type = document.getElementById('eventType').value;
+                const description = document.getElementById('eventDescription').value;
+                const points = parseInt(document.getElementById('eventPoints').value);
+                
+                console.log('Data do evento selecionada:', eventDateValue);
+                
+                // Botão de submit
+                const submitBtn = document.querySelector('#eventForm button[type="submit"]');
+                const originalBtnText = submitBtn.textContent;
+                submitBtn.textContent = 'Salvando...';
+                submitBtn.disabled = true;
+                
                 const response = await fetch('/api/events', {
                     method: 'POST',
                     headers: {
@@ -2311,43 +2328,76 @@
                 document.getElementById('eventModal').style.display = 'none';
                 document.getElementById('eventForm').reset();
                 
-                // Recarregar dados
-                fetchTeams();
-                fetchEvents();
-                
                 // Atualizar o mês atual
                 const mesAtual = document.getElementById('mesAtual').textContent;
                 console.log("Evento adicionado com sucesso. Atualizando dados do mês atual:", mesAtual);
                 
-                // Código equivalente a atualizarDadosMesAtual() inline
                 // Invalidar o cache do mês atual (se existir)
                 if (typeof savedMonthData !== 'undefined') {
                     savedMonthData[mesAtual] = null;
                 }
                 
-                // Recarregar os dados do mês atual
-                // A próxima chamada fetchEvents já atualizará os dados
+                // Recarregar dados uma única vez
+                await fetchTeams();
+                await fetchEvents();
+                
+                // Restaurar o botão
+                if (submitBtn) {
+                    submitBtn.textContent = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+                
+                // Permitir nova submissão
+                isSubmitting = false;
                 
             } catch (error) {
                 console.error('Erro ao criar evento:', error);
                 alert('Erro ao criar evento: ' + error.message);
+                
+                // Restaurar o botão
+                if (submitBtn) {
+                    submitBtn.textContent = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+                
+                // Permitir nova submissão mesmo em caso de erro
+                isSubmitting = false;
             }
         });
+        
+        // Variável para evitar submissões duplicadas em edições
+        let isEditing = false;
         
         // Submissão do formulário de edição
         document.getElementById('editForm').addEventListener('submit', async function(e) {
             e.preventDefault();
             
-            const eventId = document.getElementById('editEventId').value;
-            const eventDateValue = document.getElementById('editEventDate').value;
-            const teamId = parseInt(document.getElementById('editEventTeam').value);
-            const type = document.getElementById('editEventType').value;
-            const description = document.getElementById('editEventDescription').value;
-            const points = parseInt(document.getElementById('editEventPoints').value);
+            // Evitar submissões duplicadas
+            if (isEditing) {
+                console.log('Edição já em andamento, ignorando clique adicional');
+                return;
+            }
             
-            console.log('Data do evento editado:', eventDateValue);
+            isEditing = true;
+            
+            // Botão de submit
+            const submitBtn = document.querySelector('#editForm button[type="submit"]');
+            const originalBtnText = submitBtn ? submitBtn.textContent : 'Atualizar';
+            if (submitBtn) {
+                submitBtn.textContent = 'Atualizando...';
+                submitBtn.disabled = true;
+            }
             
             try {
+                const eventId = document.getElementById('editEventId').value;
+                const eventDateValue = document.getElementById('editEventDate').value;
+                const teamId = parseInt(document.getElementById('editEventTeam').value);
+                const type = document.getElementById('editEventType').value;
+                const description = document.getElementById('editEventDescription').value;
+                const points = parseInt(document.getElementById('editEventPoints').value);
+                
+                console.log('Data do evento editado:', eventDateValue);
+                
                 const response = await fetch(`/api/events/${eventId}`, {
                     method: 'PUT',
                     headers: {
@@ -2368,23 +2418,52 @@
                 
                 document.getElementById('editModal').style.display = 'none';
                 
-                // Recarregar dados
-                fetchTeams();
-                fetchEvents();
+                // Recarregar dados uma única vez
+                await fetchTeams();
+                await fetchEvents();
                 
                 alert('Evento atualizado com sucesso!');
                 
             } catch (error) {
                 console.error('Erro ao atualizar evento:', error);
                 alert('Erro ao atualizar evento: ' + error.message);
+            } finally {
+                // Restaurar o botão
+                if (submitBtn) {
+                    submitBtn.textContent = originalBtnText;
+                    submitBtn.disabled = false;
+                }
+                
+                // Permitir nova edição
+                isEditing = false;
             }
         });
         
+        // Variável para evitar múltiplos resets
+        let isResetting = false;
+        
         // Função para resetar pontos e eventos do mês atual
         async function resetAllData() {
+            // Prevenir múltiplos cliques
+            if (isResetting) {
+                console.log('Reset já em andamento, ignorando clique adicional');
+                return;
+            }
+            
             const mesAtual = document.getElementById('mesAtual').textContent;
             if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes para este mês. Esta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
+            }
+            
+            // Marcar que estamos realizando um reset
+            isResetting = true;
+            
+            // Obter o botão de reset e modificar seu texto
+            const resetBtn = document.getElementById('resetBtn');
+            const originalBtnText = resetBtn ? resetBtn.textContent : 'Zerar Pontos';
+            if (resetBtn) {
+                resetBtn.textContent = 'Zerando...';
+                resetBtn.disabled = true;
             }
             
             try {
@@ -2402,16 +2481,28 @@
                     throw new Error('Falha ao resetar dados');
                 }
                 
-                // Invalidar o cache do mês atual
-                savedMonthData[mesAtual] = null;
+                // Limpar o cache do mês atual (se existir)
+                if (typeof savedMonthData !== 'undefined') {
+                    savedMonthData[mesAtual] = null;
+                }
                 
-                // Recarregar dados específicos do mês atual
-                carregarDadosDoMes(mesAtual);
+                // Recarregar dados
+                await fetchTeams();
+                await fetchEvents();
                 
                 alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso!`);
             } catch (error) {
                 console.error('Erro ao resetar dados:', error);
                 alert('Erro ao resetar dados: ' + error.message);
+            } finally {
+                // Restaurar o botão
+                if (resetBtn) {
+                    resetBtn.textContent = originalBtnText;
+                    resetBtn.disabled = false;
+                }
+                
+                // Permitir novo reset
+                isResetting = false;
             }
         }
         
