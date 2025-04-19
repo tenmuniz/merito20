@@ -599,6 +599,46 @@
             100% { transform: translateY(0px); }
         }
         
+        /* Estilos para botões de ação */
+        .actions-cell {
+            display: flex;
+            gap: 8px;
+        }
+        
+        .edit-event-btn, .delete-event-btn {
+            padding: 6px 12px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transition: all 0.2s ease;
+        }
+        
+        .edit-event-btn {
+            background-color: #3b82f6;
+            color: white;
+        }
+        
+        .edit-event-btn:hover {
+            background-color: #2563eb;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
+        .delete-event-btn {
+            background-color: #ef4444;
+            color: white;
+        }
+        
+        .delete-event-btn:hover {
+            background-color: #dc2626;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
         .second-place {
             background: linear-gradient(to bottom, #e0e0e0, #bdbdbd);
             height: 220px;
@@ -2100,6 +2140,10 @@
                         <button class="edit-event-btn" title="Editar evento">
                             <i class="fas fa-edit"></i> Editar
                         </button>
+                        ${isAdmin ? `
+                        <button class="delete-event-btn" title="Excluir evento" data-id="${event.id}">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>` : ''}
                     </td>
                 `;
                 
@@ -2120,6 +2164,44 @@
                     currentEvent = event; // Definir o evento atual
                     openEditModal(); // Abrir diretamente o modal de edição
                 });
+                
+                // Adicionar evento de clique no botão excluir
+                const deleteBtn = row.querySelector('.delete-event-btn');
+                if (deleteBtn) {
+                    deleteBtn.addEventListener('click', async (e) => {
+                        e.stopPropagation(); // Evitar que o clique propague para a linha
+                        
+                        if (confirm(`Tem certeza que deseja excluir este evento de ${event.type}?`)) {
+                            try {
+                                const response = await fetch(`/api/events/${event.id}`, {
+                                    method: 'DELETE'
+                                });
+                                
+                                if (!response.ok) {
+                                    throw new Error('Falha ao excluir evento');
+                                }
+                                
+                                // Mostrar mensagem de sucesso
+                                const mensagemSucesso = document.getElementById('mensagemSucesso');
+                                if (mensagemSucesso) {
+                                    mensagemSucesso.textContent = 'Evento excluído com sucesso!';
+                                    mensagemSucesso.style.display = 'block';
+                                    setTimeout(() => {
+                                        mensagemSucesso.style.display = 'none';
+                                    }, 3000);
+                                }
+                                
+                                // Recarregar dados
+                                const mesAtual = document.getElementById('mesAtual').textContent;
+                                await fetchTeams(mesAtual);
+                                await fetchEvents(mesAtual);
+                            } catch (error) {
+                                console.error('Erro ao excluir evento:', error);
+                                alert('Erro ao excluir evento: ' + error.message);
+                            }
+                        }
+                    });
+                }
                 
                 tableBody.appendChild(row);
             }
