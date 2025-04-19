@@ -2497,22 +2497,27 @@
                 }
                 
                 // Criar dados zerados para o mês atual
-                if (typeof savedMonthData !== 'undefined') {
-                    // Definir pontuações como zero mas manter estrutura
-                    savedMonthData[mesAtual] = {
-                        "alfa": { pontos: 0, posicao: 3 },
-                        "bravo": { pontos: 0, posicao: 1 },
-                        "charlie": { pontos: 0, posicao: 2 }
-                    };
-                    
-                    // Salvar no localStorage para persistência
-                    localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(savedMonthData[mesAtual]));
-                    salvarDados();
+                // Definir pontuações como zero mas manter estrutura
+                const dadosZerados = {
+                    "alfa": { pontos: 0, posicao: 3 },
+                    "bravo": { pontos: 0, posicao: 1 },
+                    "charlie": { pontos: 0, posicao: 2 }
+                };
+                
+                // Atualizar dados diretamente
+                currentMonthData = dadosZerados;
+                
+                // Atualizar o objeto global savedMonthData
+                if (window.savedMonthData) {
+                    window.savedMonthData[mesAtual] = JSON.parse(JSON.stringify(dadosZerados));
                 }
                 
-                // Recarregar apenas os dados do mês atual
+                // Salvar no localStorage para persistência
+                localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(dadosZerados));
+                localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData || {}));
+                
+                // Recarregar a UI com os dados zerados
                 console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
-                currentMonthData = savedMonthData[mesAtual];
                 atualizarUIComDadosAtuais();
                 
                 alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso! Os dados dos outros meses permanecem intactos.`);
@@ -3028,7 +3033,8 @@
             }
             
             // Objeto para armazenar dados de cada mês em cache, evitando múltiplas consultas ao servidor
-            const savedMonthData = {
+            // Tornando acessível globalmente com window para que possa ser usado em qualquer contexto
+            window.savedMonthData = {
                 "JANEIRO": savedMonthDataFromStorage["JANEIRO"] || null,
                 "FEVEREIRO": savedMonthDataFromStorage["FEVEREIRO"] || null,
                 "MARÇO": savedMonthDataFromStorage["MARÇO"] || null, 
@@ -3052,7 +3058,7 @@
                 }
                 
                 // Salvar todos os meses no localStorage
-                localStorage.setItem('dadosMeses', JSON.stringify(savedMonthData));
+                localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData));
                 console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
                 
                 // Verificar e salvar para o banco de dados posteriormente
@@ -3081,7 +3087,7 @@
                 // Antes de mudar de mês, salve os dados do mês atual
                 if (currentMonth && currentMonth !== mes && currentMonthData) {
                     console.log(`Salvando dados do mês anterior ${currentMonth} antes de mudar para ${mes}`);
-                    savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
+                    window.savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
                     
                     // Salvar todos os dados no localStorage
                     salvarDados();
