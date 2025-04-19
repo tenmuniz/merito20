@@ -269,6 +269,42 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint simplificado apenas para zerar os pontos das equipes
+  app.post("/api/zero-points", async (req, res) => {
+    try {
+      const { month } = req.body;
+      console.log(`Zerando pontos para o mês: ${month}`);
+      
+      // Zerar pontos de todas as equipes, independente do mês
+      // Esta abordagem direta resolve o problema sem depender de cálculos complexos
+      
+      // Obter todas as equipes
+      const allTeams = await storage.getTeams();
+      
+      // Para cada equipe, definir pontos = 0
+      for (const team of allTeams) {
+        console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
+        
+        // Atualizar diretamente no banco de dados para garantir que os pontos sejam zerados
+        await db.update(teams)
+          .set({ points: 0 })
+          .where(eq(teams.id, team.id));
+      }
+      
+      // Buscar as equipes atualizadas para enviar na resposta
+      const updatedTeams = await storage.getTeams();
+      
+      res.json({ 
+        success: true, 
+        message: `Pontos de todas as equipes zerados com sucesso.`,
+        teams: updatedTeams
+      });
+    } catch (error: any) {
+      console.error("Erro ao zerar pontos:", error);
+      res.status(500).json({ message: error.message || "Erro ao zerar pontos" });
+    }
+  });
+
   // Reset API - para zerar eventos e pontos
   app.post("/api/reset", async (req, res) => {
     try {
@@ -281,24 +317,12 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const monthYear = `${month.toUpperCase()}_${year}`;
         
         // Buscar todos os eventos deste mês
-        const events = await storage.getEvents();
-        const eventsToDelete = events.filter(event => event.monthYear === monthYear);
+        const allEvents = await storage.getEvents();
+        const eventsToDelete = allEvents.filter(event => event.monthYear === monthYear);
         
         console.log(`Encontrados ${eventsToDelete.length} eventos para excluir do mês ${month}`);
         
-        // Calcular a soma de pontos por equipe para este mês
-        const pontosPorEquipe: Record<number, number> = {};
-        for (const event of eventsToDelete) {
-          const teamId = event.teamId;
-          if (!pontosPorEquipe[teamId]) {
-            pontosPorEquipe[teamId] = 0;
-          }
-          pontosPorEquipe[teamId] += event.points;
-        }
-        
         // Excluir os eventos do banco um por um
-        // Mas DESABILITAMOS a atualização automática dos pontos das equipes no método deleteEvent
-        // pois faremos isso manualmente em seguida
         for (const event of eventsToDelete) {
           try {
             // Vamos apenas excluir sem alterar os pontos
@@ -309,24 +333,20 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // Agora, vamos atualizar os pontos de cada equipe diretamente
+        // Zerar pontos de todas as equipes, independente do mês
+        // Esta abordagem direta resolve o problema sem depender de cálculos complexos
+        
+        // Obter todas as equipes
         const allTeams = await storage.getTeams();
+        
+        // Para cada equipe, definir pontos = 0
         for (const team of allTeams) {
-          // Obter os pontos atuais da equipe
-          const currentPoints = team.points;
+          console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
           
-          // Se a equipe tinha pontos deste mês, subtrair esses pontos
-          const pontosParaSubtrair = pontosPorEquipe[team.id] || 0;
-          const novosPontos = Math.max(currentPoints - pontosParaSubtrair, 0);
-          
-          console.log(`Equipe ${team.name} (${team.id}): ${currentPoints} pontos - ${pontosParaSubtrair} = ${novosPontos}`);
-          
-          // Atualizar diretamente no banco de dados (não usar updateTeamPoints para evitar problemas)
+          // Atualizar diretamente no banco de dados para garantir que os pontos sejam zerados
           await db.update(teams)
-            .set({ points: novosPontos })
+            .set({ points: 0 })
             .where(eq(teams.id, team.id));
-          
-          console.log(`Pontos da equipe ${team.name} atualizados para ${novosPontos}`);
         }
         
         // Buscar as equipes atualizadas para enviar na resposta

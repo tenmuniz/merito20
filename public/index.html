@@ -2466,7 +2466,7 @@
             }
             
             const mesAtual = document.getElementById('mesAtual').textContent;
-            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes APENAS para este mês. Os dados dos outros meses permanecerão intactos. Esta ação não pode ser desfeita. Deseja continuar?`)) {
+            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes. Os dados dos outros meses permanecerão intactos. Esta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
             }
             
@@ -2482,6 +2482,24 @@
             }
             
             try {
+                // Primeiro, zerar os pontos diretamente usando o novo endpoint
+                console.log('Zerando pontos via /api/zero-points');
+                const zeroPointsResponse = await fetch('/api/zero-points', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        month: mesAtual
+                    })
+                });
+                
+                if (!zeroPointsResponse.ok) {
+                    throw new Error('Falha ao zerar pontos');
+                }
+                
+                // Agora, excluir os eventos
+                console.log('Excluindo eventos via /api/reset');
                 const response = await fetch('/api/reset', {
                     method: 'POST',
                     headers: {
