@@ -3341,19 +3341,50 @@
             };
             
             // Função aprimorada para salvar dados no localStorage
-            function salvarDados() {
+            async function salvarDados() {
                 // Sempre salve os dados do mês atual
                 if (currentMonth && currentMonthData) {
                     // Deep copy para evitar referências
                     savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData));
+                    
+                    // Salvar no localStorage primeiro (backup local)
+                    localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData));
+                    localStorage.setItem(`pontuacao_${currentMonth}`, JSON.stringify(currentMonthData));
+                    console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
+                    
+                    // Agora, salvar no banco de dados via API
+                    try {
+                        console.log('Salvando dados para o mês:', currentMonth, currentMonthData);
+                        const response = await fetch('/api/salvar-dados', {
+                            method: 'POST',
+                            headers: {
+                                'Content-Type': 'application/json'
+                            },
+                            body: JSON.stringify({
+                                month: currentMonth,
+                                data: currentMonthData
+                            })
+                        });
+                        
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            console.error('Erro ao salvar dados:', errorText);
+                            
+                            // Falha silenciosa, não mostramos erro ao usuário para não confundir
+                            // Os dados já foram salvos no localStorage como backup
+                            return false;
+                        }
+                        
+                        const result = await response.json();
+                        console.log('Dados salvos no servidor:', result);
+                        return true;
+                    } catch (error) {
+                        console.error('Erro ao salvar dados no servidor:', error);
+                        // Falha silenciosa, os dados já foram salvos no localStorage como backup
+                        return false;
+                    }
                 }
-                
-                // Salvar todos os meses no localStorage
-                localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData));
-                console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
-                
-                // Verificar e salvar para o banco de dados posteriormente
-                localStorage.setItem(`pontuacao_${currentMonth}`, JSON.stringify(currentMonthData));
+                return false;
             }
             
             // Função para salvar e mostrar mensagem de confirmação
