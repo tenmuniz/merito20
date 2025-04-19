@@ -1,4 +1,4 @@
-import type { Express } from "express";
+import type { Express, Request, Response } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { type InsertEvent } from "@shared/schema";
@@ -7,75 +7,9 @@ import { teams, events, teamMonthlyPoints } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Endpoint para salvar dados de pontuações mensais
-  app.post("/api/salvar-dados", async (req, res) => {
-    try {
-      const { month, data } = req.body;
-      if (!month || !data) {
-        return res.status(400).json({ message: "Mês e dados são obrigatórios" });
-      }
-      
-      console.log(`Salvando dados para o mês: ${month}`, data);
-      
-      // Formatar mês/ano como esperado pelo banco
-      const year = new Date().getFullYear();
-      const monthYear = `${month.toUpperCase()}_${year}`;
-      
-      // Obter todas as equipes primeiro
-      const allTeams = await storage.getTeams();
-      
-      // Para cada equipe nos dados, atualizar seus pontos mensais no banco de dados
-      for (const teamKey in data) {
-        const teamName = teamKey.charAt(0).toUpperCase() + teamKey.slice(1); // Capitalizar primeira letra
-        const team = allTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
-        
-        if (team) {
-          const pontos = data[teamKey].pontos;
-          console.log(`Salvando pontos da equipe ${teamName} (${team.id}) para o mês ${month}: ${pontos}`);
-          
-          // Verificar se já existe um registro para esta equipe neste mês
-          const existingPoints = await db.select()
-            .from(teamMonthlyPoints)
-            .where(and(
-              eq(teamMonthlyPoints.teamId, team.id),
-              eq(teamMonthlyPoints.monthYear, monthYear)
-            ));
-          
-          if (existingPoints.length > 0) {
-            // Atualizar o registro existente
-            const pointId = existingPoints[0].id;
-            console.log(`Atualizando registro existente ${pointId} para equipe ${team.name} no mês ${month}`);
-            
-            await db.update(teamMonthlyPoints)
-              .set({ points: pontos })
-              .where(eq(teamMonthlyPoints.id, pointId));
-          } else {
-            // Criar um novo registro
-            console.log(`Criando novo registro para equipe ${team.name} no mês ${month}`);
-            
-            await db.insert(teamMonthlyPoints).values({
-              teamId: team.id,
-              monthYear: monthYear,
-              points: pontos
-            });
-          }
-        } else {
-          console.warn(`Equipe não encontrada para atualização: ${teamName}`);
-        }
-      }
-      
-      res.json({ 
-        success: true, 
-        message: `Dados para o mês ${month} salvos com sucesso no banco de dados.` 
-      });
-    } catch (error: any) {
-      console.error("Erro ao salvar dados:", error);
-      res.status(500).json({ message: error.message || "Erro ao salvar dados" });
-    }
-  });
   // API Routes
   // Teams
-  app.get("/api/teams", async (req, res) => {
+  app.get("/api/teams", async (req: Request, res: Response) => {
     try {
       // Extrair o mês da query string, se fornecido
       const month = req.query.month as string | undefined;
@@ -242,6 +176,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
         officersInvolved: event.officersInvolved,
         createdBy: event.createdBy,
         eventDate: event.eventDate,
+        monthYear: event.monthYear,
         createdAt: event.createdAt
       });
     } catch (error: any) {
@@ -398,6 +333,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
       console.log('Dados recebidos:', req.body);
       
       const { teamId, type, description, points, eventDate } = req.body;
+      const oldPoints = event.points;
       
       // Validações básicas
       if (teamId) {
@@ -424,11 +360,117 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Atualizar o evento
       const updatedEvent = await storage.updateEvent(id, updateData);
       
+      // Se os pontos foram alterados, atualizar a tabela de pontos mensais
+      if (points !== undefined && points !== oldPoints) {
+        // Obter o mês/ano deste evento
+        const monthYear = event.monthYear;
+        
+        // Buscar o registro de pontos mensais para esta equipe
+        const teamId = event.teamId;
+        
+        // Verificar se já existe um registro para esta equipe neste mês
+        const existingPoints = await db.select()
+          .from(teamMonthlyPoints)
+          .where(and(
+            eq(teamMonthlyPoints.teamId, teamId),
+            eq(teamMonthlyPoints.monthYear, monthYear)
+          ));
+        
+        if (existingPoints.length > 0) {
+          // Calcular a diferença de pontos
+          const pointsDiff = points - oldPoints;
+          // Calcular novo valor
+          const currentTotal = existingPoints[0].points;
+          // Calcular novo total somando a diferença (pode ser positiva ou negativa)
+          let newTotal;
+          
+          // Verificar se os pontos mensais atuais são conhecidos
+          if (currentTotal !== undefined && currentTotal !== null) {
+            newTotal = currentTotal + pointsDiff;
+            console.log(`Atualizando pontos mensais da equipe ${teamId} para ${monthYear}: ${currentTotal} + ${pointsDiff} = ${newTotal}`);
+          } else {
+            // Se por algum motivo não conseguirmos obter os pontos atuais, atribuir diretamente o novo valor
+            newTotal = pointsDiff;
+            console.log(`Definindo pontos diretamente para ${newTotal}`);
+          }
+          
+          // Garantir que não seja negativo
+          newTotal = Math.max(0, newTotal);
+          
+          // Atualizar o registro
+          const pointId = existingPoints[0].id;
+          await db.update(teamMonthlyPoints)
+            .set({ points: newTotal })
+            .where(eq(teamMonthlyPoints.id, pointId));
+            
+          console.log(`Atualizando registro existente ${pointId} para pontos = ${newTotal}`);
+        }
+      }
+      
       console.log('Evento atualizado com sucesso:', updatedEvent);
       res.json(updatedEvent);
     } catch (error: any) {
       console.error("Erro ao atualizar evento:", error);
       res.status(500).json({ message: error.message || "Erro ao atualizar evento" });
+    }
+  });
+
+  // Endpoint para excluir um evento
+  app.delete("/api/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+      
+      // Verificar se o evento existe
+      const event = await storage.getEvent(id);
+      if (!event) {
+        return res.status(404).json({ message: "Evento não encontrado" });
+      }
+      
+      // Capturar informações necessárias antes de excluir
+      const { teamId, points, monthYear } = event;
+      
+      // Excluir o evento
+      const success = await storage.deleteEvent(id);
+      if (!success) {
+        return res.status(500).json({ message: "Falha ao excluir evento" });
+      }
+      
+      // Atualizar os pontos mensais da equipe
+      if (monthYear) {
+        try {
+          // Verificar se existe um registro para esta equipe neste mês
+          const existingPoints = await db.select()
+            .from(teamMonthlyPoints)
+            .where(and(
+              eq(teamMonthlyPoints.teamId, teamId),
+              eq(teamMonthlyPoints.monthYear, monthYear)
+            ));
+          
+          if (existingPoints.length > 0) {
+            // Atualizar o registro existente, subtraindo os pontos
+            const pointId = existingPoints[0].id;
+            const currentPoints = existingPoints[0].points;
+            const newPoints = Math.max(0, currentPoints - points); // Nunca permitir pontos negativos
+            
+            console.log(`Atualizando pontos mensais da equipe ${teamId} para ${monthYear}: ${currentPoints} - ${points} = ${newPoints}`);
+            
+            await db.update(teamMonthlyPoints)
+              .set({ points: newPoints })
+              .where(eq(teamMonthlyPoints.id, pointId));
+          }
+        } catch (error) {
+          console.error('Erro ao atualizar pontos mensais após exclusão de evento:', error);
+          // Não falhar completamente se apenas a atualização de pontos falhar
+        }
+      }
+      
+      res.json({ success: true, message: "Evento excluído com sucesso" });
+    } catch (error: any) {
+      console.error("Erro ao excluir evento:", error);
+      res.status(500).json({ message: error.message || "Erro ao excluir evento" });
     }
   });
 
@@ -502,152 +544,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  // Reset API - para zerar eventos e pontos
+  // Reset API - para zerar eventos e pontos do mês atual
   app.post("/api/reset", async (req, res) => {
     try {
       const { month } = req.body;
-      
-      if (month) {
-        // Se um mês foi especificado, zerar apenas os eventos desse mês
-        console.log(`Zerando dados apenas para o mês: ${month}`);
-        const year = new Date().getFullYear();
-        const monthYear = `${month.toUpperCase()}_${year}`;
-        
-        // Buscar todos os eventos deste mês
-        const allEvents = await storage.getEvents();
-        const eventsToDelete = allEvents.filter(event => event.monthYear === monthYear);
-        
-        console.log(`Encontrados ${eventsToDelete.length} eventos para excluir do mês ${month}`);
-        
-        // Excluir os eventos do banco um por um
-        for (const event of eventsToDelete) {
-          try {
-            // Vamos apenas excluir sem alterar os pontos
-            await db.delete(events).where(eq(events.id, event.id));
-            console.log(`Evento ID ${event.id} excluído com sucesso`);
-          } catch (err) {
-            console.error(`Erro ao excluir evento ${event.id}:`, err);
-          }
-        }
-        
-        // Zerar ou criar registros mensais de pontos
-        const allTeams = await storage.getTeams();
-        
-        // Para cada equipe, atualizar ou criar o registro de pontos mensais
-        for (const team of allTeams) {
-          console.log(`Zerando pontos mensais da equipe ${team.name} (${team.id}) para ${monthYear}`);
-          
-          // Verificar se já existe um registro para esta equipe neste mês
-          const existingPoints = await db.select()
-            .from(teamMonthlyPoints)
-            .where(and(
-              eq(teamMonthlyPoints.teamId, team.id),
-              eq(teamMonthlyPoints.monthYear, monthYear)
-            ));
-          
-          if (existingPoints.length > 0) {
-            // Atualizar o registro existente para pontos = 0
-            const pointId = existingPoints[0].id;
-            console.log(`Atualizando registro existente ${pointId} para pontos = 0`);
-            
-            await db.update(teamMonthlyPoints)
-              .set({ points: 0 })
-              .where(eq(teamMonthlyPoints.id, pointId));
-          } else {
-            // Criar um novo registro com pontos = 0
-            console.log(`Criando novo registro mensal com pontos = 0`);
-            
-            await db.insert(teamMonthlyPoints).values({
-              teamId: team.id,
-              monthYear: monthYear,
-              points: 0
-            });
-          }
-        }
-        
-        // Buscar as equipes atualizadas para enviar na resposta
-        const updatedTeams = await storage.getTeams();
-        
-        res.json({ 
-          success: true, 
-          message: `Todos os eventos do mês de ${month} foram excluídos e os pontos zerados.`,
-          monthReset: month,
-          teams: updatedTeams
-        });
-      } else {
-        // Se nenhum mês foi especificado, resetar todos os dados
-        await storage.resetAllData();
-        
-        // Limpar também a tabela de pontos mensais
-        await db.delete(teamMonthlyPoints);
-        console.log("Todos os registros de pontos mensais foram limpos");
-        
-        // Buscar as equipes atualizadas para enviar na resposta
-        const updatedTeams = await storage.getTeams();
-        
-        res.json({ 
-          success: true, 
-          message: "Todos os eventos foram excluídos e os pontos zerados.",
-          teams: updatedTeams
-        });
-      }
-    } catch (error: any) {
-      console.error("Erro ao resetar dados:", error);
-      res.status(500).json({ message: error.message || "Erro ao resetar dados" });
-    }
-  });
-
-  // Authentication
-  app.post("/api/auth/login", async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      if (!username || !password) {
-        return res.status(400).json({ message: "Usuário e senha são obrigatórios" });
-      }
-      
-      const user = await storage.getUserByUsername(username);
-      if (!user || user.password !== password) {
-        return res.status(401).json({ message: "Credenciais inválidas" });
-      }
-      
-      // Não enviar a senha na resposta
-      const { password: _, ...userWithoutPassword } = user;
-      res.json(userWithoutPassword);
-    } catch (error: any) {
-      console.error("Erro no login:", error);
-      res.status(500).json({ message: error.message || "Erro no login" });
-    }
-  });
-  
-  // Logout
-  app.post("/api/auth/logout", (req, res) => {
-    try {
-      // Como estamos usando localStorage no cliente e não sessions no servidor,
-      // apenas respondemos com sucesso
-      res.json({ success: true });
-    } catch (error: any) {
-      console.error("Erro no logout:", error);
-      res.status(500).json({ message: error.message || "Erro no logout" });
-    }
-  });
-
-  // Endpoint para zerar pontos sem excluir eventos
-  app.post("/api/zero-points", async (req, res) => {
-    try {
-      const { month } = req.body;
+      console.log(`Zerando dados apenas para o mês: ${month}`);
       
       if (!month) {
-        return res.status(400).json({ message: "O mês é obrigatório" });
+        return res.status(400).json({ message: "Mês é obrigatório" });
       }
       
-      console.log(`Zerando pontos para o mês: ${month}`);
       const year = new Date().getFullYear();
       const monthYear = `${month.toUpperCase()}_${year}`;
       
-      // Obter todas as equipes
-      const allTeams = await storage.getTeams();
+      // 1. Excluir todos os eventos do mês
+      const allEvents = await storage.getEvents();
+      const eventsToDelete = allEvents.filter(event => event.monthYear === monthYear);
+      console.log(`Encontrados ${eventsToDelete.length} eventos para excluir do mês ${month}`);
       
-      // Para cada equipe, zerar os pontos para o mês específico
+      // Excluir cada evento individualmente
+      for (const event of eventsToDelete) {
+        const success = await storage.deleteEvent(event.id);
+        if (success) {
+          console.log(`Evento ID ${event.id} excluído com sucesso`);
+        } else {
+          console.error(`Falha ao excluir evento ID ${event.id}`);
+        }
+      }
+      
+      // 2. Zerar os pontos de todas as equipes para este mês
+      const allTeams = await storage.getTeams();
       for (const team of allTeams) {
         console.log(`Zerando pontos mensais da equipe ${team.name} (${team.id}) para ${monthYear}`);
         
@@ -679,20 +605,50 @@ export async function registerRoutes(app: Express): Promise<Server> {
         }
       }
       
-      // Buscar as equipes atualizadas para enviar na resposta
-      await db.query.teams.findMany();
-      
       res.json({ 
         success: true, 
-        message: `Pontos das equipes zerados para o mês de ${month}.` 
+        message: `Todos os eventos do mês de ${month} foram excluídos e os pontos das equipes foram zerados com sucesso.`
       });
     } catch (error: any) {
-      console.error("Erro ao zerar pontos:", error);
-      res.status(500).json({ message: error.message || "Erro ao zerar pontos" });
+      console.error("Erro ao resetar dados:", error);
+      res.status(500).json({ message: error.message || "Erro ao resetar dados" });
     }
   });
 
-  // Endpoint para salvar dados de forma permanente
+  // Endpoint para autenticação simples
+  app.post("/api/auth/login", async (req, res) => {
+    try {
+      const { username, password } = req.body;
+      
+      // Validações básicas
+      if (!username || !password) {
+        return res.status(400).json({ message: "Nome de usuário e senha são obrigatórios" });
+      }
+      
+      // Buscar usuário pelo nome de usuário
+      const user = await storage.getUserByUsername(username);
+      
+      // Verificar se o usuário existe e a senha está correta
+      if (!user) {
+        return res.status(401).json({ message: "Usuário não encontrado" });
+      }
+      
+      // Comparar senha (numa aplicação real, usaríamos bcrypt ou similar)
+      if (user.password !== password) {
+        return res.status(401).json({ message: "Senha incorreta" });
+      }
+      
+      // Retornar usuário sem a senha
+      const { password: _, ...userWithoutPassword } = user;
+      
+      res.json(userWithoutPassword);
+    } catch (error: any) {
+      console.error("Erro na autenticação:", error);
+      res.status(500).json({ message: error.message || "Erro na autenticação" });
+    }
+  });
+
+  // Endpoint para salvar os dados do mês atual
   app.post("/api/salvar-dados", async (req, res) => {
     try {
       const { month, data } = req.body;
@@ -705,34 +661,52 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const year = new Date().getFullYear();
       const monthYear = `${month.toUpperCase()}_${year}`;
       
-      // Processar os dados das equipes
-      if (data.alfa) {
-        const alfa = await storage.getTeamByName("Alfa");
-        if (alfa) {
-          console.log(`Salvando pontos da equipe Alfa (${alfa.id}) para o mês ${month}: ${data.alfa.pontos}`);
-          await storage.updateTeamMonthlyPoints(alfa.id, data.alfa.pontos, monthYear);
+      // Obter todas as equipes primeiro
+      const allTeams = await storage.getTeams();
+      
+      // Para cada equipe nos dados, atualizar seus pontos mensais no banco de dados
+      for (const teamKey in data) {
+        const teamName = teamKey.charAt(0).toUpperCase() + teamKey.slice(1); // Capitalizar primeira letra
+        const team = allTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
+        
+        if (team) {
+          const pontos = data[teamKey].pontos || 0;
+          console.log(`Salvando pontos da equipe ${teamName} (${team.id}) para o mês ${month}: ${pontos}`);
+          
+          // Verificar se já existe um registro para esta equipe neste mês
+          const existingPoints = await db.select()
+            .from(teamMonthlyPoints)
+            .where(and(
+              eq(teamMonthlyPoints.teamId, team.id),
+              eq(teamMonthlyPoints.monthYear, monthYear)
+            ));
+          
+          if (existingPoints.length > 0) {
+            // Atualizar o registro existente
+            const pointId = existingPoints[0].id;
+            console.log(`Atualizando registro existente ${pointId} para equipe ${team.name} no mês ${month}`);
+            
+            await db.update(teamMonthlyPoints)
+              .set({ points: pontos })
+              .where(eq(teamMonthlyPoints.id, pointId));
+          } else {
+            // Criar um novo registro
+            console.log(`Criando novo registro para equipe ${team.name} no mês ${month}`);
+            
+            await db.insert(teamMonthlyPoints).values({
+              teamId: team.id,
+              monthYear,
+              points: pontos
+            });
+          }
+        } else {
+          console.warn(`Equipe não encontrada para atualização: ${teamName}`);
         }
       }
       
-      if (data.bravo) {
-        const bravo = await storage.getTeamByName("Bravo");
-        if (bravo) {
-          console.log(`Salvando pontos da equipe Bravo (${bravo.id}) para o mês ${month}: ${data.bravo.pontos}`);
-          await storage.updateTeamMonthlyPoints(bravo.id, data.bravo.pontos, monthYear);
-        }
-      }
-      
-      if (data.charlie) {
-        const charlie = await storage.getTeamByName("Charlie");
-        if (charlie) {
-          console.log(`Salvando pontos da equipe Charlie (${charlie.id}) para o mês ${month}: ${data.charlie.pontos}`);
-          await storage.updateTeamMonthlyPoints(charlie.id, data.charlie.pontos, monthYear);
-        }
-      }
-      
-      res.json({
-        success: true,
-        message: `Dados para o mês de ${month} foram salvos com sucesso!`
+      res.json({ 
+        success: true, 
+        message: `Dados para o mês ${month} salvos com sucesso no banco de dados.` 
       });
     } catch (error: any) {
       console.error("Erro ao salvar dados:", error);
