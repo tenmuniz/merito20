@@ -55,6 +55,9 @@ function criarModalLogin() {
                         <div class="form-buttons">
                             <button id="submitLoginBtn" type="button">Entrar</button>
                         </div>
+                        <div class="admin-reset" style="margin-top: 20px; text-align: center; font-size: 0.8em;">
+                            <a href="#" id="resetAdminBtn" style="color: #555; text-decoration: underline;">Resetar usuário admin (emergência)</a>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -84,6 +87,57 @@ function criarModalLogin() {
             fazerLogin();
         }
     });
+    
+    // Configurar o botão de reset do admin
+    const resetAdminBtn = document.getElementById('resetAdminBtn');
+    if (resetAdminBtn) {
+        resetAdminBtn.addEventListener('click', async function(e) {
+            e.preventDefault();
+            
+            if (confirm('ATENÇÃO: Você está prestes a resetar o usuário administrador.\n\nEsta ação irá restaurar as credenciais padrão:\n- Usuário: admin\n- Senha: admin123\n\nDeseja continuar?')) {
+                try {
+                    // Mostrar feedback
+                    resetAdminBtn.textContent = 'Processando...';
+                    resetAdminBtn.style.color = '#888';
+                    
+                    // Chamar o endpoint de reset
+                    const response = await fetch('/api/reset-admin');
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        
+                        // Exibir informação de sucesso
+                        document.getElementById('loginError').textContent = '✅ Admin resetado com sucesso!';
+                        document.getElementById('loginError').style.color = 'green';
+                        document.getElementById('loginError').style.display = 'block';
+                        
+                        // Restaurar valores padrão nos campos
+                        document.getElementById('username').value = 'admin';
+                        document.getElementById('password').value = 'admin123';
+                        
+                        // Restaurar botão de reset
+                        setTimeout(() => {
+                            resetAdminBtn.textContent = 'Resetar usuário admin (emergência)';
+                            resetAdminBtn.style.color = '#555';
+                        }, 2000);
+                    } else {
+                        throw new Error('Falha ao resetar admin');
+                    }
+                } catch (error) {
+                    console.error('Erro ao resetar admin:', error);
+                    
+                    // Mostrar erro
+                    document.getElementById('loginError').textContent = 'Erro ao resetar admin: ' + error.message;
+                    document.getElementById('loginError').style.color = 'red';
+                    document.getElementById('loginError').style.display = 'block';
+                    
+                    // Restaurar botão
+                    resetAdminBtn.textContent = 'Resetar usuário admin (emergência)';
+                    resetAdminBtn.style.color = '#555';
+                }
+            }
+        });
+    }
 }
 
 async function fazerLogin() {
