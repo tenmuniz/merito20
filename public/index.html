@@ -436,6 +436,29 @@
             color: white;
         }
         
+        /* Estilos para botões de edição nas linhas da tabela */
+        .actions-cell {
+            text-align: center;
+            width: 100px;
+        }
+        
+        .edit-event-btn {
+            background: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 4px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.8rem;
+            transition: all 0.3s ease;
+        }
+        
+        .edit-event-btn:hover {
+            background: #388E3C;
+            transform: translateY(-2px);
+            box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+        }
+        
         /* Estilos do pódio - Versão melhorada 3D */
         .podium-section {
             display: flex;
@@ -2039,6 +2062,7 @@
                 const registryDate = new Date(event.createdAt);
                 const registryDateFormatted = `${registryDate.toLocaleDateString('pt-BR')}`;
                 
+                // Criar células principais
                 row.innerHTML = `
                     <td>${getTeamNameById(event.teamId)}</td>
                     <td>${event.type}</td>
@@ -2046,10 +2070,30 @@
                     <td><strong>${event.points}</strong></td>
                     <td>${eventDateFormatted}</td>
                     <td>${registryDateFormatted}</td>
+                    <td class="actions-cell">
+                        <button class="edit-event-btn" title="Editar evento">
+                            <i class="fas fa-edit"></i> Editar
+                        </button>
+                    </td>
                 `;
                 
-                // Adicionar evento de clique para mostrar detalhes
-                row.addEventListener('click', () => showEventDetails(event));
+                // Adicionar evento de clique na linha para mostrar detalhes
+                row.addEventListener('click', (e) => {
+                    // Ignorar clique se foi no botão de editar
+                    if (e.target.closest('.edit-event-btn')) {
+                        e.stopPropagation();
+                        return;
+                    }
+                    showEventDetails(event);
+                });
+                
+                // Adicionar evento de clique no botão editar para abrir o modal de edição diretamente
+                const editBtn = row.querySelector('.edit-event-btn');
+                editBtn.addEventListener('click', (e) => {
+                    e.stopPropagation(); // Evitar que o clique propague para a linha
+                    currentEvent = event; // Definir o evento atual
+                    openEditModal(); // Abrir diretamente o modal de edição
+                });
                 
                 tableBody.appendChild(row);
             }
