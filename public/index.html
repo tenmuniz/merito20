@@ -3033,22 +3033,26 @@
                 "DEZEMBRO": savedMonthDataFromStorage["DEZEMBRO"] || null
             };
             
-            // Função simplificada para salvar dados no localStorage
+            // Função aprimorada para salvar dados no localStorage
             function salvarDados() {
                 // Sempre salve os dados do mês atual
                 if (currentMonth && currentMonthData) {
+                    // Deep copy para evitar referências
                     savedMonthData[currentMonth] = JSON.parse(JSON.stringify(currentMonthData));
                 }
                 
                 // Salvar todos os meses no localStorage
                 localStorage.setItem('dadosMeses', JSON.stringify(savedMonthData));
                 console.log(`Dados SALVOS no localStorage. Mês atual: ${currentMonth}`);
+                
+                // Verificar e salvar para o banco de dados posteriormente
+                localStorage.setItem(`pontuacao_${currentMonth}`, JSON.stringify(currentMonthData));
             }
             
             // Função para salvar e mostrar mensagem de confirmação
             function salvarEConfirmar() {
                 salvarDados();
-                alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
+                alert(`✅ Dados do mês ${currentMonth} salvos com sucesso! Cada mês possui sua pontuação independente.`);
             }
             
             // Flag para controlar se estamos no processo de mudança de mês
