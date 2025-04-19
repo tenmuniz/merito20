@@ -475,7 +475,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint simplificado apenas para zerar os pontos das equipes
-  app.post("/api/zero-points", async (req, res) => {
+  app.post("/api/zero-points", async (req: Request, res: Response) => {
     try {
       const { month } = req.body;
       console.log(`Zerando pontos para o mês: ${month}`);
@@ -545,7 +545,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Reset API - para zerar eventos e pontos do mês atual
-  app.post("/api/reset", async (req, res) => {
+  app.post("/api/reset", async (req: Request, res: Response) => {
     try {
       const { month } = req.body;
       console.log(`Zerando dados apenas para o mês: ${month}`);
@@ -616,7 +616,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint para autenticação simples
-  app.post("/api/auth/login", async (req, res) => {
+  app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
       const { username, password } = req.body;
       
@@ -649,7 +649,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint para salvar os dados do mês atual
-  app.post("/api/salvar-dados", async (req, res) => {
+  app.post("/api/salvar-dados", async (req: Request, res: Response) => {
     try {
       const { month, data } = req.body;
       
