@@ -130,6 +130,7 @@ export class PostgresStorage implements IStorage {
     let teamChanged = false;
     let oldTeamId = event.teamId;
     let pointsDiff = 0;
+    let monthYear = event.monthYear; // Mês/ano atual do evento
     
     if (eventData.points !== undefined && eventData.points !== event.points) {
       pointsChanged = true;
@@ -140,19 +141,58 @@ export class PostgresStorage implements IStorage {
       teamChanged = true;
     }
     
-    // Se a equipe mudou, remover pontos da equipe antiga
+    // Se houver mudança na data do evento, pode ser necessário atualizar o mês/ano
+    if (eventData.eventDate) {
+      // Determinar o mês e ano da nova data
+      const newDate = new Date(eventData.eventDate);
+      const months = ['JANEIRO', 'FEVEREIRO', 'MARÇO', 'ABRIL', 'MAIO', 'JUNHO', 
+                     'JULHO', 'AGOSTO', 'SETEMBRO', 'OUTUBRO', 'NOVEMBRO', 'DEZEMBRO'];
+      const newMonth = months[newDate.getMonth()];
+      const newYear = newDate.getFullYear();
+      const newMonthYear = `${newMonth}_${newYear}`;
+      
+      // Se o mês/ano mudou, precisamos ajustar os pontos nos dois períodos
+      if (newMonthYear !== monthYear) {
+        console.log(`Alterando evento do mês/ano ${monthYear} para ${newMonthYear}`);
+        
+        // Remover os pontos do mês/ano antigo
+        await this.updateTeamMonthlyPoints(oldTeamId, -event.points, monthYear);
+        
+        // Adicionar pontos no novo mês/ano
+        const pointsToAdd = eventData.points !== undefined ? eventData.points : event.points;
+        await this.updateTeamMonthlyPoints(
+          eventData.teamId !== undefined ? eventData.teamId : oldTeamId, 
+          pointsToAdd, 
+          newMonthYear
+        );
+        
+        // Atualizar o monthYear do evento
+        eventData.monthYear = newMonthYear;
+        
+        // Como já atualizamos os pontos, não precisamos fazer as atualizações abaixo
+        const updatedEvent = await db
+          .update(events)
+          .set(eventData)
+          .where(eq(events.id, id))
+          .returning();
+        
+        return updatedEvent[0];
+      }
+    }
+    
+    // Se a equipe mudou dentro do mesmo período, remover pontos da equipe antiga
     if (teamChanged) {
-      await this.updateTeamPoints(oldTeamId, -event.points);
+      await this.updateTeamMonthlyPoints(oldTeamId, -event.points, monthYear);
     } 
-    // Se apenas os pontos mudaram, ajustar a diferença
+    // Se apenas os pontos mudaram, ajustar a diferença na mesma equipe
     else if (pointsChanged) {
-      await this.updateTeamPoints(event.teamId, pointsDiff);
+      await this.updateTeamMonthlyPoints(event.teamId, pointsDiff, monthYear);
     }
     
     // Se a equipe mudou, adicionar pontos à nova equipe
     if (teamChanged && eventData.teamId !== undefined) {
       const pointsToAdd = eventData.points !== undefined ? eventData.points : event.points;
-      await this.updateTeamPoints(eventData.teamId, pointsToAdd);
+      await this.updateTeamMonthlyPoints(eventData.teamId, pointsToAdd, monthYear);
     }
     
     // Atualizar o evento no banco de dados, preservando createdAt
@@ -165,12 +205,59 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
   
+  // Método auxiliar para atualizar pontos mensais de uma equipe
+  private async updateTeamMonthlyPoints(teamId: number, pointsToAdd: number, monthYear: string): Promise<void> {
+    console.log(`Atualizando pontos mensais da equipe ${teamId} para ${monthYear}: ? + ${pointsToAdd} = ?`);
+    
+    // Verificar se já existe um registro para esta equipe neste mês
+    const existingPoints = await db.select()
+      .from(teamMonthlyPoints)
+      .where(and(
+        eq(teamMonthlyPoints.teamId, teamId),
+        eq(teamMonthlyPoints.monthYear, monthYear)
+      ));
+    
+    // Atualizar ou criar registro
+    if (existingPoints.length > 0) {
+      // Atualizar registro existente
+      const currentPoints = existingPoints[0].points;
+      const newPoints = Math.max(0, currentPoints + pointsToAdd); // Evitar pontos negativos
+      
+      console.log(`Atualizando registro existente ${existingPoints[0].id} para pontos = ${newPoints}`);
+      
+      await db.update(teamMonthlyPoints)
+        .set({ points: newPoints })
+        .where(eq(teamMonthlyPoints.id, existingPoints[0].id));
+    } else {
+      // Criar novo registro
+      const newPoints = Math.max(0, pointsToAdd); // Evitar pontos negativos
+      
+      // Buscar o nome da equipe
+      const team = await this.getTeam(teamId);
+      const teamName = team ? team.name : 'Desconhecida';
+      
+      console.log(`Criando novo registro para equipe ${teamName} no mês ${monthYear} com ${newPoints} pontos`);
+      
+      await db.insert(teamMonthlyPoints)
+        .values({
+          teamId,
+          monthYear,
+          points: newPoints
+        });
+    }
+  }
+  
   async deleteEvent(id: number): Promise<boolean> {
     const event = await this.getEvent(id);
     if (!event) return false;
 
-    // Remover os pontos da equipe
-    await this.updateTeamPoints(event.teamId, -event.points);
+    // Remover os pontos da equipe no mês correspondente
+    if (event.monthYear) {
+      await this.updateTeamMonthlyPoints(event.teamId, -event.points, event.monthYear);
+    } else {
+      // Fallback para o método antigo se não tiver monthYear
+      await this.updateTeamPoints(event.teamId, -event.points);
+    }
     
     // Excluir o evento
     const result = await db.delete(events).where(eq(events.id, id)).returning();
