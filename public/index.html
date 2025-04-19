@@ -1581,6 +1581,7 @@
                         <th>Pontos</th>
                         <th>Data do Evento</th>
                         <th>Registro</th>
+                        <th>Ações</th>
                     </tr>
                 </thead>
                 <tbody id="eventsTableBody">
@@ -2137,69 +2138,27 @@
                     <td>${eventDateFormatted}</td>
                     <td>${registryDateFormatted}</td>
                     <td class="actions-cell">
-                        <button class="edit-event-btn" title="Editar evento">
-                            <i class="fas fa-edit"></i> Editar
+                        <button class="view-event-btn" data-id="${event.id}" title="Ver detalhes">
+                            Ver
                         </button>
-                        ${isAdmin ? `
-                        <button class="delete-event-btn" title="Excluir evento" data-id="${event.id}">
-                            <i class="fas fa-trash-alt"></i>
-                        </button>` : ''}
                     </td>
                 `;
                 
                 // Adicionar evento de clique na linha para mostrar detalhes
                 row.addEventListener('click', (e) => {
-                    // Ignorar clique se foi no botão de editar
-                    if (e.target.closest('.edit-event-btn')) {
-                        e.stopPropagation();
+                    // Ignorar clique se foi em um botão específico
+                    if (e.target.closest('button')) {
                         return;
                     }
                     showEventDetails(event);
                 });
                 
-                // Adicionar evento de clique no botão editar para abrir o modal de edição diretamente
-                const editBtn = row.querySelector('.edit-event-btn');
-                editBtn.addEventListener('click', (e) => {
-                    e.stopPropagation(); // Evitar que o clique propague para a linha
-                    currentEvent = event; // Definir o evento atual
-                    openEditModal(); // Abrir diretamente o modal de edição
-                });
-                
-                // Adicionar evento de clique no botão excluir
-                const deleteBtn = row.querySelector('.delete-event-btn');
-                if (deleteBtn) {
-                    deleteBtn.addEventListener('click', async (e) => {
+                // Adicionar evento de clique no botão "Ver"
+                const viewBtn = row.querySelector('.view-event-btn');
+                if (viewBtn) {
+                    viewBtn.addEventListener('click', (e) => {
                         e.stopPropagation(); // Evitar que o clique propague para a linha
-                        
-                        if (confirm(`Tem certeza que deseja excluir este evento de ${event.type}?`)) {
-                            try {
-                                const response = await fetch(`/api/events/${event.id}`, {
-                                    method: 'DELETE'
-                                });
-                                
-                                if (!response.ok) {
-                                    throw new Error('Falha ao excluir evento');
-                                }
-                                
-                                // Mostrar mensagem de sucesso
-                                const mensagemSucesso = document.getElementById('mensagemSucesso');
-                                if (mensagemSucesso) {
-                                    mensagemSucesso.textContent = 'Evento excluído com sucesso!';
-                                    mensagemSucesso.style.display = 'block';
-                                    setTimeout(() => {
-                                        mensagemSucesso.style.display = 'none';
-                                    }, 3000);
-                                }
-                                
-                                // Recarregar dados
-                                const mesAtual = document.getElementById('mesAtual').textContent;
-                                await fetchTeams(mesAtual);
-                                await fetchEvents(mesAtual);
-                            } catch (error) {
-                                console.error('Erro ao excluir evento:', error);
-                                alert('Erro ao excluir evento: ' + error.message);
-                            }
-                        }
+                        showEventDetails(event); // Mostrar detalhes do evento
                     });
                 }
                 
@@ -2264,8 +2223,11 @@
             }
             
             // Mostrar ações de edição apenas para administradores
-            // (Verificar se o botão de adicionar evento está visível, o que indica que o usuário é admin)
-            if (document.getElementById('addEventBtn').style.display === 'block') {
+            // Verificamos se o botão de adicionar evento está visível (que indica admin)
+            const addEventBtn = document.getElementById('addEventBtn');
+            const isUserAdmin = addEventBtn && (addEventBtn.style.display === 'inline-flex' || addEventBtn.style.display === 'block');
+            
+            if (isUserAdmin) {
                 detailActions.style.display = 'block';
             } else {
                 detailActions.style.display = 'none';
