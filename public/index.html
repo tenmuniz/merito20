@@ -2496,8 +2496,20 @@
                     throw new Error('Falha ao resetar dados');
                 }
                 
+                // Obter e processar a resposta do servidor
+                const responseData = await response.json();
+                console.log("Resposta do servidor após reset:", responseData);
+                
+                // Limpar a lista de eventos imediatamente
+                const eventsList = document.querySelector('.events-list');
+                if (eventsList) {
+                    eventsList.innerHTML = '<p class="no-events">Nenhum evento registrado para este mês.</p>';
+                }
+                
+                // Forçar atualização dos dados
+                await fetchEvents(); // Irá buscar eventos do servidor (que agora serão zero para este mês)
+                
                 // Criar dados zerados para o mês atual
-                // Definir pontuações como zero mas manter estrutura
                 const dadosZerados = {
                     "alfa": { pontos: 0, posicao: 3 },
                     "bravo": { pontos: 0, posicao: 1 },
@@ -2512,12 +2524,12 @@
                     window.savedMonthData[mesAtual] = JSON.parse(JSON.stringify(dadosZerados));
                 }
                 
-                // Salvar no localStorage para persistência
+                // Salvar no localStorage para persistência e no banco de dados via API
                 localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(dadosZerados));
                 localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData || {}));
                 
-                // Atualizar dados locais
-                currentMonthData = dadosZerados;
+                // Chamar salvarDados explicitamente para garantir persistência
+                salvarDados();
                 
                 // Recarregar a UI com os dados zerados
                 console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
