@@ -1975,6 +1975,37 @@
     </div>
     
 
+    <!-- Modal de Login Fixo -->
+    <div id="loginModal" class="login-modal">
+        <div class="login-modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Área Administrativa</h2>
+                <button id="closeLoginModal" class="close-button">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div id="loginForm">
+                    <div class="form-group">
+                        <label for="username">Usuário:</label>
+                        <input type="text" id="username" placeholder="Digite seu usuário" value="admin">
+                    </div>
+                    <div class="form-group">
+                        <label for="password">Senha:</label>
+                        <input type="password" id="password" placeholder="Digite sua senha" value="admin123">
+                    </div>
+                    <div id="loginError" style="color: red; margin-top: 10px; display: none;">
+                        Usuário ou senha incorretos!
+                    </div>
+                    <div class="form-buttons">
+                        <button id="submitLoginBtn" type="button">Entrar</button>
+                    </div>
+                    <div class="admin-reset" style="margin-top: 20px; text-align: center; font-size: 0.8em;">
+                        <a href="#" id="resetAdminBtn" style="color: #555; text-decoration: underline;">Resetar usuário admin (emergência)</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <footer>
         &copy; 2025 - 20ª CIPM - Sistema de Meritocracia
     </footer>

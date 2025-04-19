@@ -27,55 +27,21 @@ document.addEventListener('DOMContentLoaded', function() {
 
 function criarModalLogin() {
     // Verificar se o modal já existe
-    if (document.getElementById('loginModal')) {
+    const modal = document.getElementById('loginModal');
+    if (!modal) {
+        console.error("Modal de login não encontrado no DOM, verifique o HTML");
         return;
     }
     
-    // Criar o modal
-    const modalHtml = `
-        <div id="loginModal" class="login-modal">
-            <div class="login-modal-content">
-                <div class="modal-header">
-                    <h2 class="modal-title">Área Administrativa</h2>
-                    <button id="closeLoginModal" class="close-button">&times;</button>
-                </div>
-                <div class="modal-body">
-                    <div id="loginForm">
-                        <div class="form-group">
-                            <label for="username">Usuário:</label>
-                            <input type="text" id="username" placeholder="Digite seu usuário" value="admin">
-                        </div>
-                        <div class="form-group">
-                            <label for="password">Senha:</label>
-                            <input type="password" id="password" placeholder="Digite sua senha" value="admin123">
-                        </div>
-                        <div id="loginError" style="color: red; margin-top: 10px; display: none;">
-                            Usuário ou senha incorretos!
-                        </div>
-                        <div class="form-buttons">
-                            <button id="submitLoginBtn" type="button">Entrar</button>
-                        </div>
-                        <div class="admin-reset" style="margin-top: 20px; text-align: center; font-size: 0.8em;">
-                            <a href="#" id="resetAdminBtn" style="color: #555; text-decoration: underline;">Resetar usuário admin (emergência)</a>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    `;
-    
-    // Adicionar o modal ao corpo da página
-    const modalContainer = document.createElement('div');
-    modalContainer.innerHTML = modalHtml;
-    document.body.appendChild(modalContainer);
+    console.log("Modal de login encontrado, configurando eventos...");
     
     // Configurar os eventos do modal
-    const modal = document.getElementById('loginModal');
     const closeBtn = document.getElementById('closeLoginModal');
     const submitBtn = document.getElementById('submitLoginBtn');
     
     closeBtn.addEventListener('click', function() {
-        modal.classList.remove('active');
+        modal.style.display = 'none';
+        console.log("Modal de login fechado");
     });
     
     submitBtn.addEventListener('click', fazerLogin);
@@ -369,6 +335,8 @@ function atualizarInterfaceNaoAutenticada() {
             if (loginModal) {
                 loginModal.style.display = 'flex';
                 console.log("✅ Modal de login exibido (modo não autenticado)");
+            } else {
+                console.error("❌ Erro: Modal de login não encontrado no DOM");
             }
         });
     }
@@ -398,6 +366,9 @@ function setupAdminButton() {
                 if (loginModal) {
                     loginModal.style.display = 'flex';
                     console.log("Modal de login exibido com display flex");
+                } else {
+                    console.error("❌ Erro: Modal de login não encontrado no DOM ao clicar no botão de login");
+                    alert("Erro ao abrir o login. Por favor, recarregue a página e tente novamente.");
                 }
             });
         }
