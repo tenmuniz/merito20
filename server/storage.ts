@@ -16,6 +16,9 @@ export interface IStorage {
   createTeam(team: InsertTeam): Promise<Team>;
   updateTeamPoints(id: number, points: number): Promise<Team | undefined>;
   
+  // Monthly points operations
+  updateTeamMonthlyPoints(teamId: number, points: number, monthYear: string): Promise<void>;
+  
   // Event operations
   getEvent(id: number): Promise<Event | undefined>;
   getEvents(): Promise<Event[]>;
@@ -121,6 +124,27 @@ export class MemStorage implements IStorage {
     this.teamsMap.set(id, team);
     
     return team;
+  }
+  
+  // Implementação para armazenamento em memória - apenas atualiza pontos da equipe
+  async updateTeamMonthlyPoints(teamId: number, points: number, monthYear: string): Promise<void> {
+    // No armazenamento em memória, apenas atualizamos os pontos da equipe diretamente
+    // Não implementamos o controle por mês, então é o mesmo que updateTeamPoints
+    // mas sem retornar o objeto da equipe
+    const team = await this.getTeam(teamId);
+    if (!team) return;
+    
+    console.log(`[MemStorage] Atualizando pontos da equipe ${team.name} (${teamId}) no mês ${monthYear} com ${points} pontos`);
+    
+    // No armazenamento em memória, não usamos monthYear, 
+    // mas podemos definir pontos diretamente
+    if (points >= 0) {  // Se for para definir pontos (não incrementar)
+      team.points = points;
+    } else {
+      team.points += points; // Se for negativo, subtrair pontos
+    }
+    
+    this.teamsMap.set(teamId, team);
   }
   
   // Event operations

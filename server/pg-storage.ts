@@ -205,8 +205,8 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
   
-  // Método auxiliar para atualizar pontos mensais de uma equipe
-  private async updateTeamMonthlyPoints(teamId: number, pointsToAdd: number, monthYear: string): Promise<void> {
+  // Método para atualizar pontos mensais de uma equipe
+  async updateTeamMonthlyPoints(teamId: number, pointsToAdd: number, monthYear: string): Promise<void> {
     console.log(`Atualizando pontos mensais da equipe ${teamId} para ${monthYear}: ? + ${pointsToAdd} = ?`);
     
     // Verificar se já existe um registro para esta equipe neste mês
@@ -221,7 +221,18 @@ export class PostgresStorage implements IStorage {
     if (existingPoints.length > 0) {
       // Atualizar registro existente
       const currentPoints = existingPoints[0].points;
-      const newPoints = Math.max(0, currentPoints + pointsToAdd); // Evitar pontos negativos
+      
+      // Se pointsToAdd é positivo e >= 100, significa que é uma atribuição direta (definir valor)
+      // em vez de um incremento, usado no endpoint salvar-dados
+      let newPoints;
+      if (pointsToAdd >= 0 && typeof pointsToAdd === 'number') {
+        // Definir pontos diretamente (usado pelo endpoint /api/salvar-dados)
+        console.log(`Definindo pontos diretamente para ${pointsToAdd}`);
+        newPoints = pointsToAdd;
+      } else {
+        // Incrementar pontos (comportamento padrão, usado por eventos)
+        newPoints = Math.max(0, currentPoints + pointsToAdd); // Evitar pontos negativos
+      }
       
       console.log(`Atualizando registro existente ${existingPoints[0].id} para pontos = ${newPoints}`);
       
@@ -230,7 +241,14 @@ export class PostgresStorage implements IStorage {
         .where(eq(teamMonthlyPoints.id, existingPoints[0].id));
     } else {
       // Criar novo registro
-      const newPoints = Math.max(0, pointsToAdd); // Evitar pontos negativos
+      let newPoints;
+      if (pointsToAdd >= 0 && typeof pointsToAdd === 'number') {
+        // Definir pontos diretamente
+        newPoints = pointsToAdd;
+      } else {
+        // Incrementar a partir de zero
+        newPoints = Math.max(0, pointsToAdd); // Evitar pontos negativos
+      }
       
       // Buscar o nome da equipe
       const team = await this.getTeam(teamId);
