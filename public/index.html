@@ -2496,14 +2496,24 @@
                     throw new Error('Falha ao resetar dados');
                 }
                 
-                // Limpar o cache do mês atual (se existir)
+                // Criar dados zerados para o mês atual
                 if (typeof savedMonthData !== 'undefined') {
-                    savedMonthData[mesAtual] = null;
+                    // Definir pontuações como zero mas manter estrutura
+                    savedMonthData[mesAtual] = {
+                        "alfa": { pontos: 0, posicao: 3 },
+                        "bravo": { pontos: 0, posicao: 1 },
+                        "charlie": { pontos: 0, posicao: 2 }
+                    };
+                    
+                    // Salvar no localStorage para persistência
+                    localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(savedMonthData[mesAtual]));
+                    salvarDados();
                 }
                 
                 // Recarregar apenas os dados do mês atual
-                console.log(`Recarregando apenas os dados do mês atual (${mesAtual})`);
-                await carregarDadosDoMes(mesAtual);
+                console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
+                currentMonthData = savedMonthData[mesAtual];
+                atualizarUIComDadosAtuais();
                 
                 alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso! Os dados dos outros meses permanecem intactos.`);
             } catch (error) {
