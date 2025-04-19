@@ -90,7 +90,12 @@ async function fazerLogin() {
     const username = document.getElementById('username').value;
     const password = document.getElementById('password').value;
     
+    // Mostrar feedback ao usuário
+    document.getElementById('loginError').style.display = 'none';
+    document.getElementById('submitLoginBtn').textContent = 'Autenticando...';
+    
     try {
+        // Sempre tentar autenticar via API, sem verificar localmente
         const response = await fetch('/api/auth/login', {
             method: 'POST',
             headers: {
@@ -99,6 +104,9 @@ async function fazerLogin() {
             body: JSON.stringify({ username, password })
         });
         
+        // Restaurar botão
+        document.getElementById('submitLoginBtn').textContent = 'Entrar';
+        
         if (response.ok) {
             const userData = await response.json();
             
@@ -106,7 +114,12 @@ async function fazerLogin() {
             localStorage.setItem('escalasUserData', JSON.stringify(userData));
             
             // Fechar o modal
-            document.getElementById('loginModal').classList.remove('active');
+            const loginModal = document.getElementById('loginModal');
+            if (loginModal.classList.contains('active')) {
+                loginModal.classList.remove('active');
+            } else {
+                loginModal.style.display = 'none';
+            }
             
             // Atualizar a UI para o estado autenticado
             atualizarInterfaceAutenticada();
@@ -131,10 +144,11 @@ async function fazerLogin() {
     }
 }
 
-// Função mantida para compatibilidade com código existente, mas não é mais usada diretamente
+// Função mantida para compatibilidade com código existente, mas sempre retorna true
+// para forçar a tentativa de login via API (mais seguro e funciona em todos os ambientes)
 function validarCredenciais(username, password) {
-    // Credenciais fixas para o administrador
-    return (username === 'admin' && password === 'admin123');
+    // Sempre tentar autenticar via servidor
+    return true;
 }
 
 async function logout() {
