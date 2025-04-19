@@ -33,8 +33,8 @@ function criarModalLogin() {
     
     // Criar o modal
     const modalHtml = `
-        <div id="loginModal" class="modal">
-            <div class="modal-content">
+        <div id="loginModal" class="login-modal">
+            <div class="login-modal-content">
                 <div class="modal-header">
                     <h2 class="modal-title">Área Administrativa</h2>
                     <button id="closeLoginModal" class="close-button">&times;</button>
@@ -227,6 +227,7 @@ async function logout() {
                 const loginModal = document.getElementById('loginModal');
                 if (loginModal) {
                     loginModal.style.display = 'flex';
+                    console.log("Modal de login exibido com display flex (onclick)");
                 }
             };
             console.log("✅ Botão de login atualizado para 'Área Administrativa'");
@@ -396,6 +397,7 @@ function setupAdminButton() {
                 const loginModal = document.getElementById('loginModal');
                 if (loginModal) {
                     loginModal.style.display = 'flex';
+                    console.log("Modal de login exibido com display flex");
                 }
             });
         }
