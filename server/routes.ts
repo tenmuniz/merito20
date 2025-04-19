@@ -645,6 +645,46 @@ export async function registerRoutes(app: Express): Promise<Server> {
       });
     }
   });
+  
+  // Endpoint ESPECIAL de emergência para forçar a criação do usuário admin
+  // Este endpoint deve ser chamado quando for impossível acessar o sistema
+  app.get("/api/reset-admin", async (_req: Request, res: Response) => {
+    try {
+      // 1. Verificar se o usuário admin já existe
+      let user = await storage.getUserByUsername('admin');
+      
+      // 2. Se existir, atualizar a senha
+      if (user) {
+        console.log(`🔄 Encontrado usuário admin com ID ${user.id}. Atualizando senha...`);
+        
+        // 2.1 Excluir o usuário existente da tabela
+        await db.delete(users).where(eq(users.id, user.id));
+        console.log(`🗑️ Usuário admin antigo excluído.`);
+      }
+      
+      // 3. Criar um novo usuário admin com a senha correta
+      const newAdmin = await db.insert(users).values({
+        username: "admin",
+        password: "admin123", // Em uma aplicação real, seria hashed
+        fullName: "Administrador",
+        isAdmin: true
+      }).returning();
+      
+      console.log(`✅ Novo usuário admin criado com ID ${newAdmin[0].id}.`);
+        
+      return res.json({
+        success: true,
+        message: "Usuário admin resetado com sucesso! Use: admin/admin123 para login",
+        id: newAdmin[0].id
+      });
+    } catch (error: any) {
+      console.error("Erro ao resetar admin:", error);
+      res.status(500).json({ 
+        error: true,
+        message: error.message || "Erro ao resetar admin"
+      });
+    }
+  });
 
   // Endpoint para autenticação simples
   app.post("/api/auth/login", async (req: Request, res: Response) => {
