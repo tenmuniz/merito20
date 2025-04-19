@@ -2728,8 +2728,19 @@
                 await fetchTeams(mesAtual);
                 await fetchEvents(mesAtual);
                 
-                // Atualizar a interface com os dados atualizados
-                atualizarUIComDadosAtuais();
+                // Atualizar a interface diretamente (não precisamos chamar atualizarUIComDadosAtuais)
+                // Zerar os pontos nos cards das equipes
+                document.getElementById('alfa-points').textContent = '0';
+                document.getElementById('bravo-points').textContent = '0';
+                document.getElementById('charlie-points').textContent = '0';
+                
+                // Atualizar posições no pódio
+                document.querySelector('.first-place .podium-team').textContent = 'ALFA';
+                document.querySelector('.first-place .podium-points').textContent = '0';
+                document.querySelector('.second-place .podium-team').textContent = 'BRAVO';
+                document.querySelector('.second-place .podium-points').textContent = '0';
+                document.querySelector('.third-place .podium-team').textContent = 'CHARLIE';
+                document.querySelector('.third-place .podium-points').textContent = '0';
                 
                 // Mostrar mensagem de sucesso
                 alert(`✅ Todos os dados do mês de ${mesAtual} foram zerados com sucesso!\n\nOs dados dos outros meses permaneceram intactos.`);
