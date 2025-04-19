@@ -12,7 +12,7 @@ export interface IStorage {
   // Team operations
   getTeam(id: number): Promise<Team | undefined>;
   getTeamByName(name: string): Promise<Team | undefined>;
-  getTeams(): Promise<Team[]>;
+  getTeams(month?: string): Promise<Team[]>;
   createTeam(team: InsertTeam): Promise<Team>;
   updateTeamPoints(id: number, points: number): Promise<Team | undefined>;
   

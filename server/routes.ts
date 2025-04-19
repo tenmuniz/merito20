@@ -294,9 +294,36 @@ export async function registerRoutes(app: Express): Promise<Server> {
         monthYear: monthYearValue
       });
       
-      // Removido: não atualizar os pontos da equipe aqui
-      // Os pontos já são atualizados dentro do método createEvent
-      // Isso estava causando dupla contagem dos pontos
+      // Atualizar pontuação mensal da equipe na nova tabela
+      // Verificar se já existe um registro para esta equipe neste mês
+      const existingPoints = await db.select()
+        .from(teamMonthlyPoints)
+        .where(and(
+          eq(teamMonthlyPoints.teamId, teamId),
+          eq(teamMonthlyPoints.monthYear, monthYearValue)
+        ));
+      
+      if (existingPoints.length > 0) {
+        // Atualizar o registro existente, somando os pontos
+        const pointId = existingPoints[0].id;
+        const currentPoints = existingPoints[0].points;
+        const newPoints = currentPoints + points;
+        
+        console.log(`Atualizando pontos mensais da equipe ${teamId} para ${monthYearValue}: ${currentPoints} + ${points} = ${newPoints}`);
+        
+        await db.update(teamMonthlyPoints)
+          .set({ points: newPoints })
+          .where(eq(teamMonthlyPoints.id, pointId));
+      } else {
+        // Criar um novo registro com os pontos do evento
+        console.log(`Criando novo registro mensal para equipe ${teamId} com ${points} pontos`);
+        
+        await db.insert(teamMonthlyPoints).values({
+          teamId,
+          monthYear: monthYearValue,
+          points: points
+        });
+      }
       
       res.status(201).json(newEvent);
     } catch (error: any) {
@@ -358,28 +385,62 @@ export async function registerRoutes(app: Express): Promise<Server> {
       const { month } = req.body;
       console.log(`Zerando pontos para o mês: ${month}`);
       
-      // Zerar pontos de todas as equipes, independente do mês
-      // Esta abordagem direta resolve o problema sem depender de cálculos complexos
+      if (!month) {
+        return res.status(400).json({ message: "Mês é obrigatório" });
+      }
+      
+      const year = new Date().getFullYear();
+      const monthYear = `${month.toUpperCase()}_${year}`;
       
       // Obter todas as equipes
       const allTeams = await storage.getTeams();
       
-      // Para cada equipe, definir pontos = 0
+      // Para cada equipe, atualizar ou criar o registro de pontos mensais
       for (const team of allTeams) {
-        console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
+        console.log(`Zerando pontos mensais da equipe ${team.name} (${team.id}) para ${monthYear}`);
         
-        // Atualizar diretamente no banco de dados para garantir que os pontos sejam zerados
-        await db.update(teams)
-          .set({ points: 0 })
-          .where(eq(teams.id, team.id));
+        // Verificar se já existe um registro para esta equipe neste mês
+        const existingPoints = await db.select()
+          .from(teamMonthlyPoints)
+          .where(and(
+            eq(teamMonthlyPoints.teamId, team.id),
+            eq(teamMonthlyPoints.monthYear, monthYear)
+          ));
+        
+        if (existingPoints.length > 0) {
+          // Atualizar o registro existente para pontos = 0
+          const pointId = existingPoints[0].id;
+          console.log(`Atualizando registro existente ${pointId} para pontos = 0`);
+          
+          await db.update(teamMonthlyPoints)
+            .set({ points: 0 })
+            .where(eq(teamMonthlyPoints.id, pointId));
+        } else {
+          // Criar um novo registro com pontos = 0
+          console.log(`Criando novo registro mensal com pontos = 0`);
+          
+          await db.insert(teamMonthlyPoints).values({
+            teamId: team.id,
+            monthYear: monthYear,
+            points: 0
+          });
+        }
       }
       
-      // Buscar as equipes atualizadas para enviar na resposta
-      const updatedTeams = await storage.getTeams();
+      // Buscar as equipes atualizadas com os pontos do mês específico
+      // Usando o método getTeams com o parâmetro month
+      let updatedTeams;
+      try {
+        updatedTeams = await storage.getTeams(month);
+      } catch (err) {
+        console.error("Erro ao buscar equipes atualizadas:", err);
+        // Fallback para buscar todas as equipes sem filtragem
+        updatedTeams = await storage.getTeams();
+      }
       
       res.json({ 
         success: true, 
-        message: `Pontos de todas as equipes zerados com sucesso.`,
+        message: `Pontos das equipes para o mês de ${month} zerados com sucesso.`,
         teams: updatedTeams
       });
     } catch (error: any) {
@@ -416,20 +477,39 @@ export async function registerRoutes(app: Express): Promise<Server> {
           }
         }
         
-        // Zerar pontos de todas as equipes, independente do mês
-        // Esta abordagem direta resolve o problema sem depender de cálculos complexos
-        
-        // Obter todas as equipes
+        // Zerar ou criar registros mensais de pontos
         const allTeams = await storage.getTeams();
         
-        // Para cada equipe, definir pontos = 0
+        // Para cada equipe, atualizar ou criar o registro de pontos mensais
         for (const team of allTeams) {
-          console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
+          console.log(`Zerando pontos mensais da equipe ${team.name} (${team.id}) para ${monthYear}`);
           
-          // Atualizar diretamente no banco de dados para garantir que os pontos sejam zerados
-          await db.update(teams)
-            .set({ points: 0 })
-            .where(eq(teams.id, team.id));
+          // Verificar se já existe um registro para esta equipe neste mês
+          const existingPoints = await db.select()
+            .from(teamMonthlyPoints)
+            .where(and(
+              eq(teamMonthlyPoints.teamId, team.id),
+              eq(teamMonthlyPoints.monthYear, monthYear)
+            ));
+          
+          if (existingPoints.length > 0) {
+            // Atualizar o registro existente para pontos = 0
+            const pointId = existingPoints[0].id;
+            console.log(`Atualizando registro existente ${pointId} para pontos = 0`);
+            
+            await db.update(teamMonthlyPoints)
+              .set({ points: 0 })
+              .where(eq(teamMonthlyPoints.id, pointId));
+          } else {
+            // Criar um novo registro com pontos = 0
+            console.log(`Criando novo registro mensal com pontos = 0`);
+            
+            await db.insert(teamMonthlyPoints).values({
+              teamId: team.id,
+              monthYear: monthYear,
+              points: 0
+            });
+          }
         }
         
         // Buscar as equipes atualizadas para enviar na resposta
@@ -444,6 +524,10 @@ export async function registerRoutes(app: Express): Promise<Server> {
       } else {
         // Se nenhum mês foi especificado, resetar todos os dados
         await storage.resetAllData();
+        
+        // Limpar também a tabela de pontos mensais
+        await db.delete(teamMonthlyPoints);
+        console.log("Todos os registros de pontos mensais foram limpos");
         
         // Buscar as equipes atualizadas para enviar na resposta
         const updatedTeams = await storage.getTeams();

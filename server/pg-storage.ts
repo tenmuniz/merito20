@@ -31,7 +31,45 @@ export class PostgresStorage implements IStorage {
     return result[0];
   }
 
-  async getTeams(): Promise<Team[]> {
+  async getTeams(month?: string): Promise<Team[]> {
+    if (month) {
+      const year = new Date().getFullYear();
+      const monthYear = `${month.toUpperCase()}_${year}`;
+      console.log(`Buscando pontos das equipes para o mês/ano: ${monthYear}`);
+      
+      // Buscar as equipes
+      const teamsResult = await db.select().from(teams);
+      
+      // Para cada equipe, buscar os pontos mensais
+      const teamsWithMonthlyPoints: Team[] = [];
+      
+      for (const team of teamsResult) {
+        // Buscar pontos mensais
+        const monthlyPointsResult = await db.select()
+          .from(teamMonthlyPoints)
+          .where(and(
+            eq(teamMonthlyPoints.teamId, team.id),
+            eq(teamMonthlyPoints.monthYear, monthYear)
+          ));
+        
+        // Criar uma cópia da equipe com os pontos do mês (ou 0 se não houver)
+        const teamWithMonthlyPoints: Team = {
+          ...team,
+          points: monthlyPointsResult.length > 0 ? monthlyPointsResult[0].points : 0
+        };
+        
+        if (monthlyPointsResult.length === 0) {
+          console.log(`Equipe ${team.name} não tem pontos registrados no mês ${month}`);
+        }
+        
+        teamsWithMonthlyPoints.push(teamWithMonthlyPoints);
+      }
+      
+      // Ordenar pelo campo points
+      return teamsWithMonthlyPoints.sort((a, b) => b.points - a.points);
+    }
+    
+    // Se não foi especificado mês, retornar todas as equipes com pontos totais
     return db.select().from(teams).orderBy(desc(teams.points));
   }
 
