@@ -1392,6 +1392,7 @@
                 <div class="slogan">"Guardiões da paz, escudos da justiça"</div>
             </div>
         </div>
+        <div id="mensagemSucesso" class="mensagem-sucesso">Operação realizada com sucesso!</div>
         <div class="header-buttons">
 
             <button id="loginBtn" class="login-button">
@@ -2451,9 +2452,9 @@
                     
                     // Botão de submit
                     const submitBtn = document.querySelector('#editForm button[type="submit"]');
-                    const originalBtnText = submitBtn ? submitBtn.textContent : 'Atualizar';
+                    const originalBtnText = submitBtn ? submitBtn.textContent : 'Atualizar Evento';
                     if (submitBtn) {
-                        submitBtn.textContent = 'Atualizando...';
+                        submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Atualizando...';
                         submitBtn.disabled = true;
                     }
             
@@ -2466,9 +2467,10 @@
                         const points = parseInt(document.getElementById('editEventPoints').value);
                 
                         console.log('Data do evento editado:', eventDateValue);
+                        console.log('Atualizando evento ID:', eventId);
                         
                         const response = await fetch(`/api/events/${eventId}`, {
-                            method: 'PUT',
+                            method: 'PATCH', // Método correto para atualização parcial
                             headers: {
                                 'Content-Type': 'application/json'
                             },
@@ -2482,16 +2484,35 @@
                         });
                         
                         if (!response.ok) {
-                            throw new Error('Falha ao atualizar evento');
+                            const errorData = await response.text();
+                            let errorMsg = 'Falha ao atualizar evento';
+                            try {
+                                const parsedError = JSON.parse(errorData);
+                                errorMsg = parsedError.message || errorMsg;
+                            } catch (e) {
+                                console.error('Erro ao parsear resposta de erro:', e);
+                            }
+                            throw new Error(errorMsg);
                         }
                         
                         document.getElementById('editModal').style.display = 'none';
                         
-                        // Recarregar dados uma única vez
-                        await fetchTeams();
-                        await fetchEvents();
+                        // Recarregar dados específicos do mês atual
+                        const mesAtual = document.getElementById('mesAtual').textContent;
+                        await fetchTeams(mesAtual);
+                        await fetchEvents(mesAtual);
                         
-                        alert('Evento atualizado com sucesso!');
+                        // Mostrar mensagem de sucesso temporária em vez de alert
+                        const mensagemSucesso = document.getElementById('mensagemSucesso');
+                        if (mensagemSucesso) {
+                            mensagemSucesso.textContent = 'Evento atualizado com sucesso!';
+                            mensagemSucesso.style.display = 'block';
+                            setTimeout(() => {
+                                mensagemSucesso.style.display = 'none';
+                            }, 3000);
+                        } else {
+                            console.log('Evento atualizado com sucesso!');
+                        }
                         
                     } catch (error) {
                         console.error('Erro ao atualizar evento:', error);
@@ -2499,7 +2520,7 @@
                     } finally {
                         // Restaurar o botão
                         if (submitBtn) {
-                            submitBtn.textContent = originalBtnText;
+                            submitBtn.innerHTML = originalBtnText;
                             submitBtn.disabled = false;
                         }
                         
