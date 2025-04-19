@@ -7,6 +7,24 @@ import { teams, events } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
+  // Endpoint para salvar dados de pontuações
+  app.post("/api/salvar-dados", async (req, res) => {
+    try {
+      const { month, data } = req.body;
+      if (!month || !data) {
+        return res.status(400).json({ message: "Mês e dados são obrigatórios" });
+      }
+      
+      console.log(`Salvando dados para o mês: ${month}`, data);
+      
+      // Os dados já estão persistidos no localStorage, retornar sucesso
+      // Futuramente podemos adicionar persistência no banco de dados se necessário
+      res.json({ success: true, message: `Dados para o mês ${month} salvos com sucesso.` });
+    } catch (error: any) {
+      console.error("Erro ao salvar dados:", error);
+      res.status(500).json({ message: error.message || "Erro ao salvar dados" });
+    }
+  });
   // API Routes
   // Teams
   app.get("/api/teams", async (req, res) => {

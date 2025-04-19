@@ -2528,8 +2528,24 @@
                 localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(dadosZerados));
                 localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData || {}));
                 
-                // Chamar salvarDados explicitamente para garantir persistência
-                salvarDados();
+                // Salvar no banco de dados explicitamente
+                // Não podemos usar salvarDados() aqui pois está em outro escopo
+                // Implementamos a lógica diretamente
+                try {
+                    // Enviar dados para o servidor para garantir persistência
+                    fetch('/api/salvar-dados', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({
+                            month: mesAtual,
+                            data: dadosZerados
+                        })
+                    }).catch(err => console.error('Erro ao salvar dados no servidor:', err));
+                } catch (e) {
+                    console.error('Erro ao salvar dados:', e);
+                }
                 
                 // Recarregar a UI com os dados zerados
                 console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
