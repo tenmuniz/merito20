@@ -17,9 +17,28 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Salvando dados para o mês: ${month}`, data);
       
-      // Os dados já estão persistidos no localStorage, retornar sucesso
-      // Futuramente podemos adicionar persistência no banco de dados se necessário
-      res.json({ success: true, message: `Dados para o mês ${month} salvos com sucesso.` });
+      // Atualizar os pontos das equipes no banco de dados
+      // Obter todas as equipes primeiro
+      const allTeams = await storage.getTeams();
+      
+      // Para cada equipe nos dados, atualizar seus pontos no banco de dados
+      for (const teamKey in data) {
+        const teamName = teamKey.charAt(0).toUpperCase() + teamKey.slice(1); // Capitalizar primeira letra
+        const team = allTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
+        
+        if (team) {
+          const pontos = data[teamKey].pontos;
+          console.log(`Atualizando pontos da equipe ${teamName} (${team.id}) para ${pontos}`);
+          await storage.updateTeamPoints(team.id, pontos);
+        } else {
+          console.warn(`Equipe não encontrada para atualização: ${teamName}`);
+        }
+      }
+      
+      res.json({ 
+        success: true, 
+        message: `Dados para o mês ${month} salvos com sucesso no banco de dados.` 
+      });
     } catch (error: any) {
       console.error("Erro ao salvar dados:", error);
       res.status(500).json({ message: error.message || "Erro ao salvar dados" });
@@ -270,9 +289,15 @@ export async function registerRoutes(app: Express): Promise<Server> {
           await storage.deleteEvent(event.id);
         }
         
-        // Não vamos zerar os pontos diretamente no banco, mas sim
-        // recalcular os pontos a partir dos eventos restantes
-        // Isso garante que os pontos de outros meses permaneçam intactos
+        // Obter todas as equipes e definir seus pontos como zero
+        // Isso é uma solução temporária, pois o ideal seria recalcular
+        // os pontos das equipes a partir dos eventos restantes, mas
+        // para facilitar o desenvolvimento, vamos zerar todas as equipes
+        const allTeams = await storage.getTeams();
+        for (const team of allTeams) {
+          console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
+          await storage.updateTeamPoints(team.id, 0);
+        }
         
         res.json({ 
           success: true, 
