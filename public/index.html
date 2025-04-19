@@ -2649,25 +2649,30 @@
                 return;
             }
             
+            // Obter o mês atual selecionado
             const mesAtual = document.getElementById('mesAtual').textContent;
-            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes. Os dados dos outros meses permanecerão intactos. Esta ação não pode ser desfeita. Deseja continuar?`)) {
+            
+            // Confirmar a ação com o usuário, destacando que apenas o mês atual será afetado
+            if (!confirm(`ATENÇÃO: Esta ação irá remover TODOS os eventos do mês de ${mesAtual} e zerar as pontuações das equipes.\n\nOs dados dos outros meses permanecerão intactos.\n\nEsta ação não pode ser desfeita. Deseja continuar?`)) {
                 return;
             }
             
             // Marcar que estamos realizando um reset
             isResetting = true;
             
-            // Obter o botão de reset e modificar seu texto
+            // Atualizar a aparência do botão
             const resetBtn = document.getElementById('resetBtn');
-            const originalBtnText = resetBtn ? resetBtn.textContent : 'Zerar Pontos';
+            const originalBtnText = resetBtn?.textContent || 'Zerar Pontos';
+            const originalBtnHTML = resetBtn?.innerHTML || '<span>🔄</span><span>Zerar Pontos</span>';
+            
             if (resetBtn) {
-                resetBtn.textContent = 'Zerando...';
+                resetBtn.innerHTML = '<span>⏳</span><span>Zerando...</span>';
                 resetBtn.disabled = true;
             }
             
             try {
-                // Primeiro, zerar os pontos diretamente usando o novo endpoint
-                console.log('Zerando pontos via /api/zero-points');
+                // PASSO 1: Zerar os pontos de todas as equipes para o mês atual
+                console.log(`Zerando pontos para o mês: ${mesAtual}`);
                 const zeroPointsResponse = await fetch('/api/zero-points', {
                     method: 'POST',
                     headers: {
@@ -2678,13 +2683,16 @@
                     })
                 });
                 
+                // Verificar se a resposta foi bem-sucedida
                 if (!zeroPointsResponse.ok) {
-                    throw new Error('Falha ao zerar pontos');
+                    const errorText = await zeroPointsResponse.text();
+                    console.error('Erro ao zerar pontos:', errorText);
+                    throw new Error('Falha ao zerar pontos das equipes');
                 }
                 
-                // Agora, excluir os eventos
-                console.log('Excluindo eventos via /api/reset');
-                const response = await fetch('/api/reset', {
+                // PASSO 2: Excluir todos os eventos do mês atual
+                console.log(`Excluindo eventos do mês: ${mesAtual}`);
+                const resetResponse = await fetch('/api/reset', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json'
@@ -2694,135 +2702,88 @@
                     })
                 });
                 
-                if (!response.ok) {
-                    throw new Error('Falha ao resetar dados');
+                // Verificar se a resposta foi bem-sucedida
+                if (!resetResponse.ok) {
+                    const errorText = await resetResponse.text();
+                    console.error('Erro ao resetar eventos:', errorText);
+                    throw new Error('Falha ao excluir eventos do mês');
                 }
                 
-                // Obter e processar a resposta do servidor
-                const responseData = await response.json();
-                console.log("Resposta do servidor após reset:", responseData);
+                // Processar a resposta do servidor
+                const resetData = await resetResponse.json();
+                console.log("Resposta do servidor após reset:", resetData);
                 
-                // Atualizar pontos das equipes na interface
-                if (responseData.teams && responseData.teams.length > 0) {
-                    // Atualizar os dados usando os valores retornados do servidor
-                    responseData.teams.forEach(team => {
-                        console.log(`Atualizando equipe ${team.name} com ${team.points} pontos`);
-                        if (team.name.toLowerCase() === 'alfa') {
-                            document.getElementById('alfa-points').textContent = team.points;
-                        } else if (team.name.toLowerCase() === 'bravo') {
-                            document.getElementById('bravo-points').textContent = team.points;
-                        } else if (team.name.toLowerCase() === 'charlie') {
-                            document.getElementById('charlie-points').textContent = team.points;
-                        }
-                    });
-                }
+                // PASSO 3: Atualizar interface imediatamente sem esperar 
+                // por nova consulta ao servidor
                 
-                // Limpar a lista de eventos imediatamente
+                // Limpar lista de eventos
                 const eventsList = document.querySelector('.events-list');
                 if (eventsList) {
                     eventsList.innerHTML = '<p class="no-events">Nenhum evento registrado para este mês.</p>';
                 }
                 
-                // Forçar atualização dos dados
-                await fetchTeams(); // Forçar atualização das equipes
-                await fetchEvents(); // Irá buscar eventos do servidor (que agora serão zero para este mês)
+                // Zerar os pontos nos cards das equipes
+                document.getElementById('alfa-points').textContent = '0';
+                document.getElementById('bravo-points').textContent = '0';
+                document.getElementById('charlie-points').textContent = '0';
                 
+                // PASSO 4: Atualizar os dados em memória e cache
                 // Criar dados zerados para o mês atual
                 const dadosZerados = {
-                    "alfa": { pontos: 0, posicao: 3 },
-                    "bravo": { pontos: 0, posicao: 1 },
-                    "charlie": { pontos: 0, posicao: 2 }
+                    "alfa": { pontos: 0, posicao: 1 },
+                    "bravo": { pontos: 0, posicao: 2 },
+                    "charlie": { pontos: 0, posicao: 3 }
                 };
                 
                 // Atualizar dados diretamente
                 currentMonthData = dadosZerados;
                 
-                // Atualizar o objeto global savedMonthData
+                // Atualizar o objeto global de dados salvos
                 if (window.savedMonthData) {
                     window.savedMonthData[mesAtual] = JSON.parse(JSON.stringify(dadosZerados));
                 }
                 
-                // Salvar no localStorage para persistência e no banco de dados via API
-                localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(dadosZerados));
-                localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData || {}));
+                // PASSO 5: Salvar os dados zerados no banco de dados
+                console.log(`Salvando dados zerados para o mês: ${mesAtual}`);
+                const saveResponse = await fetch('/api/salvar-dados', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        month: mesAtual,
+                        data: dadosZerados
+                    })
+                });
                 
-                // Salvar no banco de dados explicitamente
-                // Não podemos usar salvarDados() aqui pois está em outro escopo
-                // Implementamos a lógica diretamente
-                try {
-                    // Enviar dados para o servidor para garantir persistência
-                    fetch('/api/salvar-dados', {
-                        method: 'POST',
-                        headers: {
-                            'Content-Type': 'application/json'
-                        },
-                        body: JSON.stringify({
-                            month: mesAtual,
-                            data: dadosZerados
-                        })
-                    }).catch(err => console.error('Erro ao salvar dados no servidor:', err));
-                } catch (e) {
-                    console.error('Erro ao salvar dados:', e);
+                if (!saveResponse.ok) {
+                    console.error('Aviso: Falha ao salvar dados zerados no servidor');
+                    // Continuamos mesmo com erro, pois os dados já foram zerados localmente
                 }
                 
-                // Recarregar a UI com os dados zerados
-                console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
+                // PASSO 6: Forçar recarregamento completo dos dados
+                // Buscar dados atualizados do servidor para confirmar o reset
+                await fetchTeams(mesAtual);
+                await fetchEvents(mesAtual);
                 
-                // Função inline para atualizar a UI com os dados zerados
-                // Isso é uma cópia da função atualizarUIComDadosAtuais para garantir que esteja disponível aqui
-                const dados = currentMonthData;
+                // Atualizar a interface com os dados atualizados
+                atualizarUIComDadosAtuais();
                 
-                // Atualizar o título com o mês atual
-                const mesAtualEl = document.getElementById('mesAtual');
-                if (mesAtualEl) {
-                    mesAtualEl.textContent = mesAtual;
-                }
+                // Mostrar mensagem de sucesso
+                alert(`✅ Todos os dados do mês de ${mesAtual} foram zerados com sucesso!\n\nOs dados dos outros meses permaneceram intactos.`);
                 
-                // Atualizar pontos nos cards
-                document.getElementById('alfa-points').textContent = dados.alfa.pontos;
-                document.getElementById('bravo-points').textContent = dados.bravo.pontos;
-                document.getElementById('charlie-points').textContent = dados.charlie.pontos;
-                
-                // Atualizar posições no pódio usando funções auxiliares inline para evitar referências undefined
-                const obterEquipePosicao = (dados, posicao) => {
-                    for (const equipe in dados) {
-                        if (dados[equipe].posicao === posicao) {
-                            return equipe;
-                        }
-                    }
-                    return "";
-                };
-                
-                const obterPontosPosicao = (dados, posicao) => {
-                    for (const equipe in dados) {
-                        if (dados[equipe].posicao === posicao) {
-                            return dados[equipe].pontos;
-                        }
-                    }
-                    return 0;
-                };
-                
-                document.querySelector('.first-place .podium-team').textContent = obterEquipePosicao(dados, 1).toUpperCase();
-                document.querySelector('.first-place .podium-points').textContent = obterPontosPosicao(dados, 1);
-                
-                document.querySelector('.second-place .podium-team').textContent = obterEquipePosicao(dados, 2).toUpperCase();
-                document.querySelector('.second-place .podium-points').textContent = obterPontosPosicao(dados, 2);
-                
-                document.querySelector('.third-place .podium-team').textContent = obterEquipePosicao(dados, 3).toUpperCase();
-                document.querySelector('.third-place .podium-points').textContent = obterPontosPosicao(dados, 3);
-                
-                alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso! Os dados dos outros meses permanecem intactos.`);
             } catch (error) {
-                console.error('Erro ao resetar dados:', error);
-                alert('Erro ao resetar dados: ' + error.message);
+                // Em caso de erro, mostrar mensagem e logar detalhes
+                console.error("Erro ao resetar dados:", error);
+                alert(`Erro ao zerar dados: ${error.message || 'Falha na operação'}`);
             } finally {
-                // Restaurar o botão
+                // Restaurar estado do botão independente do resultado
                 if (resetBtn) {
-                    resetBtn.textContent = originalBtnText;
+                    resetBtn.innerHTML = originalBtnHTML;
                     resetBtn.disabled = false;
                 }
                 
-                // Permitir novo reset
+                // Permitir nova operação de reset
                 isResetting = false;
             }
         }
@@ -2873,38 +2834,58 @@
             setupModals();
             
             // Por padrão, esconder os controles de administração até login
-            document.querySelector('.admin-buttons').style.display = 'none';
-
+            const adminButtons = document.querySelector('.admin-buttons');
+            if (adminButtons) {
+                adminButtons.style.display = 'none';
+            }
             
             // Configurar o botão de editar no modal de detalhes
-            document.getElementById('editEventBtn').addEventListener('click', openEditModal);
+            const editEventBtn = document.getElementById('editEventBtn');
+            if (editEventBtn) {
+                editEventBtn.addEventListener('click', openEditModal);
+            }
             
             // Configurar o botão de reset
-            document.getElementById('resetBtn').addEventListener('click', resetAllData);
+            const resetBtn = document.getElementById('resetBtn');
+            if (resetBtn) {
+                resetBtn.addEventListener('click', resetAllData);
+            }
             
             // Configurar botão de edição de guarnições
-            document.getElementById('editTeamsBtn').addEventListener('click', openTeamsModal);
+            const editTeamsBtn = document.getElementById('editTeamsBtn');
+            if (editTeamsBtn) {
+                editTeamsBtn.addEventListener('click', openTeamsModal);
+            }
             
             // Configurar botão de salvar dados
-            document.getElementById('saveDataBtn').addEventListener('click', function() {
-                salvarDados();
-                alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
-            });
+            const saveDataBtn = document.getElementById('saveDataBtn');
+            if (saveDataBtn) {
+                saveDataBtn.addEventListener('click', async function() {
+                    await salvarDados();
+                    alert(`✅ Dados do mês ${currentMonth} salvos com sucesso!`);
+                });
+            }
             
             // Configurar o evento para atualizar pontos automaticamente no modal de edição
             const editTypeSelect = document.getElementById('editEventType');
-            editTypeSelect.addEventListener('change', () => {
-                const selectedOption = editTypeSelect.options[editTypeSelect.selectedIndex];
-                if (selectedOption && selectedOption.dataset.points) {
-                    document.getElementById('editEventPoints').value = selectedOption.dataset.points;
-                }
-            });
+            if (editTypeSelect) {
+                editTypeSelect.addEventListener('change', () => {
+                    const selectedOption = editTypeSelect.options[editTypeSelect.selectedIndex];
+                    if (selectedOption && selectedOption.dataset.points) {
+                        const pointsField = document.getElementById('editEventPoints');
+                        if (pointsField) {
+                            pointsField.value = selectedOption.dataset.points;
+                        }
+                    }
+                });
+            }
             
 
             
 
             
-                const editTeamsForm = document.getElementById('editTeamsForm');
+            // Configurar formulário de edição de equipes
+            const editTeamsForm = document.getElementById('editTeamsForm');
             if (editTeamsForm) {
                 editTeamsForm.addEventListener('submit', function(e) {
                     e.preventDefault();
