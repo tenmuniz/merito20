@@ -54,7 +54,24 @@ export async function initializeDatabase() {
       await db.insert(users).values(defaultAdmin);
       console.log('✅ Usuário administrador criado com sucesso!');
     } else {
-      console.log('ℹ️ Usuário administrador já existe no banco de dados');
+      // Mesmo que o usuário já exista, garantir que a senha seja 'admin123'
+      console.log('🔄 Verificando se a senha do administrador está correta...');
+      
+      const user = adminUser[0];
+      if (user.password !== 'admin123') {
+        console.log('🔄 Atualizando senha do administrador para garantir acesso...');
+        
+        // Atualizar a senha do administrador para garantir o acesso
+        await db.update(users)
+          .set({ password: 'admin123' })
+          .where(eq(users.id, user.id));
+          
+        console.log('✅ Senha do administrador atualizada com sucesso!');
+      } else {
+        console.log('✅ Senha do administrador já está correta');
+      }
+      
+      console.log('ℹ️ Usuário administrador verificado no banco de dados');
     }
     
     console.log('✅ Inicialização do banco de dados concluída!');

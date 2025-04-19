@@ -615,6 +615,37 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para diagnóstico - ajuda a identificar problemas com o usuário admin
+  app.get("/api/admin-check", async (_req: Request, res: Response) => {
+    try {
+      const user = await storage.getUserByUsername('admin');
+      if (!user) {
+        return res.json({
+          exists: false,
+          message: "Usuário admin não encontrado. Execute a inicialização do banco de dados."
+        });
+      }
+      
+      // Por segurança, não enviamos a senha completa, apenas verificamos
+      const passwordStatus = user.password === 'admin123' ? 'correta' : 'incorreta';
+      
+      return res.json({
+        exists: true,
+        id: user.id,
+        username: user.username,
+        isAdmin: user.isAdmin,
+        passwordStatus,
+        message: `Usuário admin encontrado com ID ${user.id}. Senha está ${passwordStatus}.`
+      });
+    } catch (error: any) {
+      console.error("Erro ao verificar usuário admin:", error);
+      res.status(500).json({ 
+        error: true,
+        message: error.message || "Erro ao verificar usuário admin"
+      });
+    }
+  });
+
   // Endpoint para autenticação simples
   app.post("/api/auth/login", async (req: Request, res: Response) => {
     try {
@@ -630,13 +661,18 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       // Verificar se o usuário existe e a senha está correta
       if (!user) {
+        console.log(`⚠️ Tentativa de login falhou: usuário ${username} não encontrado`);
         return res.status(401).json({ message: "Usuário não encontrado" });
       }
       
       // Comparar senha (numa aplicação real, usaríamos bcrypt ou similar)
       if (user.password !== password) {
+        console.log(`⚠️ Tentativa de login falhou para ${username}: senha incorreta`);
         return res.status(401).json({ message: "Senha incorreta" });
       }
+      
+      console.log(`✅ Login bem-sucedido para o usuário ${username}`);
+      
       
       // Retornar usuário sem a senha
       const { password: _, ...userWithoutPassword } = user;
