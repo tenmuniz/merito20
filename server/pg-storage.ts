@@ -1,7 +1,7 @@
 import { IStorage } from './storage';
 import { db } from './db';
-import { users, teams, events, type User, type Team, type Event, type InsertUser, type InsertTeam, type InsertEvent } from '@shared/schema';
-import { eq, desc } from 'drizzle-orm';
+import { users, teams, events, teamMonthlyPoints, type User, type Team, type Event, type InsertUser, type InsertTeam, type InsertEvent, type TeamMonthlyPoint } from '@shared/schema';
+import { eq, desc, and } from 'drizzle-orm';
 
 export class PostgresStorage implements IStorage {
   // User operations

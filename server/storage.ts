@@ -100,7 +100,8 @@ export class MemStorage implements IStorage {
     );
   }
   
-  async getTeams(): Promise<Team[]> {
+  async getTeams(month?: string): Promise<Team[]> {
+    // MemStorage não suporta filtragem por mês, sempre retorna todos os times
     return Array.from(this.teamsMap.values());
   }
   
