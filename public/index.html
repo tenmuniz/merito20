@@ -3372,13 +3372,17 @@
                 // Só atualize a variável de mês atual após a verificação acima
                 currentMonth = mes;
                 
-                // Se já temos dados salvos para este mês, use-os
+                // NUNCA use dados em cache para pontuações, sempre busque do servidor
+                // Mantém esse código comentado para referência futura
+                /*
                 if (window.savedMonthData[mes]) {
-                    console.log(`Usando dados em cache para o mês: ${mes}`);
-                    currentMonthData = JSON.parse(JSON.stringify(window.savedMonthData[mes])); // Deep copy para evitar referências
+                    console.log(`[DESATIVADO] Usando dados em cache para o mês: ${mes}`);
+                    currentMonthData = JSON.parse(JSON.stringify(window.savedMonthData[mes])); 
                     atualizarUIComDadosAtuais();
                     return;
                 }
+                */
+                console.log(`SEMPRE buscando dados atualizados do servidor para o mês: ${mes}`);
                 
                 try {
                     console.log(`Buscando dados do servidor para o mês: ${mes}`);

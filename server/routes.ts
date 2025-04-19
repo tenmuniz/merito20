@@ -664,14 +664,31 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Obter todas as equipes primeiro
       const allTeams = await storage.getTeams();
       
+      // Obter os eventos do mês atual para calcular os pontos reais
+      const allEvents = await storage.getEvents();
+      const eventsThisMonth = allEvents.filter(event => event.monthYear === monthYear);
+      
+      // Calcular pontos a partir dos eventos (fonte confiável)
+      const calculatedPoints: {[key: number]: number} = {};
+      eventsThisMonth.forEach(event => {
+        const teamId = event.teamId;
+        if (calculatedPoints[teamId] === undefined) {
+          calculatedPoints[teamId] = 0;
+        }
+        calculatedPoints[teamId] += event.points;
+      });
+      
+      console.log('Pontos calculados a partir dos eventos:', calculatedPoints);
+      
       // Para cada equipe nos dados, atualizar seus pontos mensais no banco de dados
       for (const teamKey in data) {
         const teamName = teamKey.charAt(0).toUpperCase() + teamKey.slice(1); // Capitalizar primeira letra
         const team = allTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
         
         if (team) {
-          const pontos = data[teamKey].pontos || 0;
-          console.log(`Salvando pontos da equipe ${teamName} (${team.id}) para o mês ${month}: ${pontos}`);
+          // Usar os pontos calculados a partir dos eventos, não os do front-end
+          const pontos = calculatedPoints[team.id] || 0;
+          console.log(`Salvando pontos CALCULADOS da equipe ${teamName} (${team.id}) para o mês ${month}: ${pontos}`);
           
           // Verificar se já existe um registro para esta equipe neste mês
           const existingPoints = await db.select()
@@ -682,16 +699,16 @@ export async function registerRoutes(app: Express): Promise<Server> {
             ));
           
           if (existingPoints.length > 0) {
-            // Atualizar o registro existente
+            // Atualizar o registro existente com os pontos calculados
             const pointId = existingPoints[0].id;
-            console.log(`Atualizando registro existente ${pointId} para equipe ${team.name} no mês ${month}`);
+            console.log(`Atualizando registro existente ${pointId} para equipe ${team.name} no mês ${month} com pontos: ${pontos}`);
             
             await db.update(teamMonthlyPoints)
               .set({ points: pontos })
               .where(eq(teamMonthlyPoints.id, pointId));
           } else {
-            // Criar um novo registro
-            console.log(`Criando novo registro para equipe ${team.name} no mês ${month}`);
+            // Criar um novo registro com os pontos calculados
+            console.log(`Criando novo registro para equipe ${team.name} no mês ${month} com pontos: ${pontos}`);
             
             await db.insert(teamMonthlyPoints).values({
               teamId: team.id,
