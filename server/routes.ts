@@ -332,6 +332,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
   
+  // Endpoint de atualização completa (PUT)
   app.put("/api/events/:id", async (req, res) => {
     try {
       const id = parseInt(req.params.id);
@@ -372,6 +373,58 @@ export async function registerRoutes(app: Express): Promise<Server> {
       // Atualizar o evento
       const updatedEvent = await storage.updateEvent(id, updateData);
       
+      res.json(updatedEvent);
+    } catch (error: any) {
+      console.error("Erro ao atualizar evento:", error);
+      res.status(500).json({ message: error.message || "Erro ao atualizar evento" });
+    }
+  });
+
+  // Endpoint de atualização parcial (PATCH) - mesma implementação que PUT, apenas método diferente
+  app.patch("/api/events/:id", async (req, res) => {
+    try {
+      const id = parseInt(req.params.id);
+      if (isNaN(id)) {
+        return res.status(400).json({ message: "ID inválido" });
+      }
+      
+      // Verificar se o evento existe
+      const event = await storage.getEvent(id);
+      if (!event) {
+        return res.status(404).json({ message: "Evento não encontrado" });
+      }
+      
+      console.log('Atualizando evento via PATCH:', id);
+      console.log('Dados recebidos:', req.body);
+      
+      const { teamId, type, description, points, eventDate } = req.body;
+      
+      // Validações básicas
+      if (teamId) {
+        // Verificar se a equipe existe
+        const team = await storage.getTeam(teamId);
+        if (!team) {
+          return res.status(404).json({ message: "Equipe não encontrada" });
+        }
+      }
+      
+      // Dados para atualização
+      const updateData: Partial<InsertEvent> = {};
+      if (teamId !== undefined) updateData.teamId = teamId;
+      if (type !== undefined) updateData.type = type;
+      if (description !== undefined) updateData.description = description;
+      if (points !== undefined) updateData.points = points;
+      updateData.officersInvolved = "Guarnição"; // Valor padrão para manter compatibilidade
+      if (eventDate !== undefined) {
+        console.log('Data de edição recebida do cliente:', eventDate);
+        updateData.eventDate = new Date(eventDate);
+        console.log('Data de edição convertida para objeto:', updateData.eventDate);
+      }
+      
+      // Atualizar o evento
+      const updatedEvent = await storage.updateEvent(id, updateData);
+      
+      console.log('Evento atualizado com sucesso:', updatedEvent);
       res.json(updatedEvent);
     } catch (error: any) {
       console.error("Erro ao atualizar evento:", error);
