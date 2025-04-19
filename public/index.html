@@ -2500,6 +2500,21 @@
                 const responseData = await response.json();
                 console.log("Resposta do servidor após reset:", responseData);
                 
+                // Atualizar pontos das equipes na interface
+                if (responseData.teams && responseData.teams.length > 0) {
+                    // Atualizar os dados usando os valores retornados do servidor
+                    responseData.teams.forEach(team => {
+                        console.log(`Atualizando equipe ${team.name} com ${team.points} pontos`);
+                        if (team.name.toLowerCase() === 'alfa') {
+                            document.getElementById('alfa-points').textContent = team.points;
+                        } else if (team.name.toLowerCase() === 'bravo') {
+                            document.getElementById('bravo-points').textContent = team.points;
+                        } else if (team.name.toLowerCase() === 'charlie') {
+                            document.getElementById('charlie-points').textContent = team.points;
+                        }
+                    });
+                }
+                
                 // Limpar a lista de eventos imediatamente
                 const eventsList = document.querySelector('.events-list');
                 if (eventsList) {
@@ -2507,6 +2522,7 @@
                 }
                 
                 // Forçar atualização dos dados
+                await fetchTeams(); // Forçar atualização das equipes
                 await fetchEvents(); // Irá buscar eventos do servidor (que agora serão zero para este mês)
                 
                 // Criar dados zerados para o mês atual

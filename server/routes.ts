@@ -284,30 +284,72 @@ export async function registerRoutes(app: Express): Promise<Server> {
         const events = await storage.getEvents();
         const eventsToDelete = events.filter(event => event.monthYear === monthYear);
         
-        // Excluir os eventos um por um
+        console.log(`Encontrados ${eventsToDelete.length} eventos para excluir do mês ${month}`);
+        
+        // Calcular a soma de pontos por equipe para este mês
+        const pontosPorEquipe: Record<number, number> = {};
         for (const event of eventsToDelete) {
-          await storage.deleteEvent(event.id);
+          const teamId = event.teamId;
+          if (!pontosPorEquipe[teamId]) {
+            pontosPorEquipe[teamId] = 0;
+          }
+          pontosPorEquipe[teamId] += event.points;
         }
         
-        // Obter todas as equipes e definir seus pontos como zero
-        // Isso é uma solução temporária, pois o ideal seria recalcular
-        // os pontos das equipes a partir dos eventos restantes, mas
-        // para facilitar o desenvolvimento, vamos zerar todas as equipes
+        // Excluir os eventos do banco um por um
+        // Mas DESABILITAMOS a atualização automática dos pontos das equipes no método deleteEvent
+        // pois faremos isso manualmente em seguida
+        for (const event of eventsToDelete) {
+          try {
+            // Vamos apenas excluir sem alterar os pontos
+            await db.delete(events).where(eq(events.id, event.id));
+            console.log(`Evento ID ${event.id} excluído com sucesso`);
+          } catch (err) {
+            console.error(`Erro ao excluir evento ${event.id}:`, err);
+          }
+        }
+        
+        // Agora, vamos atualizar os pontos de cada equipe diretamente
         const allTeams = await storage.getTeams();
         for (const team of allTeams) {
-          console.log(`Zerando pontos da equipe ${team.name} (${team.id})`);
-          await storage.updateTeamPoints(team.id, 0);
+          // Obter os pontos atuais da equipe
+          const currentPoints = team.points;
+          
+          // Se a equipe tinha pontos deste mês, subtrair esses pontos
+          const pontosParaSubtrair = pontosPorEquipe[team.id] || 0;
+          const novosPontos = Math.max(currentPoints - pontosParaSubtrair, 0);
+          
+          console.log(`Equipe ${team.name} (${team.id}): ${currentPoints} pontos - ${pontosParaSubtrair} = ${novosPontos}`);
+          
+          // Atualizar diretamente no banco de dados (não usar updateTeamPoints para evitar problemas)
+          await db.update(teams)
+            .set({ points: novosPontos })
+            .where(eq(teams.id, team.id));
+          
+          console.log(`Pontos da equipe ${team.name} atualizados para ${novosPontos}`);
         }
+        
+        // Buscar as equipes atualizadas para enviar na resposta
+        const updatedTeams = await storage.getTeams();
         
         res.json({ 
           success: true, 
           message: `Todos os eventos do mês de ${month} foram excluídos e os pontos zerados.`,
-          monthReset: month
+          monthReset: month,
+          teams: updatedTeams
         });
       } else {
         // Se nenhum mês foi especificado, resetar todos os dados
         await storage.resetAllData();
-        res.json({ success: true, message: "Todos os eventos foram excluídos e os pontos zerados." });
+        
+        // Buscar as equipes atualizadas para enviar na resposta
+        const updatedTeams = await storage.getTeams();
+        
+        res.json({ 
+          success: true, 
+          message: "Todos os eventos foram excluídos e os pontos zerados.",
+          teams: updatedTeams
+        });
       }
     } catch (error: any) {
       console.error("Erro ao resetar dados:", error);
