@@ -2516,9 +2516,54 @@
                 localStorage.setItem(`pontuacao_${mesAtual}`, JSON.stringify(dadosZerados));
                 localStorage.setItem('dadosMeses', JSON.stringify(window.savedMonthData || {}));
                 
+                // Atualizar dados locais
+                currentMonthData = dadosZerados;
+                
                 // Recarregar a UI com os dados zerados
                 console.log(`Recarregando dados do mês atual após reset (${mesAtual})`);
-                atualizarUIComDadosAtuais();
+                
+                // Função inline para atualizar a UI com os dados zerados
+                // Isso é uma cópia da função atualizarUIComDadosAtuais para garantir que esteja disponível aqui
+                const dados = currentMonthData;
+                
+                // Atualizar o título com o mês atual
+                const mesAtualEl = document.getElementById('mesAtual');
+                if (mesAtualEl) {
+                    mesAtualEl.textContent = mesAtual;
+                }
+                
+                // Atualizar pontos nos cards
+                document.getElementById('alfa-points').textContent = dados.alfa.pontos;
+                document.getElementById('bravo-points').textContent = dados.bravo.pontos;
+                document.getElementById('charlie-points').textContent = dados.charlie.pontos;
+                
+                // Atualizar posições no pódio usando funções auxiliares inline para evitar referências undefined
+                const obterEquipePosicao = (dados, posicao) => {
+                    for (const equipe in dados) {
+                        if (dados[equipe].posicao === posicao) {
+                            return equipe;
+                        }
+                    }
+                    return "";
+                };
+                
+                const obterPontosPosicao = (dados, posicao) => {
+                    for (const equipe in dados) {
+                        if (dados[equipe].posicao === posicao) {
+                            return dados[equipe].pontos;
+                        }
+                    }
+                    return 0;
+                };
+                
+                document.querySelector('.first-place .podium-team').textContent = obterEquipePosicao(dados, 1).toUpperCase();
+                document.querySelector('.first-place .podium-points').textContent = obterPontosPosicao(dados, 1);
+                
+                document.querySelector('.second-place .podium-team').textContent = obterEquipePosicao(dados, 2).toUpperCase();
+                document.querySelector('.second-place .podium-points').textContent = obterPontosPosicao(dados, 2);
+                
+                document.querySelector('.third-place .podium-team').textContent = obterEquipePosicao(dados, 3).toUpperCase();
+                document.querySelector('.third-place .podium-points').textContent = obterPontosPosicao(dados, 3);
                 
                 alert(`Todos os eventos do mês de ${mesAtual} foram removidos e as pontuações zeradas com sucesso! Os dados dos outros meses permanecem intactos.`);
             } catch (error) {
@@ -3097,9 +3142,9 @@
                 currentMonth = mes;
                 
                 // Se já temos dados salvos para este mês, use-os
-                if (savedMonthData[mes]) {
+                if (window.savedMonthData[mes]) {
                     console.log(`Usando dados em cache para o mês: ${mes}`);
-                    currentMonthData = JSON.parse(JSON.stringify(savedMonthData[mes])); // Deep copy para evitar referências
+                    currentMonthData = JSON.parse(JSON.stringify(window.savedMonthData[mes])); // Deep copy para evitar referências
                     atualizarUIComDadosAtuais();
                     return;
                 }
@@ -3154,7 +3199,7 @@
                     
                     // Salvar os dados calculados para este mês
                     currentMonthData = novosDados;
-                    savedMonthData[mes] = JSON.parse(JSON.stringify(novosDados)); // Deep copy
+                    window.savedMonthData[mes] = JSON.parse(JSON.stringify(novosDados)); // Deep copy
                     
                     // Salvar dados no localStorage para evitar perda na atualização da página
                     salvarDados();
@@ -3216,12 +3261,12 @@
                 // Salvar explicitamente quaisquer dados atuais antes de recarregar
                 if (currentMonthData) {
                     console.log(`Salvando dados atuais antes de atualizar para o mês: ${mesAtual}`);
-                    savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
+                    window.savedMonthData[mesAtual] = JSON.parse(JSON.stringify(currentMonthData)); // Deep copy
                     salvarDados();
                 }
                 
                 // Invalidar o cache do mês atual para forçar nova consulta ao servidor
-                savedMonthData[mesAtual] = null;
+                window.savedMonthData[mesAtual] = null;
                 
                 // Recarregar os dados do servidor para este mês
                 console.log(`Atualizando dados para o mês: ${mesAtual}`);
