@@ -3,7 +3,7 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { type InsertEvent } from "@shared/schema";
 import { db } from './db';
-import { teams, events, teamMonthlyPoints } from '@shared/schema';
+import { teams, events, teamMonthlyPoints, users } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
