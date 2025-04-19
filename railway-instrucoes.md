@@ -55,3 +55,30 @@ Após o deploy bem-sucedido, use estas credenciais para acessar o sistema:
 
 - **Usuário**: admin
 - **Senha**: admin123
+
+## Solução para Problemas com Autenticação do Admin
+
+Se não conseguir acessar o sistema com as credenciais de administrador, você tem opções para resetá-las:
+
+### Opção 1: Acessar o Endpoint de Reset
+Acesse o seguinte URL no seu navegador:
+```
+https://seu-dominio.com.br/api/reset-admin
+```
+
+### Opção 2: Usar o Console Shell no Railway
+1. No dashboard do Railway, abra seu projeto
+2. Vá para a aba "Shell"
+3. Execute o comando:
+```bash
+node -e "require('./dist/reset-admin.js')"
+```
+
+### Opção 3: Adicionar Tarefa para Reset
+1. No dashboard do Railway, vá para "Settings" > "Cron Jobs"
+2. Adicione uma tarefa agendada com o comando:
+```
+node -e "require('./dist/reset-admin.js')"
+```
+3. Configure o agendamento para executar uma única vez e ative-o
+4. Após execução, você pode desativar ou remover a tarefa

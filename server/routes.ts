@@ -650,37 +650,64 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Este endpoint deve ser chamado quando for impossível acessar o sistema
   app.get("/api/reset-admin", async (_req: Request, res: Response) => {
     try {
-      // 1. Verificar se o usuário admin já existe
-      let user = await storage.getUserByUsername('admin');
+      console.log('🔄 Iniciando reset do usuário administrador via endpoint...');
       
-      // 2. Se existir, atualizar a senha
-      if (user) {
-        console.log(`🔄 Encontrado usuário admin com ID ${user.id}. Atualizando senha...`);
-        
-        // 2.1 Excluir o usuário existente da tabela
-        await db.delete(users).where(eq(users.id, user.id));
-        console.log(`🗑️ Usuário admin antigo excluído.`);
+      // Verificar conexão com o banco de dados
+      try {
+        console.log('🔍 Verificando conexão com o banco de dados...');
+        await db.select().from(users).limit(1);
+        console.log('✅ Conexão com o banco de dados bem-sucedida.');
+      } catch (dbError: any) {
+        console.error('❌ Erro ao conectar ao banco de dados:', dbError);
+        return res.status(500).json({ 
+          success: false, 
+          message: "Erro de conexão com o banco de dados: " + dbError.message 
+        });
       }
       
-      // 3. Criar um novo usuário admin com a senha correta
+      // 1. Buscar usuário admin existente
+      const adminUsers = await db.select().from(users).where(eq(users.username, 'admin'));
+      
+      // 2. Remover usuário admin existente, se houver
+      if (adminUsers.length > 0) {
+        const adminUser = adminUsers[0];
+        console.log(`🔄 Removendo usuário admin existente (ID: ${adminUser.id})...`);
+        
+        await db.delete(users).where(eq(users.id, adminUser.id));
+        console.log('✅ Usuário admin removido com sucesso.');
+      } else {
+        console.log('⚠️ Nenhum usuário admin encontrado no banco de dados.');
+      }
+      
+      // 3. Criar um novo usuário admin com a senha padrão
+      console.log('🔄 Criando novo usuário administrador...');
+      
       const newAdmin = await db.insert(users).values({
-        username: "admin",
-        password: "admin123", // Em uma aplicação real, seria hashed
-        fullName: "Administrador",
+        username: 'admin',
+        password: 'admin123',
+        fullName: 'Administrador',
         isAdmin: true
       }).returning();
       
-      console.log(`✅ Novo usuário admin criado com ID ${newAdmin[0].id}.`);
+      if (newAdmin.length > 0) {
+        console.log(`✅ Novo usuário admin criado com sucesso. ID: ${newAdmin[0].id}`);
+        console.log('🔐 Credenciais padrão: admin / admin123');
         
-      return res.json({
-        success: true,
-        message: "Usuário admin resetado com sucesso! Use: admin/admin123 para login",
-        id: newAdmin[0].id
-      });
+        return res.json({
+          success: true,
+          message: "✅ Usuário admin resetado com sucesso! Use: admin/admin123 para login",
+          id: newAdmin[0].id
+        });
+      } else {
+        return res.status(500).json({
+          success: false,
+          message: "Falha ao criar novo usuário admin"
+        });
+      }
     } catch (error: any) {
-      console.error("Erro ao resetar admin:", error);
+      console.error("❌ Erro ao resetar admin:", error);
       res.status(500).json({ 
-        error: true,
+        success: false,
         message: error.message || "Erro ao resetar admin"
       });
     }

@@ -63,3 +63,44 @@ Para conectar o domínio 20cipm.com.br:
 2. Clique na aba "Settings"
 3. Role até "Domains" e clique em "Generate Domain" ou "Custom Domain"
 4. Siga as instruções para configurar os registros DNS do seu domínio
+
+## Sistema de recuperação do usuário administrador
+
+Em caso de problemas com a autenticação do usuário administrador, foram implementados mecanismos de emergência para resetar as credenciais para o padrão original:
+
+### Opção 1: Usando os scripts de emergência
+
+Foram disponibilizados scripts para facilitar o reset do administrador:
+
+- **Windows**: Execute o arquivo `reset-admin.bat` com duplo clique
+- **Linux/Mac**: Execute o arquivo `reset-admin.sh` com o comando `./reset-admin.sh`
+
+Estes scripts irão resetar o usuário administrador para:
+- Usuário: `admin`
+- Senha: `admin123`
+
+### Opção 2: Usando o endpoint de emergência
+
+Se o sistema estiver em execução mas você não consegue acessar como administrador, acesse:
+
+```
+https://seu-dominio.com.br/api/reset-admin
+```
+
+ou localmente:
+
+```
+http://localhost:5000/api/reset-admin
+```
+
+Este endpoint recriará o usuário admin com as credenciais padrão.
+
+### Opção 3: No Railway
+
+Em casos extremos, conecte-se ao Railway e execute:
+
+```bash
+npm run reset-admin
+```
+
+Isso executará o script de reset diretamente no servidor.
