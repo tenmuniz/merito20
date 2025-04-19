@@ -1894,9 +1894,15 @@
         let currentEvent = null;
         
         // Função para obter as equipes da API
-        async function fetchTeams() {
+        async function fetchTeams(month) {
             try {
-                const response = await fetch('/api/teams');
+                // Se um mês foi especificado, buscar equipes com pontos específicos para esse mês
+                const mesAtual = month || document.getElementById('mesAtual').textContent;
+                const url = mesAtual ? `/api/teams?month=${encodeURIComponent(mesAtual)}` : '/api/teams';
+                
+                console.log(`Buscando equipes com pontos específicos para o mês: ${mesAtual}`);
+                
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Falha ao buscar as equipes');
                 }
@@ -1908,9 +1914,15 @@
         }
         
         // Função para obter os eventos da API
-        async function fetchEvents() {
+        async function fetchEvents(month) {
             try {
-                const response = await fetch('/api/events');
+                // Se um mês foi especificado, buscar eventos específicos para esse mês
+                const mesAtual = month || document.getElementById('mesAtual').textContent;
+                const url = mesAtual ? `/api/events?month=${encodeURIComponent(mesAtual)}` : '/api/events';
+                
+                console.log(`Buscando eventos para o mês: ${mesAtual}`);
+                
+                const response = await fetch(url);
                 if (!response.ok) {
                     throw new Error('Falha ao buscar os eventos');
                 }
@@ -3214,10 +3226,10 @@
                 try {
                     console.log(`Buscando dados do servidor para o mês: ${mes}`);
                     
-                    // Buscar eventos do mês específico e equipes
+                    // Buscar eventos e pontuações do mês específico
                     const [eventsResponse, teamsResponse] = await Promise.all([
                         fetch(`/api/events?month=${mes}`),
-                        fetch('/api/teams')
+                        fetch(`/api/teams?month=${mes}`)
                     ]);
                     
                     if (!eventsResponse.ok || !teamsResponse.ok) {
@@ -3237,15 +3249,11 @@
                         "charlie": { pontos: 0, posicao: 0 }
                     };
                     
-                    // Calcular pontos somando eventos filtrados pelo mês
-                    events.forEach(event => {
-                        // Encontrar a equipe correspondente
-                        const team = teams.find(t => t.id === event.teamId);
-                        if (team) {
-                            const nomeEquipe = team.name.toLowerCase();
-                            if (novosDados[nomeEquipe]) {
-                                novosDados[nomeEquipe].pontos += event.points;
-                            }
+                    // Atualizar pontos com os valores vindos da API
+                    teams.forEach(team => {
+                        const nomeEquipe = team.name.toLowerCase();
+                        if (novosDados[nomeEquipe]) {
+                            novosDados[nomeEquipe].pontos = team.points;
                         }
                     });
                     
