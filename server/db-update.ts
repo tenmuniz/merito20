@@ -55,6 +55,30 @@ export async function updateDatabase() {
       console.error("Erro ao adicionar ou atualizar coluna month_year:", error);
     }
     
+    // Criação da tabela team_monthly_points, se ainda não existir
+    try {
+      await db.execute(sql`
+        CREATE TABLE IF NOT EXISTS team_monthly_points (
+          id SERIAL PRIMARY KEY,
+          team_id INTEGER NOT NULL,
+          month_year TEXT NOT NULL,
+          points INTEGER NOT NULL DEFAULT 0,
+          created_at TIMESTAMP WITH TIME ZONE NOT NULL DEFAULT NOW()
+        );
+      `);
+      log("Tabela team_monthly_points criada com sucesso", "db-update");
+      
+      // Criar índice para acelerar consultas
+      await db.execute(sql`
+        CREATE INDEX IF NOT EXISTS idx_team_monthly_points_team_month 
+        ON team_monthly_points (team_id, month_year);
+      `);
+      log("Índice criado na tabela team_monthly_points", "db-update");
+      
+    } catch (error) {
+      console.error("Erro ao criar tabela team_monthly_points:", error);
+    }
+    
     return true;
   } catch (error) {
     console.error("Erro ao atualizar o banco de dados:", error);

@@ -3,11 +3,11 @@ import { createServer, type Server } from "http";
 import { storage } from "./storage";
 import { type InsertEvent } from "@shared/schema";
 import { db } from './db';
-import { teams, events } from '@shared/schema';
+import { teams, events, teamMonthlyPoints } from '@shared/schema';
 import { eq, and, sql } from 'drizzle-orm';
 
 export async function registerRoutes(app: Express): Promise<Server> {
-  // Endpoint para salvar dados de pontuações
+  // Endpoint para salvar dados de pontuações mensais
   app.post("/api/salvar-dados", async (req, res) => {
     try {
       const { month, data } = req.body;
@@ -17,19 +17,48 @@ export async function registerRoutes(app: Express): Promise<Server> {
       
       console.log(`Salvando dados para o mês: ${month}`, data);
       
-      // Atualizar os pontos das equipes no banco de dados
+      // Formatar mês/ano como esperado pelo banco
+      const year = new Date().getFullYear();
+      const monthYear = `${month.toUpperCase()}_${year}`;
+      
       // Obter todas as equipes primeiro
       const allTeams = await storage.getTeams();
       
-      // Para cada equipe nos dados, atualizar seus pontos no banco de dados
+      // Para cada equipe nos dados, atualizar seus pontos mensais no banco de dados
       for (const teamKey in data) {
         const teamName = teamKey.charAt(0).toUpperCase() + teamKey.slice(1); // Capitalizar primeira letra
         const team = allTeams.find(t => t.name.toLowerCase() === teamName.toLowerCase());
         
         if (team) {
           const pontos = data[teamKey].pontos;
-          console.log(`Atualizando pontos da equipe ${teamName} (${team.id}) para ${pontos}`);
-          await storage.updateTeamPoints(team.id, pontos);
+          console.log(`Salvando pontos da equipe ${teamName} (${team.id}) para o mês ${month}: ${pontos}`);
+          
+          // Verificar se já existe um registro para esta equipe neste mês
+          const existingPoints = await db.select()
+            .from(teamMonthlyPoints)
+            .where(and(
+              eq(teamMonthlyPoints.teamId, team.id),
+              eq(teamMonthlyPoints.monthYear, monthYear)
+            ));
+          
+          if (existingPoints.length > 0) {
+            // Atualizar o registro existente
+            const pointId = existingPoints[0].id;
+            console.log(`Atualizando registro existente ${pointId} para equipe ${team.name} no mês ${month}`);
+            
+            await db.update(teamMonthlyPoints)
+              .set({ points: pontos })
+              .where(eq(teamMonthlyPoints.id, pointId));
+          } else {
+            // Criar um novo registro
+            console.log(`Criando novo registro para equipe ${team.name} no mês ${month}`);
+            
+            await db.insert(teamMonthlyPoints).values({
+              teamId: team.id,
+              monthYear: monthYear,
+              points: pontos
+            });
+          }
         } else {
           console.warn(`Equipe não encontrada para atualização: ${teamName}`);
         }
@@ -48,14 +77,68 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Teams
   app.get("/api/teams", async (req, res) => {
     try {
+      // Extrair o mês da query string, se fornecido
+      const month = req.query.month as string | undefined;
+      
+      // Obter as equipes base primeiro
       const teams = await storage.getTeams();
-      // Convertendo para o formato esperado pelo cliente
-      const formattedTeams = teams.map(team => ({
+      
+      // Formatar os resultados de acordo com o cliente
+      let formattedTeams = teams.map(team => ({
         id: team.id,
         name: team.name,
         colorCode: team.colorCode,
-        points: team.points
+        points: 0 // Inicializa com zero, será preenchido de acordo com o mês
       }));
+      
+      // Se foi fornecido um mês, buscar os pontos específicos desse mês para cada equipe
+      if (month) {
+        try {
+          // Obter o ano atual
+          const year = new Date().getFullYear();
+          // Montar o formato month_year esperado
+          const monthYearFilter = `${month.toUpperCase()}_${year}`;
+          
+          console.log(`Buscando pontos das equipes para o mês/ano: ${monthYearFilter}`);
+          
+          // Para cada equipe, buscar seus pontos mensais
+          for (const team of formattedTeams) {
+            // Consultar pontos mensais desta equipe
+            const monthlyPoints = await db.select()
+              .from(teamMonthlyPoints)
+              .where(and(
+                eq(teamMonthlyPoints.teamId, team.id),
+                eq(teamMonthlyPoints.monthYear, monthYearFilter)
+              ));
+            
+            // Se houver pontos para este mês, atualizar os pontos da equipe na resposta
+            if (monthlyPoints.length > 0) {
+              team.points = monthlyPoints[0].points;
+              console.log(`Equipe ${team.name} tem ${team.points} pontos no mês ${month}`);
+            } else {
+              console.log(`Equipe ${team.name} não tem pontos registrados no mês ${month}`);
+            }
+          }
+        } catch (error) {
+          console.error('Erro ao buscar pontos mensais das equipes:', error);
+          // Em caso de erro, usar os pontos gerais das equipes (como fallback)
+          formattedTeams = teams.map(team => ({
+            id: team.id,
+            name: team.name,
+            colorCode: team.colorCode,
+            points: team.points
+          }));
+        }
+      } else {
+        // Se nenhum mês for especificado, usar os pontos gerais das equipes
+        formattedTeams = teams.map(team => ({
+          id: team.id,
+          name: team.name,
+          colorCode: team.colorCode,
+          points: team.points
+        }));
+      }
+      
       res.json(formattedTeams);
     } catch (error: any) {
       console.error("Erro ao buscar equipes:", error);

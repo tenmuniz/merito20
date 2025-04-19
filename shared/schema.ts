@@ -26,6 +26,15 @@ export const teams = pgTable("teams", {
   points: integer("points").default(0).notNull(),
 });
 
+// Modelo para armazenar pontos mensais das equipes
+export const teamMonthlyPoints = pgTable("team_monthly_points", {
+  id: serial("id").primaryKey(),
+  teamId: integer("team_id").notNull(),
+  monthYear: text("month_year").notNull(), // Formato "MES_ANO", por exemplo "ABRIL_2025"
+  points: integer("points").default(0).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+});
+
 export const insertTeamSchema = createInsertSchema(teams).pick({
   name: true,
   colorCode: true,
@@ -58,12 +67,23 @@ export const insertEventSchema = createInsertSchema(events).pick({
   // createdAt é gerenciado automaticamente pelo banco de dados
 });
 
+// Schema de inserção para pontos mensais
+export const insertTeamMonthlyPointsSchema = createInsertSchema(teamMonthlyPoints).pick({
+  teamId: true,
+  monthYear: true,
+  points: true,
+  // createdAt é gerenciado automaticamente pelo banco de dados
+});
+
 // Types
 export type User = typeof users.$inferSelect;
 export type InsertUser = z.infer<typeof insertUserSchema>;
 
 export type Team = typeof teams.$inferSelect;
 export type InsertTeam = z.infer<typeof insertTeamSchema>; 
+
+export type TeamMonthlyPoint = typeof teamMonthlyPoints.$inferSelect;
+export type InsertTeamMonthlyPoint = z.infer<typeof insertTeamMonthlyPointsSchema>;
 
 export type Event = typeof events.$inferSelect;
 export type InsertEvent = z.infer<typeof insertEventSchema>;
