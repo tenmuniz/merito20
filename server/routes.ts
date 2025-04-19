@@ -631,6 +631,115 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
+  // Endpoint para zerar pontos sem excluir eventos
+  app.post("/api/zero-points", async (req, res) => {
+    try {
+      const { month } = req.body;
+      
+      if (!month) {
+        return res.status(400).json({ message: "O mês é obrigatório" });
+      }
+      
+      console.log(`Zerando pontos para o mês: ${month}`);
+      const year = new Date().getFullYear();
+      const monthYear = `${month.toUpperCase()}_${year}`;
+      
+      // Obter todas as equipes
+      const allTeams = await storage.getTeams();
+      
+      // Para cada equipe, zerar os pontos para o mês específico
+      for (const team of allTeams) {
+        console.log(`Zerando pontos mensais da equipe ${team.name} (${team.id}) para ${monthYear}`);
+        
+        // Verificar se já existe um registro para esta equipe neste mês
+        const existingPoints = await db.select()
+          .from(teamMonthlyPoints)
+          .where(and(
+            eq(teamMonthlyPoints.teamId, team.id),
+            eq(teamMonthlyPoints.monthYear, monthYear)
+          ));
+        
+        if (existingPoints.length > 0) {
+          // Atualizar o registro existente para pontos = 0
+          const pointId = existingPoints[0].id;
+          console.log(`Atualizando registro existente ${pointId} para pontos = 0`);
+          
+          await db.update(teamMonthlyPoints)
+            .set({ points: 0 })
+            .where(eq(teamMonthlyPoints.id, pointId));
+        } else {
+          // Criar um novo registro com pontos = 0
+          console.log(`Criando novo registro mensal com pontos = 0`);
+          
+          await db.insert(teamMonthlyPoints).values({
+            teamId: team.id,
+            monthYear: monthYear,
+            points: 0
+          });
+        }
+      }
+      
+      // Buscar as equipes atualizadas para enviar na resposta
+      await db.query.teams.findMany();
+      
+      res.json({ 
+        success: true, 
+        message: `Pontos das equipes zerados para o mês de ${month}.` 
+      });
+    } catch (error: any) {
+      console.error("Erro ao zerar pontos:", error);
+      res.status(500).json({ message: error.message || "Erro ao zerar pontos" });
+    }
+  });
+
+  // Endpoint para salvar dados de forma permanente
+  app.post("/api/salvar-dados", async (req, res) => {
+    try {
+      const { month, data } = req.body;
+      
+      if (!month || !data) {
+        return res.status(400).json({ message: "Mês e dados são obrigatórios" });
+      }
+      
+      console.log(`Salvando dados para o mês: ${month}`, data);
+      const year = new Date().getFullYear();
+      const monthYear = `${month.toUpperCase()}_${year}`;
+      
+      // Processar os dados das equipes
+      if (data.alfa) {
+        const alfa = await storage.getTeamByName("Alfa");
+        if (alfa) {
+          console.log(`Salvando pontos da equipe Alfa (${alfa.id}) para o mês ${month}: ${data.alfa.pontos}`);
+          await storage.updateTeamMonthlyPoints(alfa.id, data.alfa.pontos, monthYear);
+        }
+      }
+      
+      if (data.bravo) {
+        const bravo = await storage.getTeamByName("Bravo");
+        if (bravo) {
+          console.log(`Salvando pontos da equipe Bravo (${bravo.id}) para o mês ${month}: ${data.bravo.pontos}`);
+          await storage.updateTeamMonthlyPoints(bravo.id, data.bravo.pontos, monthYear);
+        }
+      }
+      
+      if (data.charlie) {
+        const charlie = await storage.getTeamByName("Charlie");
+        if (charlie) {
+          console.log(`Salvando pontos da equipe Charlie (${charlie.id}) para o mês ${month}: ${data.charlie.pontos}`);
+          await storage.updateTeamMonthlyPoints(charlie.id, data.charlie.pontos, monthYear);
+        }
+      }
+      
+      res.json({
+        success: true,
+        message: `Dados para o mês de ${month} foram salvos com sucesso!`
+      });
+    } catch (error: any) {
+      console.error("Erro ao salvar dados:", error);
+      res.status(500).json({ message: error.message || "Erro ao salvar dados" });
+    }
+  });
+
   const httpServer = createServer(app);
   return httpServer;
 }
