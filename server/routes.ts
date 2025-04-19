@@ -80,7 +80,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/teams/:id", async (req, res) => {
+  app.get("/api/teams/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -105,7 +105,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Events
-  app.get("/api/events", async (req, res) => {
+  app.get("/api/events", async (req: Request, res: Response) => {
     try {
       // Extrair o mês da query string, se fornecido
       const month = req.query.month as string | undefined;
@@ -155,7 +155,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.get("/api/events/:id", async (req, res) => {
+  app.get("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -185,7 +185,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
     }
   });
 
-  app.post("/api/events", async (req, res) => {
+  app.post("/api/events", async (req: Request, res: Response) => {
     try {
       const { teamId, type, description, points, createdBy, eventDate, monthYear } = req.body;
       
@@ -268,7 +268,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
   
   // Endpoint de atualização completa (PUT)
-  app.put("/api/events/:id", async (req, res) => {
+  app.put("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -316,7 +316,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint de atualização parcial (PATCH) - mesma implementação que PUT, apenas método diferente
-  app.patch("/api/events/:id", async (req, res) => {
+  app.patch("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
@@ -416,7 +416,7 @@ export async function registerRoutes(app: Express): Promise<Server> {
   });
 
   // Endpoint para excluir um evento
-  app.delete("/api/events/:id", async (req, res) => {
+  app.delete("/api/events/:id", async (req: Request, res: Response) => {
     try {
       const id = parseInt(req.params.id);
       if (isNaN(id)) {
